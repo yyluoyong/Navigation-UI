@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--主界面ViewPager包含标签页面的数量-->
+    <integer name="TAB_COUNTS">4</integer>
+</resources>

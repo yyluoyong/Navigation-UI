@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--TabLayout中标签的名字-->
+    <string-array name="TAB_TITLES">
+        <item>所有</item>
+        <item>来电</item>
+        <item>去电</item>
+        <item>未接</item>
+    </string-array>
+</resources>
