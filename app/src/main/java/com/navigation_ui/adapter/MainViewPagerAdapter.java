@@ -69,7 +69,6 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
 
         if (fragment != null && position >=0 && position < mFragments.size()) {
             mFragments.set(position, fragment);
-
             notifyDataSetChanged();
         }
         else {
