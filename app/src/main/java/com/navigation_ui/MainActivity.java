@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity
 
         mFragments = new ArrayList<>();
         for (int i = 1; i <= tabCounts; i++) {
-            mFragments.add(new FragmentIndex());
+            mFragments.add(new CallLogFragment());
         }
     }
 
@@ -159,6 +159,7 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_camera) {
             // Handle the camera action
+
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {
@@ -166,9 +167,10 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {
-
+            mViewPagerAdapter.replaceFragment(new FragmentIndex(), 0);
         } else if (id == R.id.nav_send) {
-
+            mFragments.set(0, new FragmentIndex());
+            mViewPagerAdapter.setFragmentList(mFragments);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

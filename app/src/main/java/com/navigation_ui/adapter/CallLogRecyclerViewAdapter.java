@@ -16,7 +16,7 @@ import java.util.List;
  * Created by Yong on 2017/2/11.
  */
 
-public class CallLogAdapter extends RecyclerView.Adapter<CallLogAdapter.ViewHolder> {
+public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<CallLogRecyclerViewAdapter.ViewHolder> {
 
     private List<CallLogItemModel> mCallLogList;
 
@@ -48,7 +48,7 @@ public class CallLogAdapter extends RecyclerView.Adapter<CallLogAdapter.ViewHold
         }
     }
 
-    public CallLogAdapter(List<CallLogItemModel> callLogList) {
+    public CallLogRecyclerViewAdapter(List<CallLogItemModel> callLogList) {
         mCallLogList = callLogList;
     }
 
