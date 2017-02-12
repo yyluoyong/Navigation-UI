@@ -2,7 +2,7 @@ package com.navigation_ui.adapter;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.PagerAdapter;
 import android.view.ViewGroup;
@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * 主界面内容部分ViewPager的适配器
  */
-public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
+public class MainViewPagerAdapter extends FragmentPagerAdapter {
 
     private FragmentManager mFragmentManager;
     private String[] mTitles;
@@ -55,11 +55,6 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
     }
 
     @Override
-    public void notifyDataSetChanged() {
-        super.notifyDataSetChanged();
-    }
-
-    @Override
     public int getItemPosition(Object object) {
         return PagerAdapter.POSITION_NONE;
     }
@@ -72,41 +67,47 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
      */
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        Fragment fragment;
 
-        FragmentTransaction transaction = mFragmentManager.beginTransaction();
+        Fragment fragment = (Fragment)super.instantiateItem(container, position);
 
-        for (int i = 0; i < mFragments.size(); i++) {
-            if (mFragmentsUpdateFlag[i]) {
-                fragment = mFragments.get(i);
-                transaction.replace(container.getId(), fragment);
+        String fragmentTag = fragment.getTag();
 
-                mFragmentsUpdateFlag[i] = false;
-            }
+        if (mFragmentsUpdateFlag[position]) {
+            FragmentTransaction transaction = mFragmentManager.beginTransaction();
+
+            transaction.remove(fragment);
+            fragment = mFragments.get(position);
+            transaction.add(container.getId(), fragment, fragmentTag);
+            transaction.attach(fragment);
+
+            /**
+             * 不同于FragmentStatePagerAdapter，这里似乎不能用replace函数。
+             */
+//            Fragment fragment = mFragments.get(position);
+//            ft.replace(container.getId(), fragment);
+
+            transaction.commit();
+
+            mFragmentsUpdateFlag[position] = false; //标记回位
         }
-        transaction.commit();
 
-        /**
-         * 由于预加载的缘故，如果写成如下的形式，不能实现预想的动态更新。例如：
-         * ViewPager包含4个页面，即FragmentList长度为4，若想更新0位置的Fragment，如果当前
-         * position=0，则会如期更新；若position /= 0，即视图在比如第3个Fragment上，则该函
-         * 数被调用的时候，更新的是第3个Fragment，当视图回到第1个视图的时候，由于这个时候不会
-         * 调用notifyDataSetChanged()方法，因此instantiateItem方法不再被调用，因而第一个
-         * 视图不会被更新。
-         */
-//        fragment = mFragments.get(position);
-//        transaction.replace(container.getId(), fragment);
-//        transaction.commit();
-
-        return mFragments.get(position);
+        return fragment;
     }
 
     //重置所有的Fragment
     public void setFragmentList(List<Fragment> fgList) {
 
         if (fgList != null) {
-            this.mFragments = fgList;
+            mFragments = fgList;
+
+            for (int i = 0; i < mFragments.size(); i++) {
+                mFragmentsUpdateFlag[i] = true;
+            }
+
             notifyDataSetChanged();
+        }
+        else {
+            //undo:错误
         }
     }
 
@@ -115,10 +116,11 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
 
         if (fragment != null && position >=0 && position < mFragments.size()) {
             mFragments.set(position, fragment);
+            mFragmentsUpdateFlag[position] = true;
             notifyDataSetChanged();
         }
         else {
-            //错误
+            //undo:错误
         }
     }
 }
