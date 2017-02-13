@@ -38,9 +38,11 @@ public class ScrollAwareFABBehavior extends FloatingActionButton.Behavior {
                                        final View directTargetChild,
                                        final View target,
                                        final int nestedScrollAxes) {
+
         // Ensure we react to vertical scrolling
         return nestedScrollAxes == ViewCompat.SCROLL_AXIS_VERTICAL
-                || super.onStartNestedScroll(coordinatorLayout, child, directTargetChild, target, nestedScrollAxes);
+                || super.onStartNestedScroll(coordinatorLayout, child,
+                directTargetChild, target, nestedScrollAxes);
     }
 
     @Override
@@ -52,7 +54,9 @@ public class ScrollAwareFABBehavior extends FloatingActionButton.Behavior {
                                final int dxUnconsumed,
                                final int dyUnconsumed) {
 
-        super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
+        super.onNestedScroll(coordinatorLayout, child, target,
+                dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
+
         if (dyConsumed > 0 && !this.mIsAnimatingOut && child.getVisibility() == View.VISIBLE) {
             // User scrolled down and the FAB is currently visible -> hide the FAB
             animateOut(child);
@@ -64,6 +68,7 @@ public class ScrollAwareFABBehavior extends FloatingActionButton.Behavior {
 
     // Same animation that FloatingActionButton.Behavior uses to hide the FAB when the AppBarLayout exits
     private void animateOut(final FloatingActionButton button) {
+
         if (Build.VERSION.SDK_INT >= 14) {
             ViewCompat.animate(button).translationY(button.getHeight() +
                     getMarginBottom(button)).setInterpolator(INTERPOLATOR).withLayer()
@@ -88,7 +93,9 @@ public class ScrollAwareFABBehavior extends FloatingActionButton.Behavior {
 
     // Same animation that FloatingActionButton.Behavior uses to show the FAB when the AppBarLayout enters
     private void animateIn(FloatingActionButton button) {
+
         button.setVisibility(View.VISIBLE);
+
         if (Build.VERSION.SDK_INT >= 14) {
             ViewCompat.animate(button).translationY(0)
                     .setInterpolator(INTERPOLATOR).withLayer().setListener(null)
@@ -101,9 +108,11 @@ public class ScrollAwareFABBehavior extends FloatingActionButton.Behavior {
     private int getMarginBottom(View v) {
         int marginBottom = 0;
         final ViewGroup.LayoutParams layoutParams = v.getLayoutParams();
+
         if (layoutParams instanceof ViewGroup.MarginLayoutParams) {
             marginBottom = ((ViewGroup.MarginLayoutParams) layoutParams).bottomMargin;
         }
+
         return marginBottom;
     }
 }
