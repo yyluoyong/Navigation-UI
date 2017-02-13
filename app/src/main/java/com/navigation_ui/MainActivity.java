@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity
                 mTabLayoutTitles, mFragments);
 
         mViewPager.setAdapter(mViewPagerAdapter);
-        mViewPager.setOffscreenPageLimit(getResources().getInteger(R.integer.TAB_COUNTS));
+//        mViewPager.setOffscreenPageLimit(getResources().getInteger(R.integer.TAB_COUNTS));
         //Listener
     }
 

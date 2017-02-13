@@ -7,6 +7,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.PagerAdapter;
 import android.view.ViewGroup;
 
+import com.navigation_ui.tools.LogUtil;
+
 import java.util.List;
 
 /**
@@ -90,6 +92,8 @@ public class MainViewPagerAdapter extends FragmentPagerAdapter {
 
             mFragmentsUpdateFlag[position] = false; //标记回位
         }
+
+        LogUtil.d("PagerAdapter", "位置：" + position);
 
         return fragment;
     }
