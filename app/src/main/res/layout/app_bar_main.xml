@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <!--App 的内容布局。-->
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     tools:context="com.navigation_ui.MainActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -19,7 +19,8 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:layout_scrollFlags="scroll|enterAlways|snap"/>
 
         <!--导航选项卡。-->
         <android.support.design.widget.TabLayout
@@ -27,15 +28,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:tabIndicatorColor="#FFFFFF"/>
-            <!--app:primaryColor="?attr/colorPrimary"-->
-            <!--app:accentColor="?attr/colorAccent" />-->
     </android.support.design.widget.AppBarLayout>
 
     <!--主要内容。-->
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
     <!--浮动按钮。-->
@@ -46,6 +45,6 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         app:srcCompat="@android:drawable/ic_dialog_email"
-        app:layout_behavior="com.navigation_ui.view.ScrollAwareFABBehavior"/>
+        app:layout_behavior="com.navigation_ui.view.ScrollAwareFABBehaviorDefault"/>
 
 </android.support.design.widget.CoordinatorLayout>

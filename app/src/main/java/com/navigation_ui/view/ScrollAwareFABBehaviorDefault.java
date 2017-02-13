@@ -54,4 +54,14 @@ public class ScrollAwareFABBehaviorDefault extends FloatingActionButton.Behavior
             child.show();
         }
     }
+
+
+    //停止滚动的时候，显示。
+//    @Override
+//    public void onStopNestedScroll(CoordinatorLayout coordinatorLayout,
+//                                   FloatingActionButton child, View target) {
+//        super.onStopNestedScroll(coordinatorLayout, child, target);
+//
+//        child.show();
+//    }
 }

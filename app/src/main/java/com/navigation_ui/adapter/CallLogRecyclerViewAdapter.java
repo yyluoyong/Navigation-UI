@@ -71,9 +71,9 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<CallLogRecy
         holder.contactsNameTV.setText(callLogItem.getContactsName());
         holder.phoneNumberTV.setText(callLogItem.getPhoneNumber());
         holder.callDateTV.setText(callLogItem.getDateInStr());
-        holder.callCountsTV.setText(callLogItem.getCallCounts());
+        holder.callCountsTV.setText(""+callLogItem.getCallCounts());
         holder.durationTV.setText(callLogItem.getDuration());
-        holder.callTypeTV.setText(callLogItem.getCallType());
+        holder.callTypeTV.setText(""+callLogItem.getCallType());
         holder.callerLocTV.setText(callLogItem.getCallerLoc());
     }
 
