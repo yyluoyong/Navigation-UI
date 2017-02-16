@@ -11,18 +11,29 @@ import android.view.ViewGroup;
 
 import com.navigation_ui.R;
 import com.navigation_ui.adapter.CallLogRecyclerViewAdapter;
-import com.navigation_ui.adapter.MainViewPagerAdapter;
 import com.navigation_ui.model.CallLogItemModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CallLogFragment extends Fragment {
+public class CallLogFragment extends Fragment implements FragmentUpdatable {
 
     private View mView;
     private RecyclerView mRecyclerView;
+    private CallLogRecyclerViewAdapter mRecyclerViewAdapter;
 
     private List<CallLogItemModel> callLogItemModelList = new ArrayList<>();
+
+    private String contactsName;
+
+    private boolean isNeedUpdatea = false;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        initCallLogs();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -33,16 +44,44 @@ public class CallLogFragment extends Fragment {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(layoutManager);
 
-        initCallLogs();
-
-        CallLogRecyclerViewAdapter recyclerViewAdapter = new CallLogRecyclerViewAdapter(callLogItemModelList);
-        mRecyclerView.setAdapter(recyclerViewAdapter);
+        mRecyclerViewAdapter = new CallLogRecyclerViewAdapter(callLogItemModelList);
+        mRecyclerView.setAdapter(mRecyclerViewAdapter);
 
         return mView;
     }
 
+    @Override
+    public void update() {
+        contactsName = "李四";
+
+        callLogItemModelList.clear();
+
+        for (int i = 0; i < 30; i++) {
+            CallLogItemModel callLogItemModel = new CallLogItemModel();
+            callLogItemModel.setContactsName("李四");
+            callLogItemModel.setPhoneNumber("13012341234");
+            callLogItemModel.setDateInStr("2012年6月12日 12:12:12");
+            callLogItemModel.setCallCounts(5);
+            callLogItemModel.setDuration("12");
+            callLogItemModel.setCallType(1);
+            callLogItemModel.setCallerLoc("北京市");
+
+            callLogItemModelList.add(callLogItemModel);
+        }
+
+        mRecyclerViewAdapter.setCallLogList(callLogItemModelList);
+        mRecyclerViewAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public boolean isNeedUpdate() {
+        return isNeedUpdatea;
+    }
+
 
     private void initCallLogs() {
+
+        contactsName = "张三";
 
         for (int i = 0; i < 30; i++) {
             CallLogItemModel callLogItemModel = new CallLogItemModel();
@@ -58,5 +97,12 @@ public class CallLogFragment extends Fragment {
         }
     }
 
+    @Override
+    public String toString() {
+        return contactsName;
+    }
 
+    public void setNeedUpdate(boolean needUpdate) {
+        isNeedUpdatea = needUpdate;
+    }
 }

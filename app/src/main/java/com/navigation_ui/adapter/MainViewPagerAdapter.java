@@ -1,15 +1,18 @@
 package com.navigation_ui.adapter;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.PagerAdapter;
 import android.view.ViewGroup;
 
+import com.navigation_ui.R;
+import com.navigation_ui.fragment.CallLogFragment;
+import com.navigation_ui.fragment.FragmentUpdatable;
 import com.navigation_ui.tools.LogUtil;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Yong on 2017/2/11.
@@ -20,111 +23,141 @@ import java.util.List;
  */
 public class MainViewPagerAdapter extends FragmentPagerAdapter {
 
+    private static final String TAG = "PagerAdapter";
+
     private FragmentManager mFragmentManager;
-    private String[] mTitles;
-    private List<Fragment> mFragments;
 
-    //用于动态更新Fragment列表的时候，决定是否更新对应位置的Fragment
-    private boolean[] mFragmentsUpdateFlag;
+    //用于保存每个Fragment对应的Tag值
+    private Map<Integer, String> mFragmentTags;
+    private Context context;
 
-    public MainViewPagerAdapter(FragmentManager fm, String[] mTitles,
-                                List<Fragment> mFragments) {
+    //页面数量
+    private static int mPageCounts;
+    private String[] mPageTitles;
+
+    //页面是否需要更新，默认不需要更新
+    private boolean[] isPagesNeedUpdate;
+
+    public MainViewPagerAdapter(FragmentManager fm, Context context) {
         super(fm);
-        mFragmentManager = fm;
-        this.mTitles = mTitles;
-        this.mFragments = mFragments;
 
-        //默认每个位置都不更新
-        mFragmentsUpdateFlag = new boolean[this.mFragments.size()];
-        for (int i = 0; i < this.mFragments.size(); i++) {
-            mFragmentsUpdateFlag[i] = false;
+        this.mFragmentManager = fm;
+        this.context = context;
+
+        init();
+    }
+
+    private void init() {
+        mFragmentTags = new HashMap<Integer, String>();
+
+        mPageCounts = context.getResources().getInteger(R.integer.MAIN_PAGE_COUNTS);
+        mPageTitles = context.getResources().getStringArray(R.array.MAIN_PAGE_TITLES);
+
+        isPagesNeedUpdate = new boolean[mPageCounts];
+        for (int i = 0; i < mPageCounts; i++) {
+            isPagesNeedUpdate[i] = false;
         }
     }
 
+    /**
+     * 创建一个新的Fragment实例的时候调用
+     * @param position
+     * @return
+     */
     @Override
     public Fragment getItem(int position) {
-        return mFragments.get(position);
+
+        return new CallLogFragment();
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return mTitles[position];
+        return mPageTitles[position];
     }
 
     @Override
     public int getCount() {
-        return mFragments.size();
-    }
-
-    @Override
-    public int getItemPosition(Object object) {
-        return PagerAdapter.POSITION_NONE;
+        return mPageCounts;
     }
 
     /**
-     * 实现动态更新Fragment
+     * 实现更新该Fragment
+     * @param object
+     * @return
+     */
+    @Override
+    public int getItemPosition(Object object) {
+
+        LogUtil.d("Adapter", "getItemPosition");
+
+        int position = super.getItemPosition(object);
+
+        if (object != null) {
+//            if (((CallLogFragment) object).isNeedUpdate()) {
+//                ((CallLogFragment) object).update();
+//                isPagesNeedUpdate[position] = false;
+//            }
+            ((CallLogFragment) object).update();
+        }
+
+        return position;
+    }
+
+
+    public void updateFragment(int position) {
+
+        LogUtil.d("Adapter", "updateFragment - " + position);
+
+        Fragment fragment = getFragment(position);
+
+        if (fragment != null) {
+            isPagesNeedUpdate[position] = true;
+
+        } else {
+            //该位置Fragment需要更新，由于Fragment尚未创建等原因，在这里并不能完成更新，因此先标记。
+            //比如，当前位置为0时，位置3的Fragment并没有创建，若此时使用该函数更新位置3的Fragment，
+            //则并不会生效。此处标记是为了配合instantiateItem函数使用。
+            isPagesNeedUpdate[position] = true;
+        }
+
+
+        notifyDataSetChanged();
+    }
+
+
+    /**
+     * 得到每个Fragment的Tag，将其存储到HashMap中，以便于根据Tag从FragmentManager中获得
+     * 对应的Fragment。其余功能集成父类。
      * @param container
      * @param position
      * @return
      */
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
+        Object object = super.instantiateItem(container, position);
 
-        Fragment fragment = (Fragment)super.instantiateItem(container, position);
+        if (object != null) {
+            Fragment fragment = (Fragment) object;
+            String tag = fragment.getTag();
+            mFragmentTags.put(position, tag);
 
-        String fragmentTag = fragment.getTag();
-
-        if (mFragmentsUpdateFlag[position]) {
-            FragmentTransaction transaction = mFragmentManager.beginTransaction();
-
-            transaction.remove(fragment);
-            fragment = mFragments.get(position);
-            transaction.add(container.getId(), fragment, fragmentTag);
-            transaction.attach(fragment);
-
-            /**
-             * 不同于FragmentStatePagerAdapter，这里似乎不能用replace函数。
-             */
-//            Fragment fragment = mFragments.get(position);
-//            ft.replace(container.getId(), fragment);
-
-            transaction.commit();
-
-            mFragmentsUpdateFlag[position] = false; //标记回位
+            if (isPagesNeedUpdate[position]) {
+                ((CallLogFragment) fragment).setNeedUpdate(true);
+                isPagesNeedUpdate[position] = false;
+            }
         }
 
-        LogUtil.d("PagerAdapter", "位置：" + position);
+        return object;
+    }
+
+    private Fragment getFragment(int position) {
+        Fragment fragment = null;
+        String tag = mFragmentTags.get(position);
+
+        if (tag != null) {
+            fragment = mFragmentManager.findFragmentByTag(tag);
+        }
 
         return fragment;
-    }
-
-    //重置所有的Fragment
-    public void setFragmentList(List<Fragment> fgList) {
-
-        if (fgList != null) {
-            mFragments = fgList;
-
-            for (int i = 0; i < mFragments.size(); i++) {
-                mFragmentsUpdateFlag[i] = true;
-            }
-
-            notifyDataSetChanged();
-        }
-        else {
-            //undo:错误
-        }
-    }
-
-    //替换指定位置的Fragment
-    public void replaceFragment(Fragment fragment, int position) {
-
-        if (fragment != null && position >=0 && position < mFragments.size()) {
-            mFragments.set(position, fragment);
-            mFragmentsUpdateFlag[position] = true;
-            notifyDataSetChanged();
-        }
-        else {
-            //undo:错误
-        }
     }
 }

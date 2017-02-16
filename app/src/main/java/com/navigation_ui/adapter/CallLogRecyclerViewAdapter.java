@@ -81,4 +81,8 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<CallLogRecy
     public int getItemCount() {
         return mCallLogList.size();
     }
+
+    public void setCallLogList(List<CallLogItemModel> mCallLogList) {
+        this.mCallLogList = mCallLogList;
+    }
 }

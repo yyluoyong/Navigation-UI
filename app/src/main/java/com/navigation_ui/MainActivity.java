@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import com.navigation_ui.adapter.MainViewPagerAdapter;
 import com.navigation_ui.fragment.CallLogFragment;
 import com.navigation_ui.fragment.FragmentIndex;
+import com.navigation_ui.tools.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -105,11 +106,9 @@ public class MainActivity extends AppCompatActivity
 
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
 
-        mViewPagerAdapter = new MainViewPagerAdapter(getSupportFragmentManager(),
-                mTabLayoutTitles, mFragments);
+        mViewPagerAdapter = new MainViewPagerAdapter(getSupportFragmentManager(), MainActivity.this);
 
         mViewPager.setAdapter(mViewPagerAdapter);
-//        mViewPager.setOffscreenPageLimit(getResources().getInteger(R.integer.TAB_COUNTS));
         //Listener
     }
 
@@ -159,18 +158,18 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_camera) {
             // Handle the camera action
-
+            mViewPagerAdapter.updateFragment(0);
         } else if (id == R.id.nav_gallery) {
-
+            mViewPagerAdapter.updateFragment(1);
         } else if (id == R.id.nav_slideshow) {
-
+            mViewPagerAdapter.updateFragment(2);
         } else if (id == R.id.nav_manage) {
-
+            mViewPagerAdapter.updateFragment(3);
+            LogUtil.d("Adapter", "onNavigationItemSelected");
         } else if (id == R.id.nav_share) {
-            mViewPagerAdapter.replaceFragment(new FragmentIndex(), 0);
+//            mViewPagerAdapter.updateFragment(0);
         } else if (id == R.id.nav_send) {
-            mFragments.set(0, new FragmentIndex());
-            mViewPagerAdapter.setFragmentList(mFragments);
+//            mViewPagerAdapter.updateFragment(1);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

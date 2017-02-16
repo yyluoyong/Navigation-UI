@@ -8,4 +8,11 @@
         <item>去电</item>
         <item>未接</item>
     </string-array>
+
+    <string-array name="MAIN_PAGE_TITLES">
+        <item>所有</item>
+        <item>来电</item>
+        <item>去电</item>
+        <item>未接</item>
+    </string-array>
 </resources>
