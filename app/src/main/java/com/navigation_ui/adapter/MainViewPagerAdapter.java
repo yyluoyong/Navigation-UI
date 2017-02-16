@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.view.ViewGroup;
 
 import com.navigation_ui.R;
@@ -21,7 +22,7 @@ import java.util.Map;
 /**
  * 主界面内容部分ViewPager的适配器
  */
-public class MainViewPagerAdapter extends FragmentPagerAdapter {
+public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
 
     private static final String TAG = "PagerAdapter";
 
@@ -88,19 +89,18 @@ public class MainViewPagerAdapter extends FragmentPagerAdapter {
     @Override
     public int getItemPosition(Object object) {
 
-        LogUtil.d("Adapter", "getItemPosition");
-
-        int position = super.getItemPosition(object);
-
-        if (object != null) {
+//        LogUtil.d("Adapter", "getItemPosition");
+//
+//        int position = super.getItemPosition(object);
+//
+//        if (object != null) {
 //            if (((CallLogFragment) object).isNeedUpdate()) {
 //                ((CallLogFragment) object).update();
 //                isPagesNeedUpdate[position] = false;
 //            }
-            ((CallLogFragment) object).update();
-        }
+//        }
 
-        return position;
+        return POSITION_NONE;
     }
 
 

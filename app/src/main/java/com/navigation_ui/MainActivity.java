@@ -109,6 +109,7 @@ public class MainActivity extends AppCompatActivity
         mViewPagerAdapter = new MainViewPagerAdapter(getSupportFragmentManager(), MainActivity.this);
 
         mViewPager.setAdapter(mViewPagerAdapter);
+
         //Listener
     }
 

@@ -83,7 +83,7 @@ public class CallLogFragment extends Fragment implements FragmentUpdatable {
 
         contactsName = "张三";
 
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 50000; i++) {
             CallLogItemModel callLogItemModel = new CallLogItemModel();
             callLogItemModel.setContactsName("张三");
             callLogItemModel.setPhoneNumber("13012341234");
