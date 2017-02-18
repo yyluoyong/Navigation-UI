@@ -17,9 +17,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.navigation_ui.adapter.MainViewPagerAdapter;
-import com.navigation_ui.fragment.CallLogFragment;
-import com.navigation_ui.fragment.FragmentIndex;
-import com.navigation_ui.fragment.UpdateDataObservable;
+import com.navigation_ui.fragment.view.pager.CallLogFragment;
+import com.navigation_ui.fragment.view.pager.UpdateFragmentObservable;
 import com.navigation_ui.tools.LogUtil;
 
 import java.util.ArrayList;
@@ -35,8 +34,6 @@ public class MainActivity extends AppCompatActivity
     private FloatingActionButton mFloatFB;
     private NavigationView mNavigationView;
 
-    private String[] mTabLayoutTitles;
-    private List<Fragment> mFragments;
     private MainViewPagerAdapter mViewPagerAdapter;
 
     @Override
@@ -69,8 +66,10 @@ public class MainActivity extends AppCompatActivity
         mFloatFB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+                //让ViewPager中的Fragment更新数据
+                UpdateFragmentObservable.getInstance().notifyFragmentUpdate();
             }
         });
     }
@@ -80,7 +79,7 @@ public class MainActivity extends AppCompatActivity
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        mDrawerLayout.setDrawerListener(toggle);
+        mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
     }
 
@@ -90,28 +89,15 @@ public class MainActivity extends AppCompatActivity
         mNavigationView.setNavigationItemSelectedListener(this);
     }
 
-    //初始化FragmentList
-    private void createFragmentList() {
-        int tabCounts = getResources().getInteger(R.integer.TAB_COUNTS);
-
-        mFragments = new ArrayList<>();
-        for (int i = 1; i <= tabCounts; i++) {
-            mFragments.add(new CallLogFragment());
-        }
-    }
-
     //初始化ViewPager
     private void createViewPager() {
-        mTabLayoutTitles = getResources().getStringArray(R.array.TAB_TITLES);
-        createFragmentList();
 
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
-
         mViewPagerAdapter = new MainViewPagerAdapter(getSupportFragmentManager(), MainActivity.this);
-
         mViewPager.setAdapter(mViewPagerAdapter);
 
-        mViewPager.setOffscreenPageLimit(4);
+        //设置页面缓存数量，防止重新加载
+        mViewPager.setOffscreenPageLimit(getResources().getInteger(R.integer.TAB_COUNTS));
 
         //Listener
     }
@@ -161,20 +147,17 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-            // Handle the camera action
-//            mViewPagerAdapter.updateFragment(0);
-            UpdateDataObservable.getInstance().notifyUpdate(true);
+
         } else if (id == R.id.nav_gallery) {
-            mViewPagerAdapter.updateFragment(1);
+
         } else if (id == R.id.nav_slideshow) {
-            mViewPagerAdapter.updateFragment(2);
+
         } else if (id == R.id.nav_manage) {
-            mViewPagerAdapter.updateFragment(3);
-            LogUtil.d("Adapter", "onNavigationItemSelected");
+
         } else if (id == R.id.nav_share) {
-//            mViewPagerAdapter.updateFragment(0);
+
         } else if (id == R.id.nav_send) {
-//            mViewPagerAdapter.updateFragment(1);
+
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

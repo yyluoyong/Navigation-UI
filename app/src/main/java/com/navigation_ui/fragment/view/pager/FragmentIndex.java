@@ -1,4 +1,4 @@
-package com.navigation_ui.fragment;
+package com.navigation_ui.fragment.view.pager;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
