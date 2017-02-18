@@ -1,5 +1,6 @@
 package com.navigation_ui.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -12,11 +13,14 @@ import android.view.ViewGroup;
 import com.navigation_ui.R;
 import com.navigation_ui.adapter.CallLogRecyclerViewAdapter;
 import com.navigation_ui.model.CallLogItemModel;
+import com.navigation_ui.tools.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
-public class CallLogFragment extends Fragment implements FragmentUpdatable {
+public class CallLogFragment extends Fragment implements FragmentUpdatable, Observer {
 
     private View mView;
     private RecyclerView mRecyclerView;
@@ -26,13 +30,24 @@ public class CallLogFragment extends Fragment implements FragmentUpdatable {
 
     private String contactsName;
 
+    private FragmentUpdateListener mUpdateListener;
+
     private boolean isNeedUpdatea = false;
+
+    @Override
+    public void onAttach(Context context) {
+        LogUtil.d("Adapter", "onAttach");
+
+        super.onAttach(context);
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         initCallLogs();
+
+        LogUtil.d("Adapter", "onCreate");
     }
 
     @Override
@@ -47,11 +62,37 @@ public class CallLogFragment extends Fragment implements FragmentUpdatable {
         mRecyclerViewAdapter = new CallLogRecyclerViewAdapter(callLogItemModelList);
         mRecyclerView.setAdapter(mRecyclerViewAdapter);
 
+        LogUtil.d("Adapter", "onCreateView");
+        UpdateDataObservable.getInstance().addObserver(this);
+
         return mView;
     }
 
     @Override
-    public void update() {
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        LogUtil.d("Adapter", "onActivityCreated");
+
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onStart() {
+        LogUtil.d("Adapter", "onStart");
+        super.onStart();
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+
+        boolean updateFlag = (boolean) arg;
+
+        if (updateFlag) {
+            updateData();
+        }
+    }
+
+    @Override
+    public void updateData() {
         contactsName = "李四";
 
         callLogItemModelList.clear();
@@ -71,6 +112,41 @@ public class CallLogFragment extends Fragment implements FragmentUpdatable {
 
         mRecyclerViewAdapter.setCallLogList(callLogItemModelList);
         mRecyclerViewAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onResume() {
+
+        LogUtil.d("Adapter", "onResume --->");
+
+//        if (mUpdateListener != null) {
+//            LogUtil.d("Adapter", "onResume mUpdateListener");
+//            if (mUpdateListener.isNeedUpdate()) {
+//                updateData();
+//                LogUtil.d("Adapter", "onResume update");
+//            }
+//        }
+
+
+
+        super.onResume();
+
+        LogUtil.d("Adapter", "onResume ====");
+    }
+
+
+    @Override
+    public void onDestroyView() {
+        LogUtil.d("Adapter", "onDestroyView");
+        UpdateDataObservable.getInstance().deleteObserver(this);
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onPause() {
+        LogUtil.d("Adapter", "onPause");
+        super.onPause();
+
     }
 
     @Override
@@ -104,5 +180,9 @@ public class CallLogFragment extends Fragment implements FragmentUpdatable {
 
     public void setNeedUpdate(boolean needUpdate) {
         isNeedUpdatea = needUpdate;
+    }
+
+    public void addFragmentUpdateListener(FragmentUpdateListener listener) {
+        mUpdateListener = listener;
     }
 }

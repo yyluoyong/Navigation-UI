@@ -11,5 +11,5 @@ public interface FragmentUpdatable {
 
     boolean isNeedUpdate();
 
-    void update();
+    void updateData();
 }

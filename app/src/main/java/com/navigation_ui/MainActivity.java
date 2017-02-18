@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import com.navigation_ui.adapter.MainViewPagerAdapter;
 import com.navigation_ui.fragment.CallLogFragment;
 import com.navigation_ui.fragment.FragmentIndex;
+import com.navigation_ui.fragment.UpdateDataObservable;
 import com.navigation_ui.tools.LogUtil;
 
 import java.util.ArrayList;
@@ -110,6 +111,8 @@ public class MainActivity extends AppCompatActivity
 
         mViewPager.setAdapter(mViewPagerAdapter);
 
+        mViewPager.setOffscreenPageLimit(4);
+
         //Listener
     }
 
@@ -159,7 +162,8 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_camera) {
             // Handle the camera action
-            mViewPagerAdapter.updateFragment(0);
+//            mViewPagerAdapter.updateFragment(0);
+            UpdateDataObservable.getInstance().notifyUpdate(true);
         } else if (id == R.id.nav_gallery) {
             mViewPagerAdapter.updateFragment(1);
         } else if (id == R.id.nav_slideshow) {

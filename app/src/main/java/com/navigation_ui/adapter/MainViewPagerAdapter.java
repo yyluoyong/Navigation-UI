@@ -5,11 +5,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.util.Log;
 import android.view.ViewGroup;
 
 import com.navigation_ui.R;
 import com.navigation_ui.fragment.CallLogFragment;
 import com.navigation_ui.fragment.FragmentUpdatable;
+import com.navigation_ui.fragment.FragmentUpdateListener;
 import com.navigation_ui.tools.LogUtil;
 
 import java.util.HashMap;
@@ -22,7 +24,7 @@ import java.util.Map;
 /**
  * 主界面内容部分ViewPager的适配器
  */
-public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
+public class MainViewPagerAdapter extends FragmentPagerAdapter {
 
     private static final String TAG = "PagerAdapter";
 
@@ -66,9 +68,21 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
      * @return
      */
     @Override
-    public Fragment getItem(int position) {
+    public Fragment getItem(final int position) {
 
-        return new CallLogFragment();
+        CallLogFragment callLogFragment = new CallLogFragment();
+
+        callLogFragment.addFragmentUpdateListener(new FragmentUpdateListener() {
+            @Override
+            public boolean isNeedUpdate() {
+
+                LogUtil.d("Adapter", "isNeedUpdate " + isPagesNeedUpdate[position]);
+
+                return isPagesNeedUpdate[position];
+            }
+        });
+
+        return callLogFragment;
     }
 
     @Override
@@ -100,28 +114,34 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
 //            }
 //        }
 
-        return POSITION_NONE;
+//        return POSITION_NONE;
+        LogUtil.d("Adapter", "getItemPosition ");
+
+
+        return super.getItemPosition(object);
     }
+
 
 
     public void updateFragment(int position) {
 
-        LogUtil.d("Adapter", "updateFragment - " + position);
-
-        Fragment fragment = getFragment(position);
-
-        if (fragment != null) {
-            isPagesNeedUpdate[position] = true;
-
-        } else {
-            //该位置Fragment需要更新，由于Fragment尚未创建等原因，在这里并不能完成更新，因此先标记。
-            //比如，当前位置为0时，位置3的Fragment并没有创建，若此时使用该函数更新位置3的Fragment，
-            //则并不会生效。此处标记是为了配合instantiateItem函数使用。
-            isPagesNeedUpdate[position] = true;
-        }
-
-
-        notifyDataSetChanged();
+        isPagesNeedUpdate[position] = true;
+//        LogUtil.d("Adapter", "updateFragment - " + position);
+//
+//        Fragment fragment = getFragment(position);
+//
+//        if (fragment != null) {
+//            isPagesNeedUpdate[position] = true;
+//
+//        } else {
+//            //该位置Fragment需要更新，由于Fragment尚未创建等原因，在这里并不能完成更新，因此先标记。
+//            //比如，当前位置为0时，位置3的Fragment并没有创建，若此时使用该函数更新位置3的Fragment，
+//            //则并不会生效。此处标记是为了配合instantiateItem函数使用。
+//            isPagesNeedUpdate[position] = true;
+//        }
+//
+//
+//        notifyDataSetChanged();
     }
 
 
@@ -134,6 +154,9 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
      */
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
+
+        LogUtil.d("Adapter", "instantiateItem " + position);
+
         Object object = super.instantiateItem(container, position);
 
         if (object != null) {
