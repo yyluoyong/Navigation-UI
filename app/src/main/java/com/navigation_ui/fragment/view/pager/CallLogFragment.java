@@ -80,7 +80,7 @@ public class CallLogFragment extends Fragment implements Observer {
             CallLogItemModel callLogItemModel = new CallLogItemModel();
             callLogItemModel.setContactsName("李四");
             callLogItemModel.setPhoneNumber("13012341234");
-            callLogItemModel.setDateInStr("6月12日 12:12");
+            callLogItemModel.setDateInMilliseconds("1485602523885");
             callLogItemModel.setCallCounts(5);
             callLogItemModel.setDuration("12");
             callLogItemModel.setCallType(1);
@@ -113,8 +113,8 @@ public class CallLogFragment extends Fragment implements Observer {
                 for (int i = 0; i < 50000; i++) {
                     CallLogItemModel callLogItemModel = new CallLogItemModel();
                     callLogItemModel.setContactsName("张三");
-                    callLogItemModel.setPhoneNumber("130 1234 1234");
-                    callLogItemModel.setDateInStr("6月12日 12:12");
+                    callLogItemModel.setPhoneNumber("13012341234");
+                    callLogItemModel.setDateInMilliseconds("1485602523885");
                     callLogItemModel.setCallCounts(5);
                     callLogItemModel.setDuration("12");
                     callLogItemModel.setCallType(1);

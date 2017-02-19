@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.navigation_ui.R;
 import com.navigation_ui.model.CallLogItemModel;
+import com.navigation_ui.tools.PhoneNumberFormatter;
 
 import java.util.List;
 
@@ -48,6 +49,8 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<CallLogRecy
 //            callTypeTV     = (TextView) view.findViewById(R.id.call_type);
             callTypeImage  = (ImageView) view.findViewById(R.id.call_type_image);
             callerLocTV    = (TextView) view.findViewById(R.id.caller_loc);
+
+
         }
     }
 
@@ -72,11 +75,13 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<CallLogRecy
         CallLogItemModel callLogItem = mCallLogList.get(position);
 
         holder.contactsNameTV.setText(callLogItem.getContactsName());
-        holder.phoneNumberTV.setText(callLogItem.getPhoneNumber());
-        holder.callDateTV.setText(callLogItem.getDateInStr());
+
+        holder.phoneNumberTV.setText(PhoneNumberFormatter
+            .phoneNumberFormat(callLogItem.getPhoneNumber()));
+
+        holder.callDateTV.setText(callLogItem.getDateInMilliseconds());
         holder.callCountsTV.setText("("+callLogItem.getCallCounts()+")");
-//        holder.durationTV.setText(callLogItem.getDuration());
-//        holder.callTypeTV.setText(""+callLogItem.getCallType());
+
         holder.callTypeImage.setImageResource(R.mipmap.ic_call_missed_grey600_18dp);
         holder.callerLocTV.setText(callLogItem.getCallerLoc());
     }

@@ -17,7 +17,7 @@ public class CallLogItemModel {
     private String phoneNumber;
 
     //日期
-    private String dateInStr;
+    private String dateInMilliseconds;
 
     //通话次数
     private int callCounts;
@@ -47,12 +47,12 @@ public class CallLogItemModel {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getDateInStr() {
-        return dateInStr;
+    public String getDateInMilliseconds() {
+        return dateInMilliseconds;
     }
 
-    public void setDateInStr(String dateInStr) {
-        this.dateInStr = dateInStr;
+    public void setDateInMilliseconds(String dateInMilliseconds) {
+        this.dateInMilliseconds = dateInMilliseconds;
     }
 
     public int getCallCounts() {
@@ -89,7 +89,7 @@ public class CallLogItemModel {
 
     @Override
     public String toString() {
-        return  contactsName + " " + phoneNumber + " " + dateInStr +
+        return  contactsName + " " + phoneNumber + " " + dateInMilliseconds +
                 " " + duration + " " + callType + " " + callerLoc + " " + callCounts;
     }
 }
