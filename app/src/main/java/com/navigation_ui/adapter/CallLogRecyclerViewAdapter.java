@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.navigation_ui.R;
@@ -26,13 +27,14 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<CallLogRecy
     static class ViewHolder extends RecyclerView.ViewHolder {
         View callLogItemView;
 
-        TextView contactsNameTV;
-        TextView phoneNumberTV;
-        TextView callDateTV;
-        TextView callCountsTV;
-        TextView durationTV;
-        TextView callTypeTV;
-        TextView callerLocTV;
+        TextView contactsNameTV;  //联系人
+        TextView phoneNumberTV;   //电话号码
+        TextView callDateTV;      //通话发生时间
+        TextView callCountsTV;    //通话次数
+//        TextView durationTV;
+//        TextView callTypeTV;
+        ImageView callTypeImage;  //通话类型对应的图片
+        TextView callerLocTV;     //归属地
 
         public ViewHolder(View view) {
             super(view);
@@ -42,8 +44,9 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<CallLogRecy
             phoneNumberTV  = (TextView) view.findViewById(R.id.phone_number);
             callDateTV     = (TextView) view.findViewById(R.id.call_date);
             callCountsTV   = (TextView) view.findViewById(R.id.call_counts);
-            durationTV     = (TextView) view.findViewById(R.id.duration);
-            callTypeTV     = (TextView) view.findViewById(R.id.call_type);
+//            durationTV     = (TextView) view.findViewById(R.id.duration);
+//            callTypeTV     = (TextView) view.findViewById(R.id.call_type);
+            callTypeImage  = (ImageView) view.findViewById(R.id.call_type_image);
             callerLocTV    = (TextView) view.findViewById(R.id.caller_loc);
         }
     }
@@ -71,9 +74,10 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<CallLogRecy
         holder.contactsNameTV.setText(callLogItem.getContactsName());
         holder.phoneNumberTV.setText(callLogItem.getPhoneNumber());
         holder.callDateTV.setText(callLogItem.getDateInStr());
-        holder.callCountsTV.setText(""+callLogItem.getCallCounts());
-        holder.durationTV.setText(callLogItem.getDuration());
-        holder.callTypeTV.setText(""+callLogItem.getCallType());
+        holder.callCountsTV.setText("("+callLogItem.getCallCounts()+")");
+//        holder.durationTV.setText(callLogItem.getDuration());
+//        holder.callTypeTV.setText(""+callLogItem.getCallType());
+        holder.callTypeImage.setImageResource(R.mipmap.ic_call_missed_grey600_18dp);
         holder.callerLocTV.setText(callLogItem.getCallerLoc());
     }
 

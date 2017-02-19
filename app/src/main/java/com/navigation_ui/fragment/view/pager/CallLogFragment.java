@@ -1,5 +1,6 @@
 package com.navigation_ui.fragment.view.pager;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -8,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.navigation_ui.R;
 import com.navigation_ui.adapter.CallLogRecyclerViewAdapter;
@@ -31,8 +33,7 @@ public class CallLogFragment extends Fragment implements Observer {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //初始化数据
-        initCallLogs();
+
     }
 
     @Override
@@ -50,6 +51,9 @@ public class CallLogFragment extends Fragment implements Observer {
 
         //将自己注册为观察者
         UpdateFragmentObservable.getInstance().addObserver(this);
+
+        //初始化数据
+        initCallLogs();
 
         return mView;
     }
@@ -76,7 +80,7 @@ public class CallLogFragment extends Fragment implements Observer {
             CallLogItemModel callLogItemModel = new CallLogItemModel();
             callLogItemModel.setContactsName("李四");
             callLogItemModel.setPhoneNumber("13012341234");
-            callLogItemModel.setDateInStr("2012年6月12日 12:12:12");
+            callLogItemModel.setDateInStr("6月12日 12:12");
             callLogItemModel.setCallCounts(5);
             callLogItemModel.setDuration("12");
             callLogItemModel.setCallType(1);
@@ -94,17 +98,61 @@ public class CallLogFragment extends Fragment implements Observer {
      */
     private void initCallLogs() {
 
-        for (int i = 0; i < 50000; i++) {
-            CallLogItemModel callLogItemModel = new CallLogItemModel();
-            callLogItemModel.setContactsName("张三");
-            callLogItemModel.setPhoneNumber("13012341234");
-            callLogItemModel.setDateInStr("2012年6月12日 12:12:12");
-            callLogItemModel.setCallCounts(5);
-            callLogItemModel.setDuration("12");
-            callLogItemModel.setCallType(1);
-            callLogItemModel.setCallerLoc("北京市");
+        final ProgressDialog pgDialog = createProgressDialog(null, "正在读取，请稍后...");
+        pgDialog.show();
 
-            callLogItemModelList.add(callLogItemModel);
-        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+//                try {
+//                    Thread.sleep(1000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+
+                for (int i = 0; i < 50000; i++) {
+                    CallLogItemModel callLogItemModel = new CallLogItemModel();
+                    callLogItemModel.setContactsName("张三");
+                    callLogItemModel.setPhoneNumber("130 1234 1234");
+                    callLogItemModel.setDateInStr("6月12日 12:12");
+                    callLogItemModel.setCallCounts(5);
+                    callLogItemModel.setDuration("12");
+                    callLogItemModel.setCallType(1);
+                    callLogItemModel.setCallerLoc("四川省绵阳市");
+
+                    callLogItemModelList.add(callLogItemModel);
+                }
+
+                //更新UI页面
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mRecyclerViewAdapter.setCallLogList(callLogItemModelList);
+                        mRecyclerViewAdapter.notifyDataSetChanged();
+
+                        pgDialog.dismiss();
+                    }
+                });
+            }
+        }).start();
+    }
+
+    /**
+     * 一个圆圈的进度对话框
+     * @param title
+     * @param msg
+     * @return
+     */
+    private ProgressDialog createProgressDialog(String title, String msg) {
+
+        ProgressDialog pgDialog = new ProgressDialog(getActivity());
+
+        pgDialog.setTitle(title);
+        pgDialog.setMessage(msg);
+        pgDialog.setCancelable(false);
+        pgDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        pgDialog.setIndeterminate(false);
+
+        return pgDialog;
     }
 }

@@ -10,46 +10,116 @@
     <!--CardView自动处理间距-->
     <!--app:cardUseCompatPadding="true">-->
 
+    <!--水平方向布局-->
     <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp">
+
+        <!--水平方向第一个部分，联系人头像-->
+        <!--<ImageView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--app:srcCompat="@android:drawable/ic_lock_lock"-->
+            <!--android:layout_gravity="left|center"-->
+        <!--android:id="@+id/contacts_name_char"/>-->
+
+        <!--水平方向第二个部分，通话详情-->
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp">
+
+            <!--联系人姓名-->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/contacts_name"
+                android:textColor="@color/black"
+                android:textSize="16dp"/>
+
+            <!--(通话次数)电话号码  归属地-->
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/call_counts" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/phone_number" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:id="@+id/caller_loc" />
+            </LinearLayout>
+
+            <!--通话类型：来电、去电、未接  通话发生时间-->
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp">
 
 
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginRight="5dp"
+                    app:srcCompat="@mipmap/ic_call_made_grey600_18dp"
+                    android:id="@+id/call_type_image"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/call_date" />
+
+                <!--<TextView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:id="@+id/duration" />-->
+
+                <!--<TextView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:id="@+id/call_type" />-->
+            </LinearLayout>
+        </LinearLayout>
+
+        <!--将按钮撑到居右-->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/contacts_name" />
+            android:layout_weight="1" />
 
-        <TextView
+        <!--水平方向第三个部分，信息按钮-->
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/phone_number" />
+            app:srcCompat="@mipmap/ic_info_outline_grey600_24dp"
+            android:layout_gravity="center"
+            android:layout_marginRight="5dp"
+            android:id="@+id/call_detail"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/call_date" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/call_counts" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/duration" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/call_type" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/caller_loc" />
 
     </LinearLayout>
+
+
+
+
 </android.support.v7.widget.CardView>
