@@ -9,13 +9,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
-
 import com.navigation_ui.R;
 import com.navigation_ui.adapter.CallLogRecyclerViewAdapter;
 import com.navigation_ui.model.CallLogItemModel;
 import com.navigation_ui.tools.LogUtil;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
@@ -83,7 +80,7 @@ public class CallLogFragment extends Fragment implements Observer {
             callLogItemModel.setDateInMilliseconds("1485602523885");
             callLogItemModel.setCallCounts(5);
             callLogItemModel.setDuration("12");
-            callLogItemModel.setCallType(1);
+            callLogItemModel.setCallType(2);
             callLogItemModel.setCallerLoc("北京市");
 
             callLogItemModelList.add(callLogItemModel);
@@ -104,11 +101,12 @@ public class CallLogFragment extends Fragment implements Observer {
         new Thread(new Runnable() {
             @Override
             public void run() {
-//                try {
-//                    Thread.sleep(1000);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
+                //undo：展示读取耗时操作
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
                 for (int i = 0; i < 50000; i++) {
                     CallLogItemModel callLogItemModel = new CallLogItemModel();
