@@ -11,4 +11,26 @@
     <color name="green">#00FF00</color>
     <color name="red">#FF0000</color>
     <color name="blue">#0000FF</color>
+    <color name="white">#FFFFFF</color>
+
+    <!--Material Design标准色彩，饱和度500，参考官网-->
+    <color name="MDRed">#e51c23</color>
+    <color name="MDPink">#e91e63</color>
+    <color name="MDPurple">#9c27b0</color>
+    <color name="MDDeepPurple">#673ab7</color>
+    <color name="MDIndigo">#3f51b5</color>
+    <color name="MDBlue">#5677fc</color>
+    <color name="MDLightBlue">#03a9f4</color>
+    <color name="MDCyan">#00bcd4</color>
+    <color name="MDTeal">#009688</color>
+    <color name="MDGreen">#259b24</color>
+    <color name="MDLightGreen">#8bc34a</color>
+    <color name="MDLime">#cddc39</color>
+    <color name="MDYellow">#ffeb3b</color>
+    <color name="MDAmber">#ffc107</color>
+    <color name="MDOrange">#ff9800</color>
+    <color name="MDDeepOrange">#ff5722</color>
+    <color name="MDBrown">#795548</color>
+    <color name="MDGrey">#9e9e9e</color>
+    <color name="MDBlueGrey">#607d8b</color>
 </resources>

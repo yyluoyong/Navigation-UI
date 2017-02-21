@@ -44,7 +44,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@mipmap/ic_cached_white_18dp"
+        app:srcCompat="@drawable/ic_refresh"
         app:layout_behavior="com.navigation_ui.view.ScrollAwareFABBehaviorDefault"/>
 
 </android.support.design.widget.CoordinatorLayout>

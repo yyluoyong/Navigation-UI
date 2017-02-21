@@ -80,7 +80,7 @@ public class CallLogFragment extends Fragment implements Observer {
             callLogItemModel.setDateInMilliseconds("1485602523885");
             callLogItemModel.setCallCounts(5);
             callLogItemModel.setDuration("12");
-            callLogItemModel.setCallType(2);
+            callLogItemModel.setCallType(3);
             callLogItemModel.setCallerLoc("北京市");
 
             callLogItemModelList.add(callLogItemModel);

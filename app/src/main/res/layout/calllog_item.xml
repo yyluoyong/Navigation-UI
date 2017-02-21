@@ -20,15 +20,32 @@
         android:layout_marginBottom="5dp"
         android:id="@+id/calllog_detail_linearlayout">
 
-        <!--水平方向第一个部分，联系人头像-->
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            app:srcCompat="@drawable/green_circle"
-            android:layout_gravity="left|center"
-            android:id="@+id/contacts_image"/>
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+
+            <!--水平方向第一个部分，联系人头像-->
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                app:srcCompat="@drawable/green_circle"
+                android:layout_gravity="center"
+                android:id="@+id/contacts_image"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_gravity="center"
+                android:textColor="@color/white"
+                android:textSize="16.5dp"
+                android:id="@+id/contacts_image_text"/>
+        </FrameLayout>
+
+
 
         <!--水平方向第二个部分，通话详情-->
         <LinearLayout
@@ -82,7 +99,7 @@
                     android:layout_height="14dp"
                     android:layout_marginTop="3dp"
                     android:layout_marginRight="5dp"
-                    app:srcCompat="@mipmap/ic_call_made_grey600_18dp"
+                    app:srcCompat="@drawable/ic_call_made"
                     android:id="@+id/call_type_image"/>
 
                 <TextView
@@ -104,7 +121,7 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@mipmap/ic_info_outline_grey600_24dp"
+            app:srcCompat="@drawable/ic_info"
             android:layout_gravity="center"
             android:layout_marginRight="5dp"
             android:id="@+id/more_info"/>
