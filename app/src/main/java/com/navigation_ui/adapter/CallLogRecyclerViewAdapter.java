@@ -31,6 +31,7 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<CallLogRecy
     static class ViewHolder extends RecyclerView.ViewHolder {
         View callLogItemView;
 
+        ImageView contactsImage;  //联系人头像
         TextView contactsNameTV;  //联系人
         TextView phoneNumberTV;   //电话号码
         TextView callDateTV;      //通话发生时间
@@ -42,6 +43,7 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<CallLogRecy
             super(view);
             callLogItemView = view;
 
+            contactsImage  = (ImageView) view.findViewById(R.id.contacts_image);
             contactsNameTV = (TextView) view.findViewById(R.id.contacts_name);
             phoneNumberTV  = (TextView) view.findViewById(R.id.phone_number);
             callDateTV     = (TextView) view.findViewById(R.id.call_date);
@@ -80,6 +82,15 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<CallLogRecy
                     Snackbar.make(v, "拨打电话："+holder.phoneNumberTV.getText()
                         .toString().replace(" ", ""),
                         Snackbar.LENGTH_SHORT).show();
+                }
+            }
+        );
+
+        holder.contactsImage.setOnClickListener(
+            new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Snackbar.make(v, "点击了联系人头像，功能待完善.", Snackbar.LENGTH_SHORT).show();
                 }
             }
         );

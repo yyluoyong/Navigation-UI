@@ -15,26 +15,26 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
         android:id="@+id/calllog_detail_linearlayout">
 
         <!--水平方向第一个部分，联系人头像-->
-        <!--<ImageView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--app:srcCompat="@android:drawable/ic_lock_lock"-->
-            <!--android:layout_gravity="left|center"-->
-        <!--android:id="@+id/contacts_name_char"/>-->
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            app:srcCompat="@drawable/green_circle"
+            android:layout_gravity="left|center"
+            android:id="@+id/contacts_image"/>
 
         <!--水平方向第二个部分，通话详情-->
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp">
+            android:layout_height="wrap_content">
 
             <!--联系人姓名-->
             <TextView
@@ -42,38 +42,39 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/contacts_name"
                 android:textColor="@color/black"
-                android:textSize="16dp"/>
+                android:textSize="16sp"/>
 
             <!--(通话次数)电话号码  归属地-->
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp">
+                android:layout_height="wrap_content">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/call_counts" />
+                    android:id="@+id/call_counts"
+                    android:textSize="12.5sp"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/phone_number" />
+                    android:id="@+id/phone_number"
+                    android:textSize="12.5sp"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
-                    android:id="@+id/caller_loc" />
+                    android:id="@+id/caller_loc"
+                    android:textSize="12.5sp"/>
             </LinearLayout>
 
             <!--通话类型：来电、去电、未接  通话发生时间-->
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp">
+                android:layout_height="wrap_content">
 
 
                 <ImageView
@@ -87,7 +88,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/call_date" />
+                    android:id="@+id/call_date"
+                    android:textSize="12.5sp"/>
 
             </LinearLayout>
         </LinearLayout>
