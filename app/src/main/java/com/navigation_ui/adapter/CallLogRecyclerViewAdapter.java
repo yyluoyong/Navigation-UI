@@ -1,10 +1,11 @@
 package com.navigation_ui.adapter;
 
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.provider.CallLog;
 import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,11 +13,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.navigation_ui.R;
+import com.navigation_ui.activity.CallLogDetailInfoActivity;
 import com.navigation_ui.model.CallLogItemModel;
 import com.navigation_ui.tools.CallDateFormatter;
-import com.navigation_ui.tools.LogUtil;
 import com.navigation_ui.tools.MaterialDesignColor;
-import com.navigation_ui.tools.MyApplication;
 import com.navigation_ui.tools.PhoneNumberFormatter;
 
 import java.util.List;
@@ -68,8 +68,9 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<CallLogRecy
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.calllog_item, parent, false);
+        final Context mContext = parent.getContext();
+
+        View view = LayoutInflater.from(mContext).inflate(R.layout.calllog_item, parent, false);
 
         final ViewHolder holder = new ViewHolder(view);
 
@@ -78,7 +79,13 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<CallLogRecy
             new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Snackbar.make(v, "点击了Info按钮，功能待完善.", Snackbar.LENGTH_SHORT).show();
+//                    Snackbar.make(v, "点击了Info按钮，功能待完善.", Snackbar.LENGTH_SHORT).show();
+                    Intent intent = new Intent(mContext, CallLogDetailInfoActivity.class);
+                    intent.putExtra(CallLogDetailInfoActivity.CONTACTS_NAME,
+                        holder.contactsNameTV.getText().toString());
+                    intent.putExtra(CallLogDetailInfoActivity.CALL_TYPE,
+                        CallLogDetailInfoActivity.CALL_ALL);
+                    mContext.startActivity(intent);
                 }
             }
         );
@@ -127,7 +134,7 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<CallLogRecy
             holder.callTypeImage.setImageResource(R.drawable.ic_call_received);
         } else {
 //            LogUtil.d(TAG, "设置");
-            holder.callTypeImage.setImageResource(R.drawable.ic_missed);
+            holder.callTypeImage.setImageResource(R.drawable.ic_call_missed);
         }
 
         holder.callerLocTV.setText(callLogItem.getCallerLoc());

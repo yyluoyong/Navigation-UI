@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.navigation_ui">
+          package="com.navigation_ui">
 
     <application
-        android:name="com.navigation_ui.tools.MyApplication"
+        android:name=".tools.MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -14,10 +14,15 @@
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.CallLogDetailInfoActivity"
+            android:label="@string/title_activity_call_log_detail_info"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
     </application>
 
