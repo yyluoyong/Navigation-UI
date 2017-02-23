@@ -68,7 +68,7 @@ public class MaterialDesignColor {
     public final static int MDBlueGrey = ContextCompat
         .getColor(MyApplication.getContext(), R.color.MDBlueGrey);
 
-    public final static int[] MDColorsDeep = {MDRed, MDPurple, MDDeepPurple,
-        MDIndigo, MDBlue, MDTeal, MDGreen, MDAmber, MDOrange,
+    public final static int[] MDColorsDeep = {MDRed, MDPurple,
+        MDIndigo, MDBlue, MDLightBlue, MDCyan, MDTeal, MDGreen, MDAmber, MDOrange,
         MDDeepOrange, MDBrown, MDGrey, MDBlueGrey};
 }

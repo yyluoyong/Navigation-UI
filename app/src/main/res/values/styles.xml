@@ -17,4 +17,17 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
 
+    
+    <style name="MDBlue" parent="ThemeOverlay.AppCompat.Light">
+        <item name="colorPrimary">@color/MDBlue</item>
+        <item name="colorPrimaryDark">#1976D2</item>
+        <item name="colorAccent">@color/MDAmber</item>
+    </style>
+
+    <style name="MDGreen" parent="ThemeOverlay.AppCompat.Light">
+        <item name="colorPrimary">@color/MDGreen</item>
+        <item name="colorPrimaryDark">#388E3C</item>
+        <item name="colorAccent">@color/MDRed</item>
+    </style>
+    
 </resources>
