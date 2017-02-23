@@ -39,7 +39,8 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:id="@+id/calllog_detail_item_ll2">
 
             <!--通话日期-->
             <TextView

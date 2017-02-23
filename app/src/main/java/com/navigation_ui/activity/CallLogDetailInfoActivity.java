@@ -67,7 +67,8 @@ public class CallLogDetailInfoActivity extends AppCompatActivity {
         mRecyclerView.addItemDecoration(new RecycleViewDivider(
             CallLogDetailInfoActivity.this, LinearLayoutManager.VERTICAL, R.drawable.divider_1px));
 
-        mRecyclerView.addItemDecoration(new RecycleViewDivider(CallLogDetailInfoActivity.this, LinearLayoutManager.VERTICAL));
+        mRecyclerView.addItemDecoration(new RecycleViewDivider(CallLogDetailInfoActivity.this,
+            LinearLayoutManager.VERTICAL));
 
         //初始化数据
         initCallLogs();

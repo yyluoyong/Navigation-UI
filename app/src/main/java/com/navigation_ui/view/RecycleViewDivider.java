@@ -99,11 +99,11 @@ public class RecycleViewDivider extends RecyclerView.ItemDecoration {
             final int top = child.getBottom() + layoutParams.bottomMargin;
             final int bottom = top + mDividerHeight;
             if (mDivider != null) {
-                mDivider.setBounds(left, top, right, bottom);
+                mDivider.setBounds(left+200, top, right, bottom);
                 mDivider.draw(canvas);
             }
             if (mPaint != null) {
-                canvas.drawRect(left, top, right, bottom, mPaint);
+                canvas.drawRect(left+200, top, right, bottom, mPaint);
             }
         }
     }

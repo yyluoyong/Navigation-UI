@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.navigation_ui.R;
 import com.navigation_ui.model.CallLogItemModel;
 import com.navigation_ui.tools.CallDateFormatter;
+import com.navigation_ui.tools.LogUtil;
 import com.navigation_ui.tools.PhoneNumberFormatter;
 import java.util.List;
 
@@ -83,7 +84,6 @@ public class DetailRecyclerViewAdapter extends
         }
 
         holder.callDurationTV.setText("呼入2分");
-
     }
 
     @Override
