@@ -1,23 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    app:cardCornerRadius="5dp"
-    app:cardElevation="3dp"
-    android:layout_margin="@dimen/card_margin"
-    app:cardPreventCornerOverlap="true">
-    <!--CardView自动处理间距-->
-    <!--app:cardUseCompatPadding="true">-->
+    android:orientation="vertical"
+    android:layout_height="@dimen/material_design_item_height"
+    android:layout_width="match_parent">
 
     <!--水平方向布局-->
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginRight="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="8dp"
         android:id="@+id/calllog_detail_linearlayout">
 
         <FrameLayout
@@ -27,10 +23,10 @@
 
             <!--水平方向第一个部分，联系人头像-->
             <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
+                android:layout_width="@dimen/material_design_item_image_width"
+                android:layout_height="@dimen/material_design_item_image_height"
+                android:layout_marginLeft="@dimen/material_design_item_image_left_margin"
+                android:layout_marginRight="@dimen/material_design_item_image_right_margin"
                 app:srcCompat="@drawable/green_circle"
                 android:layout_gravity="center"
                 android:id="@+id/contacts_image"/>
@@ -123,9 +119,14 @@
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/ic_info"
             android:layout_gravity="center"
-            android:layout_marginRight="5dp"
+            android:layout_marginRight="8dp"
             android:id="@+id/more_info"/>
 
     </LinearLayout>
 
-</android.support.v7.widget.CardView>
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1px"
+        android:background="?android:attr/listDivider"
+        />
+</LinearLayout>
