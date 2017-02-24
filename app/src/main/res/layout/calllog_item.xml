@@ -124,6 +124,7 @@
 
     </LinearLayout>
 
+    <!--水平分隔线-->
     <View
         android:layout_width="fill_parent"
         android:layout_height="1px"

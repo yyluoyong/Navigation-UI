@@ -26,53 +26,35 @@ import java.util.Random;
  * Created by Yong on 2017/2/11.
  */
 
-public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<CallLogRecyclerViewAdapter.ViewHolder> {
+public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private String TAG = "CallLogRecyclerViewAdapter";
 
     private List<CallLogItemModel> mCallLogList;
 
-    /**
-     * 内部类，对应布局文件 calllog_item.xml，即通话列表每个单项
-     */
-    static class ViewHolder extends RecyclerView.ViewHolder {
-        View callLogItemView;
+    private final static int VIEW_TYPE_BLANK = 0;
+    private final static int VIEW_TYPE_ITEM = 1;
 
-        ImageView contactsImage;     //联系人头像
-        TextView contactsImageText;  //联系人头像上的文字
-        TextView contactsNameTV;     //联系人
-        TextView phoneNumberTV;      //电话号码
-        TextView callDateTV;         //通话发生时间
-        TextView callCountsTV;       //通话次数
-        ImageView callTypeImage;     //通话类型对应的图片
-        TextView callerLocTV;        //归属地
-
-        public ViewHolder(View view) {
-            super(view);
-            callLogItemView = view;
-
-            contactsImage = (ImageView) view.findViewById(R.id.contacts_image);
-            contactsImageText = (TextView) view.findViewById(R.id.contacts_image_text);
-            contactsNameTV = (TextView) view.findViewById(R.id.contacts_name);
-            phoneNumberTV  = (TextView) view.findViewById(R.id.phone_number);
-            callDateTV     = (TextView) view.findViewById(R.id.call_date);
-            callCountsTV   = (TextView) view.findViewById(R.id.call_counts);
-            callTypeImage  = (ImageView) view.findViewById(R.id.call_type_image);
-            callerLocTV    = (TextView) view.findViewById(R.id.caller_loc);
-        }
-    }
 
     public CallLogRecyclerViewAdapter(List<CallLogItemModel> callLogList) {
         mCallLogList = callLogList;
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
         final Context mContext = parent.getContext();
+
+        //最开始处的空白
+        if (viewType == VIEW_TYPE_BLANK) {
+            View view = LayoutInflater.from(mContext).inflate(R.layout.blank_view, parent, false);
+            return new BlankViewHolder(view);
+        }
+
 
         View view = LayoutInflater.from(mContext).inflate(R.layout.calllog_item, parent, false);
 
-        final ViewHolder holder = new ViewHolder(view);
+        final CallLogItemViewHolder holder = new CallLogItemViewHolder(view);
 
         //undo:为单项上更多信息添加监听，计划是展示与该联系人历史通话详细信息。
         holder.callLogItemView.findViewById(R.id.more_info).setOnClickListener(
@@ -115,31 +97,38 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<CallLogRecy
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        CallLogItemModel callLogItem = mCallLogList.get(position);
-
-        holder.contactsNameTV.setText(callLogItem.getContactsName());
-
-        holder.phoneNumberTV.setText(PhoneNumberFormatter
-            .phoneNumberFormat(callLogItem.getPhoneNumber()));
-
-        holder.callDateTV.setText(CallDateFormatter
-            .format(callLogItem.getDateInMilliseconds()));
-
-        holder.callCountsTV.setText("("+callLogItem.getCallCounts()+")");
-
-        if (callLogItem.getCallType() == CallLog.Calls.INCOMING_TYPE) {
-            holder.callTypeImage.setImageResource(R.drawable.ic_call_made);
-        } else if (callLogItem.getCallType() == CallLog.Calls.OUTGOING_TYPE) {
-            holder.callTypeImage.setImageResource(R.drawable.ic_call_received);
-        } else {
-//            LogUtil.d(TAG, "设置");
-            holder.callTypeImage.setImageResource(R.drawable.ic_call_missed);
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        //开始出的空白
+        if (position == 0) {
+            return;
         }
 
-        holder.callerLocTV.setText(callLogItem.getCallerLoc());
+        CallLogItemModel callLogItem = mCallLogList.get(position);
 
-        setContactsImage(holder, position);
+        ((CallLogItemViewHolder) holder).contactsNameTV.setText(callLogItem.getContactsName());
+
+        ((CallLogItemViewHolder) holder).phoneNumberTV
+            .setText(PhoneNumberFormatter.phoneNumberFormat(callLogItem.getPhoneNumber()));
+
+        ((CallLogItemViewHolder) holder).callDateTV.setText(CallDateFormatter
+            .format(callLogItem.getDateInMilliseconds()));
+
+        ((CallLogItemViewHolder) holder).callCountsTV.setText("("+callLogItem.getCallCounts()+")");
+
+        if (callLogItem.getCallType() == CallLog.Calls.INCOMING_TYPE) {
+            ((CallLogItemViewHolder) holder).callTypeImage
+                .setImageResource(R.drawable.ic_call_made);
+        } else if (callLogItem.getCallType() == CallLog.Calls.OUTGOING_TYPE) {
+            ((CallLogItemViewHolder) holder).callTypeImage
+                .setImageResource(R.drawable.ic_call_received);
+        } else {
+            ((CallLogItemViewHolder) holder).callTypeImage
+                .setImageResource(R.drawable.ic_call_missed);
+        }
+
+        ((CallLogItemViewHolder) holder).callerLocTV.setText(callLogItem.getCallerLoc());
+
+        setContactsImage(((CallLogItemViewHolder) holder), position);
     }
 
 
@@ -148,7 +137,7 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<CallLogRecy
      * @param holder
      * @param position
      */
-    private void setContactsImage(ViewHolder holder, int position) {
+    private void setContactsImage(CallLogItemViewHolder holder, int position) {
 
         char firstChar = mCallLogList.get(position).toString().charAt(0);
 
@@ -173,7 +162,61 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<CallLogRecy
         return mCallLogList.size();
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        if (position == 0) {
+            return VIEW_TYPE_BLANK;
+        }
+
+        return VIEW_TYPE_ITEM;
+    }
+
     public void setCallLogList(List<CallLogItemModel> mCallLogList) {
         this.mCallLogList = mCallLogList;
     }
+
+    /**
+     * 内部类，对应布局文件 blank_view.xml，用于在整个列表之前添加一个小空白，
+     * 不然列表第一项与顶部距离太短。
+     */
+    private static class BlankViewHolder extends RecyclerView.ViewHolder {
+        View blankView;
+
+        public BlankViewHolder(View view) {
+            super(view);
+
+            blankView = (View) view.findViewById(R.id.blank_view);
+        }
+    }
+
+    /**
+     * 内部类，对应布局文件 calllog_item.xml，即通话列表每个单项
+     */
+    private static class CallLogItemViewHolder extends RecyclerView.ViewHolder {
+        View callLogItemView;
+
+        ImageView contactsImage;     //联系人头像
+        TextView contactsImageText;  //联系人头像上的文字
+        TextView contactsNameTV;     //联系人
+        TextView phoneNumberTV;      //电话号码
+        TextView callDateTV;         //通话发生时间
+        TextView callCountsTV;       //通话次数
+        ImageView callTypeImage;     //通话类型对应的图片
+        TextView callerLocTV;        //归属地
+
+        public CallLogItemViewHolder(View view) {
+            super(view);
+            callLogItemView = view;
+
+            contactsImage = (ImageView) view.findViewById(R.id.contacts_image);
+            contactsImageText = (TextView) view.findViewById(R.id.contacts_image_text);
+            contactsNameTV = (TextView) view.findViewById(R.id.contacts_name);
+            phoneNumberTV  = (TextView) view.findViewById(R.id.phone_number);
+            callDateTV     = (TextView) view.findViewById(R.id.call_date);
+            callCountsTV   = (TextView) view.findViewById(R.id.call_counts);
+            callTypeImage  = (ImageView) view.findViewById(R.id.call_type_image);
+            callerLocTV    = (TextView) view.findViewById(R.id.caller_loc);
+        }
+    }
+
 }
