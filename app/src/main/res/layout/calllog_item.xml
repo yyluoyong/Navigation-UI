@@ -67,34 +67,34 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/call_counts"
-                    android:textSize="12.5sp"/>
+                    android:textSize="12sp"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/phone_number"
-                    android:textSize="12.5sp"/>
+                    android:textSize="12sp"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:id="@+id/caller_loc"
-                    android:textSize="12.5sp"/>
+                    android:textSize="12sp"/>
             </LinearLayout>
 
             <!--通话类型：来电、去电、未接  通话发生时间-->
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:gravity="center">
 
 
                 <ImageView
-                    android:layout_width="14dp"
-                    android:layout_height="14dp"
-                    android:layout_marginTop="3dp"
-                    android:layout_marginRight="5dp"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:layout_marginRight="4dp"
                     app:srcCompat="@drawable/ic_call_made"
                     android:id="@+id/call_type_image"/>
 
@@ -102,7 +102,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/call_date"
-                    android:textSize="12.5sp"/>
+                    android:textSize="12sp"/>
 
             </LinearLayout>
         </LinearLayout>
