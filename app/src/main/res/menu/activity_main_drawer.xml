@@ -3,23 +3,23 @@
 
     <item
         android:id="@+id/nav_share"
-        android:icon="@drawable/ic_menu_share"
+        android:icon="@drawable/ic_table"
         android:title="数据库可视化" />
 
     <item
         android:id="@+id/nav_camera"
-        android:icon="@drawable/ic_menu_camera"
+        android:icon="@drawable/ic_refresh_white"
         android:title="刷新DB联系人" />
 
-    <item android:title="Copy">
+    <item android:title="Database Move">
         <menu>
             <item
                 android:id="@+id/nav_gallery"
-                android:icon="@drawable/ic_menu_gallery"
+                android:icon="@drawable/ic_copy"
                 android:title="复制DB到SD卡" />
             <item
                 android:id="@+id/nav_slideshow"
-                android:icon="@drawable/ic_menu_slideshow"
+                android:icon="@drawable/ic_export"
                 android:title="导出DB为Excel" />
         </menu>
     </item>

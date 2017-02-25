@@ -24,10 +24,18 @@
         <item name="colorAccent">@color/MDAmber</item>
     </style>
 
+    <style name="OneplusMsg" parent="ThemeOverlay.AppCompat.Light">
+        <item name="colorPrimary">@color/oneplusMsg</item>
+        <item name="colorPrimaryDark">@color/oneplusMsgDark</item>
+        <item name="colorAccent">@color/oneplusFB</item>
+    </style>
+
     <style name="MDGreen" parent="ThemeOverlay.AppCompat.Light">
         <item name="colorPrimary">@color/MDGreen</item>
         <item name="colorPrimaryDark">#388E3C</item>
         <item name="colorAccent">@color/MDRed</item>
     </style>
+
+    <style name="MainTheme" parent="MDBlue"/>
     
 </resources>

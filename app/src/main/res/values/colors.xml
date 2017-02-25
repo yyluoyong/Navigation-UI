@@ -35,5 +35,10 @@
     <color name="MDBrown">#7A5547</color>
     <color name="MDGrey">#9D9D9D</color>
     <color name="MDBlueGrey">#5E7C8B</color>
+
+    <color name="oneplusMsgDark">#2BA79B</color>
+    <color name="oneplusMsg">#33C8BA</color>
+    <color name="oneplusMsgSecond">#3DF0DF</color>
+    <color name="oneplusFB">#FFB400</color>
 </resources>
 

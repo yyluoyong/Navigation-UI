@@ -11,7 +11,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:openDrawer="start"
-    android:theme="@style/MDBlue">
+    android:theme="@style/MainTheme">
 
     <!--主界面的内容部分。-->
     <include layout="@layout/app_bar_main" />

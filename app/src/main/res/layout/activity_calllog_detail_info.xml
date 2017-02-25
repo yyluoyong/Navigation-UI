@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:context="com.navigation_ui.activity.CallLogDetailInfoActivity"
-    android:theme="@style/MDBlue">
+    android:theme="@style/MainTheme">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"
@@ -24,13 +24,13 @@
             app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-            <!--<ImageView-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:scaleType="fitXY"-->
-                <!--app:srcCompat="@drawable/header_background"-->
-                <!--android:fitsSystemWindows="true"-->
-                <!--android:id="@+id/imageView"/>-->
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/app_bar_height"
+                android:scaleType="fitXY"
+                app:srcCompat="@drawable/rectangle"
+                android:fitsSystemWindows="true"
+                android:id="@+id/imageView"/>
 
             <!--layout_collapseMode="pin"表示在折叠过程中始终保持不变-->
             <android.support.v7.widget.Toolbar
