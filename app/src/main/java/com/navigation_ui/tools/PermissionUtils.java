@@ -18,7 +18,16 @@ import java.util.List;
  * Created by Yong on 2017/2/25.
  */
 
+/**
+ * 动态权限申请工具类
+ */
 public class PermissionUtils {
+
+    /**
+     * 说明一：
+     * 在H2OS 2.0(Android 6.0)中
+     * ContextCompat.checkSelfPermission始终返回PackageManager.PERMISSION_GRANTED
+     */
 
     private final static String TAG = "PermissionUtils";
 
@@ -49,33 +58,22 @@ public class PermissionUtils {
     public static void requestPermissions(Context context, int requestCode
         , String[] permissions, OnPermissionListener listener) {
 
+        //Android 6.0之前无需动态申请权限
+        if (Build.VERSION.SDK_INT < 23) {
+            return;
+        }
+
         if (context instanceof Activity) {
 
             mOnPermissionListener = listener;
+
+
             ActivityCompat.requestPermissions((Activity) context, permissions, requestCode);
 
-//            List<String> deniedPermissions = getDeniedPermissions(context, permissions);
-//
-//            int res = PermissionChecker.checkSelfPermission(context, Manifest.permission.CALL_PHONE);
-//
-//            LogUtil.d(TAG, "权限检查返回值" + ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE));
-//
-//            if (ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE)
-//                != PackageManager.PERMISSION_GRANTED) {
-//
-////            if (deniedPermissions != null && deniedPermissions.size() > 0) {
-////                mRequestCode = requestCode;
-//
-//                ActivityCompat.requestPermissions((Activity) context, deniedPermissions
-//                    .toArray(new String[deniedPermissions.size()]), requestCode);
-//            } else {
-//
-//                LogUtil.d(TAG, "requestPermissions  ---> 已获取");
-//
-//                if (mOnPermissionListener != null) {
-//                    mOnPermissionListener.onPermissionGranted();
-//                }
-//            }
+            if (PermissionChecker.checkSelfPermission(context, Manifest.permission.CALL_PHONE)
+                != PackageManager.PERMISSION_GRANTED) {
+                mOnPermissionListener.onPermissionDenied();
+            }
         } else {
             throw new RuntimeException("Context must be an Activity");
         }
@@ -92,18 +90,14 @@ public class PermissionUtils {
             return;
         }
 
-        LogUtil.d(TAG, "onRequestPermissionsResult " + grantResults);
-
         switch (requestCode) {
             case REQUEST_CODE:
                 if (verifyPermissions(grantResults)) {
                     //回调申请权限成功的处理办法
                     mOnPermissionListener.onPermissionGranted();
-                    LogUtil.d(TAG, "权限申请成功!");
                 } else {
                     //回调申请权限失败的处理办法
                     mOnPermissionListener.onPermissionDenied();
-                    LogUtil.d("CallLogRecyclerViewAdapter", "权限申请失败!");
                 }
                 break;
             default:
@@ -111,6 +105,7 @@ public class PermissionUtils {
     }
 
     /**
+     * 该方法在“说明一”情况下，会失效
      * 获取请求权限中需要授权的权限
      */
     private static List<String> getDeniedPermissions(Context context, String... permissions) {
@@ -131,6 +126,7 @@ public class PermissionUtils {
     }
 
     /**
+     * 该方法在“说明一”情况下，会失效
      * 验证所有权限是否都已经授权
      */
     private static boolean verifyPermissions(int[] grantResults) {
