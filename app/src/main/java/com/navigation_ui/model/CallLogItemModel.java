@@ -6,7 +6,7 @@ package com.navigation_ui.model;
  */
 
 /**
- * RecyclerView的适配类，对应布局文件 calllog_item.xml
+ * RecyclerView的适配类，对应布局文件 main_calllog_item.xml
  */
 public class CallLogItemModel {
 

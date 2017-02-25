@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--用于通话详情页面，RecyclerView中的一项-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <!--水平分隔线-->
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/material_design_item_margin"
+        android:background="?android:attr/listDivider"/>
+
+    <TextView
+        android:text="最近记录"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18dp"
+        android:textColor="?attr/colorPrimary"
+        android:layout_marginTop="@dimen/material_design_item_margin"
+        android:layout_marginBottom="@dimen/material_design_item_margin"
+        android:layout_marginLeft="@dimen/material_design_item_image_left_margin"
+        android:id="@+id/recent_call_tv"/>
+
+    <!--水平分隔线-->
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1px"
+        android:background="?android:attr/listDivider"/>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/material_design_item_image_top_margin"
+        android:background="?android:attr/windowBackground"/>
+
+</LinearLayout>

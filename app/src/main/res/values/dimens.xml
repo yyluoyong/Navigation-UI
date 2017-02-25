@@ -11,9 +11,13 @@
     <dimen name="app_bar_height">128dp</dimen>
     <dimen name="text_margin">16dp</dimen>
     <dimen name="material_design_item_height">72dp</dimen>
+    <dimen name="material_design_item_width">72dp</dimen>
     <dimen name="material_design_item_image_height">40dp</dimen>
     <dimen name="material_design_item_image_width">40dp</dimen>
     <dimen name="material_design_item_image_left_margin">16dp</dimen>
     <dimen name="material_design_item_image_right_margin">16dp</dimen>
+    <dimen name="material_design_item_image_top_margin">16dp</dimen>
     <dimen name="material_design_item_second_image_right_margin">16dp</dimen>
+    <dimen name="material_design_item_margin">8dp</dimen>
+    <dimen name="material_design_text_margin">4dp</dimen>
 </resources>

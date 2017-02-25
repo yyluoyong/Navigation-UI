@@ -10,13 +10,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import com.navigation_ui.R;
-import com.navigation_ui.adapter.DetailRecyclerViewAdapter;
+import com.navigation_ui.adapter.CallLogDetailRecyclerViewAdapter;
 import com.navigation_ui.model.CallLogItemModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CallLogDetailInfoActivity extends AppCompatActivity {
+public class CallLogDetailActivity extends AppCompatActivity {
 
     //联系人的姓名
     public static final String CONTACTS_NAME = "contacts_name";
@@ -32,7 +32,7 @@ public class CallLogDetailInfoActivity extends AppCompatActivity {
     public static final String CALL_TYPE = CALL_ALL;
 
     private RecyclerView mRecyclerView;
-    private DetailRecyclerViewAdapter mRecyclerViewAdapter;
+    private CallLogDetailRecyclerViewAdapter mRecyclerViewAdapter;
 
     private List<CallLogItemModel> callLogItemModelList = new ArrayList<>();
 
@@ -40,7 +40,7 @@ public class CallLogDetailInfoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_calllog_detail_info);
+        setContentView(R.layout.activity_calllog_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -56,11 +56,11 @@ public class CallLogDetailInfoActivity extends AppCompatActivity {
 //        collapsingToolbar.setContentScrimColor(MaterialDesignColor.MDAmber);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.detail_recyclerview);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(CallLogDetailInfoActivity.this);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(CallLogDetailActivity.this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(layoutManager);
 
-        mRecyclerViewAdapter = new DetailRecyclerViewAdapter(callLogItemModelList);
+        mRecyclerViewAdapter = new CallLogDetailRecyclerViewAdapter(callLogItemModelList);
         mRecyclerView.setAdapter(mRecyclerViewAdapter);
 
         //初始化数据
@@ -85,7 +85,7 @@ public class CallLogDetailInfoActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                for (int i = 0; i < 20; i++) {
+                for (int i = 0; i < 10; i++) {
                     CallLogItemModel callLogItemModel = new CallLogItemModel();
                     callLogItemModel.setContactsName("张三");
                     callLogItemModel.setPhoneNumber("13012341234");
@@ -120,7 +120,7 @@ public class CallLogDetailInfoActivity extends AppCompatActivity {
      */
     private ProgressDialog createProgressDialog(String title, String msg) {
 
-        ProgressDialog pgDialog = new ProgressDialog(CallLogDetailInfoActivity.this);
+        ProgressDialog pgDialog = new ProgressDialog(CallLogDetailActivity.this);
 
         pgDialog.setTitle(title);
         pgDialog.setMessage(msg);

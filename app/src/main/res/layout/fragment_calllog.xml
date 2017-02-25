@@ -1,3 +1,4 @@
+<!--主界面ViewPager包含的Fragment的布局文件-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"

@@ -20,7 +20,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.CallLogDetailInfoActivity"
+            android:name=".activity.CallLogDetailActivity"
             android:label="@string/title_activity_call_log_detail_info"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>

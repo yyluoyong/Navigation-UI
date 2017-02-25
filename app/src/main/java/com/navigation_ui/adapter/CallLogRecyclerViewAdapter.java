@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.navigation_ui.R;
-import com.navigation_ui.activity.CallLogDetailInfoActivity;
+import com.navigation_ui.activity.CallLogDetailActivity;
 import com.navigation_ui.model.CallLogItemModel;
 import com.navigation_ui.tools.CallDateFormatter;
 import com.navigation_ui.tools.MaterialDesignColor;
@@ -52,7 +52,7 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         }
 
 
-        View view = LayoutInflater.from(mContext).inflate(R.layout.calllog_item, parent, false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.main_calllog_item, parent, false);
 
         final CallLogItemViewHolder holder = new CallLogItemViewHolder(view);
 
@@ -62,11 +62,11 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
                 @Override
                 public void onClick(View v) {
 //                    Snackbar.make(v, "点击了Info按钮，功能待完善.", Snackbar.LENGTH_SHORT).show();
-                    Intent intent = new Intent(mContext, CallLogDetailInfoActivity.class);
-                    intent.putExtra(CallLogDetailInfoActivity.CONTACTS_NAME,
+                    Intent intent = new Intent(mContext, CallLogDetailActivity.class);
+                    intent.putExtra(CallLogDetailActivity.CONTACTS_NAME,
                         holder.contactsNameTV.getText().toString());
-                    intent.putExtra(CallLogDetailInfoActivity.CALL_TYPE,
-                        CallLogDetailInfoActivity.CALL_ALL);
+                    intent.putExtra(CallLogDetailActivity.CALL_TYPE,
+                        CallLogDetailActivity.CALL_ALL);
                     mContext.startActivity(intent);
                 }
             }
@@ -96,6 +96,7 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         return holder;
     }
 
+    //undo:电话号码和时间格式不应该在这里面处理吧？
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         //开始出的空白
@@ -103,7 +104,10 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             return;
         }
 
-        CallLogItemModel callLogItem = mCallLogList.get(position);
+        //除去空白项
+        int mPosition = position - 1;
+
+        CallLogItemModel callLogItem = mCallLogList.get(mPosition);
 
         ((CallLogItemViewHolder) holder).contactsNameTV.setText(callLogItem.getContactsName());
 
@@ -128,7 +132,7 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
         ((CallLogItemViewHolder) holder).callerLocTV.setText(callLogItem.getCallerLoc());
 
-        setContactsImage(((CallLogItemViewHolder) holder), position);
+        setContactsImage(((CallLogItemViewHolder) holder), mPosition);
     }
 
 
@@ -157,9 +161,13 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
     }
 
+    /**
+     * 一个空白栏 + 通话记录条目数量
+     * @return
+     */
     @Override
     public int getItemCount() {
-        return mCallLogList.size();
+        return mCallLogList.size() + 1;
     }
 
     @Override
@@ -190,7 +198,7 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
     }
 
     /**
-     * 内部类，对应布局文件 calllog_item.xml，即通话列表每个单项
+     * 内部类，对应布局文件 main_calllog_item.xml，即通话列表每个单项
      */
     private static class CallLogItemViewHolder extends RecyclerView.ViewHolder {
         View callLogItemView;

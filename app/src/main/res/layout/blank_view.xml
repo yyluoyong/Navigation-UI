@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--用于主界面的RecyclerView中，加入空白可使第一项与最前面保持合理的距离-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="wrap_content">

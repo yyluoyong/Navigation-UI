@@ -36,7 +36,7 @@ public class CallLogFragment extends Fragment implements Observer {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        mView = inflater.inflate(R.layout.fragment_call_log, container, false);
+        mView = inflater.inflate(R.layout.fragment_calllog, container, false);
 
         mRecyclerView = (RecyclerView) mView.findViewById(R.id.recyclerview);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
@@ -73,7 +73,7 @@ public class CallLogFragment extends Fragment implements Observer {
     public void update(Observable o, Object arg) {
         callLogItemModelList.clear();
 
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 10; i++) {
             CallLogItemModel callLogItemModel = new CallLogItemModel();
             callLogItemModel.setContactsName("李四");
             callLogItemModel.setPhoneNumber("13012341234");
@@ -108,7 +108,7 @@ public class CallLogFragment extends Fragment implements Observer {
                     e.printStackTrace();
                 }
 
-                for (int i = 0; i < 50000; i++) {
+                for (int i = 0; i < 10; i++) {
                     CallLogItemModel callLogItemModel = new CallLogItemModel();
                     callLogItemModel.setContactsName("张三");
                     callLogItemModel.setPhoneNumber("13012341234");
