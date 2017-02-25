@@ -3,6 +3,7 @@ package com.navigation_ui.activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +13,8 @@ import android.support.v7.widget.Toolbar;
 import com.navigation_ui.R;
 import com.navigation_ui.adapter.CallLogDetailRecyclerViewAdapter;
 import com.navigation_ui.model.CallLogItemModel;
+import com.navigation_ui.tools.LogUtil;
+import com.navigation_ui.tools.PermissionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +63,8 @@ public class CallLogDetailActivity extends AppCompatActivity {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(layoutManager);
 
-        mRecyclerViewAdapter = new CallLogDetailRecyclerViewAdapter(callLogItemModelList);
+        mRecyclerViewAdapter = new CallLogDetailRecyclerViewAdapter(CallLogDetailActivity.this,
+            callLogItemModelList);
         mRecyclerView.setAdapter(mRecyclerViewAdapter);
 
         //初始化数据
@@ -130,4 +134,14 @@ public class CallLogDetailActivity extends AppCompatActivity {
 
         return pgDialog;
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+
+        PermissionUtils.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+
 }

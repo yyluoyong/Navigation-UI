@@ -61,7 +61,6 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    Snackbar.make(v, "点击了Info按钮，功能待完善.", Snackbar.LENGTH_SHORT).show();
                     Intent intent = new Intent(mContext, CallLogDetailActivity.class);
                     intent.putExtra(CallLogDetailActivity.CONTACTS_NAME,
                         holder.contactsNameTV.getText().toString());

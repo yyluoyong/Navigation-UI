@@ -1,6 +1,9 @@
 package com.navigation_ui.adapter;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.provider.CallLog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,10 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.navigation_ui.R;
 import com.navigation_ui.model.CallLogItemModel;
 import com.navigation_ui.tools.CallDateFormatter;
 import com.navigation_ui.tools.LogUtil;
+import com.navigation_ui.tools.PermissionUtils;
 import com.navigation_ui.tools.PhoneNumberFormatter;
 
 import java.util.ArrayList;
@@ -25,6 +30,8 @@ public class CallLogDetailRecyclerViewAdapter extends
     RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private String TAG = "CallLogRecyclerViewAdapter";
+
+    private Context mContext;
 
     //对应电话号码类型
     private final static int VIEW_TYPE_PHONE_ITEM = 0;
@@ -40,7 +47,10 @@ public class CallLogDetailRecyclerViewAdapter extends
 
     private final static int COUNT_STRING_ITEM = 1;
 
-    public CallLogDetailRecyclerViewAdapter(List<CallLogItemModel> callLogList) {
+    public CallLogDetailRecyclerViewAdapter(Context context, List<CallLogItemModel> callLogList) {
+
+        mContext = context;
+
         mCallLogList = callLogList;
 
         mPhoneNumberList = new ArrayList<String>();
@@ -50,7 +60,6 @@ public class CallLogDetailRecyclerViewAdapter extends
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        final Context mContext = parent.getContext();
 
         //电话号码item
         if (viewType == VIEW_TYPE_PHONE_ITEM) {
@@ -82,7 +91,25 @@ public class CallLogDetailRecyclerViewAdapter extends
             new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+//                    MakeCallActivity.makeCall(MyApplication.getContext(), "1567639928");
+                    PermissionUtils.requestPermissions(mContext,
+                        PermissionUtils.REQUEST_CODE, new String[]{Manifest.permission.CALL_PHONE},
+                        new PermissionUtils.OnPermissionListener() {
+                            @Override
+                            public void onPermissionGranted() {
+                                Intent intent = new Intent();
+                                intent.setAction(Intent.ACTION_CALL);
+                                intent.setData(Uri.parse("tel:10000"));
+                                mContext.startActivity(intent);
+                            }
 
+                            @Override
+                            public void onPermissionDenied() {
+                                Toast.makeText(mContext, "你绝拒了权限申请！",
+                                    Toast.LENGTH_LONG).show();
+                                LogUtil.d(TAG, "权限申请失败!");
+                            }
+                        });
                 }
             }
         );
