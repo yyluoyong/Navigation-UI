@@ -99,8 +99,8 @@ public class CallLogDetailActivity extends AppCompatActivity {
                     callLogItemModel.setPhoneNumber("13012341234");
                     callLogItemModel.setDateInMilliseconds("1485602523885");
                     callLogItemModel.setCallCounts(5);
-                    callLogItemModel.setDuration("1230");
-                    callLogItemModel.setCallType(1);
+                    callLogItemModel.setDuration("135");
+                    callLogItemModel.setCallType(2);
                     callLogItemModel.setCallerLoc("四川省绵阳市");
 
                     mCallLogItemModelList.add(callLogItemModel);

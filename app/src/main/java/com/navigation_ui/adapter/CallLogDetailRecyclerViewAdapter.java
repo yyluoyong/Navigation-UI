@@ -34,18 +34,23 @@ public class CallLogDetailRecyclerViewAdapter extends
     private Context mContext;
 
     //对应电话号码类型
-    private final static int VIEW_TYPE_PHONE_ITEM = 0;
+    private static final int VIEW_TYPE_PHONE_ITEM = 0;
     //对应中间分隔的字符类型
-    private final static int VIEW_TYPE_STRING = 1;
+    private static final int VIEW_TYPE_STRING = 1;
     //对应通话记录类型
-    private final static int VIEW_TYPE_CALL_ITEM = 2;
+    private static final int VIEW_TYPE_CALL_ITEM = 2;
 
     //电话号码列表
     private List<PhoneNumberItemModel> mPhoneNumberList;
     //通话记录列表
     private List<CallLogItemModel> mCallLogList;
+    //字符item数目
+    private static final int COUNT_STRING_ITEM = 1;
 
-    private final static int COUNT_STRING_ITEM = 1;
+    private static final String CALL_MADE_STRING = "呼出";
+    private static final String CALL_MISSED_STRING = "未接";
+    private static final String CALL_RECEIVED_STRING = "呼入";
+    private static final String CALL_MADE_FAILED_STRING = "未接通";
 
     /**
      * 电话条目数据的Bean
@@ -98,8 +103,7 @@ public class CallLogDetailRecyclerViewAdapter extends
     }
 
     public CallLogDetailRecyclerViewAdapter(Context context,
-                                            List<PhoneNumberItemModel> phoneNumberList,
-                                            List<CallLogItemModel> callLogList) {
+        List<PhoneNumberItemModel> phoneNumberList, List<CallLogItemModel> callLogList) {
 
         mContext = context;
 
@@ -205,23 +209,23 @@ public class CallLogDetailRecyclerViewAdapter extends
         if (callLogItem.getCallType() == CallLog.Calls.INCOMING_TYPE) {
             ((DetailItemViewHolder) holder).callTypeImage
                 .setImageResource(R.drawable.ic_call_made);
-            durationStr.append("呼出 ");
+            durationStr.append(CALL_MADE_STRING + " ");
         } else if (callLogItem.getCallType() == CallLog.Calls.OUTGOING_TYPE) {
             ((DetailItemViewHolder) holder).callTypeImage
                 .setImageResource(R.drawable.ic_call_received);
-            durationStr.append("呼入 ");
+            durationStr.append(CALL_RECEIVED_STRING + " ");
         } else {
             ((DetailItemViewHolder) holder).callTypeImage
                 .setImageResource(R.drawable.ic_call_missed);
         }
 
         if (callLogItem.getCallType() == CallLog.Calls.MISSED_TYPE) {
-            ((DetailItemViewHolder) holder).callDurationTV.setText("未接通");
+            ((DetailItemViewHolder) holder).callDurationTV.setText(CALL_MISSED_STRING);
         } else if ("0".equals(callLogItem.getDuration())) {
             if (callLogItem.getCallType() == CallLog.Calls.INCOMING_TYPE) {
-                ((DetailItemViewHolder) holder).callDurationTV.setText("未接通");
+                ((DetailItemViewHolder) holder).callDurationTV.setText(CALL_MADE_FAILED_STRING);
             } else {
-                ((DetailItemViewHolder) holder).callDurationTV.setText("未接");
+                ((DetailItemViewHolder) holder).callDurationTV.setText(CALL_MISSED_STRING);
             }
         } else {
             durationStr.append(callLogItem.getDurationFormat());

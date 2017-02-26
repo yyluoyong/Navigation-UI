@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.provider.CallLog;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -32,19 +33,25 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
     private List<CallLogItemModel> mCallLogList;
 
+    //对应空白item类型
     private static final int VIEW_TYPE_BLANK = 0;
+    //对应通话记录item类型
     private static final int VIEW_TYPE_ITEM = 1;
 
+    //空白item数目
     private static final int COUNT_BLACK_ITEM = 1;
 
-    public CallLogRecyclerViewAdapter(List<CallLogItemModel> callLogList) {
+    private Context mContext;
+
+    public CallLogRecyclerViewAdapter(Context context, List<CallLogItemModel> callLogList) {
+        mContext = context;
         mCallLogList = callLogList;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        final Context mContext = parent.getContext();
+//        final Context mContext = parent.getContext();
 
         //最开始处的空白
         if (viewType == VIEW_TYPE_BLANK) {
@@ -62,12 +69,14 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(mContext, CallLogDetailActivity.class);
-                    intent.putExtra(CallLogDetailActivity.CONTACTS_NAME,
-                        holder.contactsNameTV.getText().toString());
-                    intent.putExtra(CallLogDetailActivity.CALL_TYPE,
-                        CallLogDetailActivity.CALL_ALL);
-                    mContext.startActivity(intent);
+//                    Intent intent = new Intent(mContext, CallLogDetailActivity.class);
+//                    intent.putExtra(CallLogDetailActivity.CONTACTS_NAME,
+//                        holder.contactsNameTV.getText().toString());
+//                    intent.putExtra(CallLogDetailActivity.CALL_TYPE,
+//                        CallLogDetailActivity.CALL_ALL);
+//                    mContext.startActivity(intent);
+
+                    startDetailActivity(holder.contactsNameTV.getText().toString());
                 }
             }
         );
@@ -88,7 +97,8 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Snackbar.make(v, "点击了联系人头像，功能待完善.", Snackbar.LENGTH_SHORT).show();
+//                    Snackbar.make(v, "点击了联系人头像，功能待完善.", Snackbar.LENGTH_SHORT).show();
+                    startDetailActivity(holder.contactsNameTV.getText().toString());
                 }
             }
         );
@@ -96,7 +106,6 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         return holder;
     }
 
-    //undo:电话号码和时间格式不应该在这里面处理吧？
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         //开始出的空白
@@ -179,6 +188,13 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
     public void setCallLogList(List<CallLogItemModel> mCallLogList) {
         this.mCallLogList = mCallLogList;
+    }
+
+    private void startDetailActivity(@NonNull String contactsName) {
+        Intent intent = new Intent(mContext, CallLogDetailActivity.class);
+        intent.putExtra(CallLogDetailActivity.CONTACTS_NAME, contactsName);
+        intent.putExtra(CallLogDetailActivity.CALL_TYPE, CallLogDetailActivity.CALL_ALL);
+        mContext.startActivity(intent);
     }
 
     /**

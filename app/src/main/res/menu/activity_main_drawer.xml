@@ -2,23 +2,23 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/nav_share"
+        android:id="@+id/nav_table"
         android:icon="@drawable/ic_table"
         android:title="数据库可视化" />
 
     <item
-        android:id="@+id/nav_camera"
+        android:id="@+id/nav_refresh"
         android:icon="@drawable/ic_refresh_white"
         android:title="刷新DB联系人" />
 
     <item android:title="Database Move">
         <menu>
             <item
-                android:id="@+id/nav_gallery"
+                android:id="@+id/nav_copy"
                 android:icon="@drawable/ic_copy"
                 android:title="复制DB到SD卡" />
             <item
-                android:id="@+id/nav_slideshow"
+                android:id="@+id/nav_export"
                 android:icon="@drawable/ic_export"
                 android:title="导出DB为Excel" />
         </menu>

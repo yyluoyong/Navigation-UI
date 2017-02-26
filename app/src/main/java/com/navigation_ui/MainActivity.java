@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.navigation_ui.adapter.MainViewPagerAdapter;
 import com.navigation_ui.fragment.view.pager.CallLogFragment;
@@ -134,7 +135,8 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_search) {
+            Snackbar.make(mToolbar, "搜索功能待完善", Snackbar.LENGTH_SHORT).show();
             return true;
         }
 
@@ -147,17 +149,19 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-//        if (id == R.id.nav_camera) {
-//
-//        } else if (id == R.id.nav_gallery) {
-//
-//        } else if (id == R.id.nav_slideshow) {
-//
-//        } else if (id == R.id.nav_manage) {
-//
-//        } else if (id == R.id.nav_share) {
-//
-//        }
+        if (id == R.id.nav_table) {
+            Toast.makeText(MainActivity.this, "点击'数据库可视化'按钮，功能待完善",
+                Toast.LENGTH_SHORT).show();
+        } else if (id == R.id.nav_refresh) {
+            Toast.makeText(MainActivity.this, "点击'刷新DB联系人'按钮，功能待完善",
+                Toast.LENGTH_SHORT).show();
+        } else if (id == R.id.nav_copy) {
+            Toast.makeText(MainActivity.this, "点击'复制DB'按钮，功能待完善",
+                Toast.LENGTH_SHORT).show();
+        } else if (id == R.id.nav_export) {
+            Toast.makeText(MainActivity.this, "点击'导出DB'按钮，功能待完善",
+                Toast.LENGTH_SHORT).show();
+        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -166,7 +170,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
+        @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }

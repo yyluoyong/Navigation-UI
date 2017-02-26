@@ -2,6 +2,7 @@ package com.navigation_ui.fragment.view.pager;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,6 +14,8 @@ import com.navigation_ui.R;
 import com.navigation_ui.adapter.CallLogRecyclerViewAdapter;
 import com.navigation_ui.model.CallLogItemModel;
 import com.navigation_ui.tools.LogUtil;
+import com.navigation_ui.tools.PermissionUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
@@ -35,7 +38,7 @@ public class CallLogFragment extends Fragment implements Observer {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+        @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_calllog, container, false);
 
         mRecyclerView = (RecyclerView) mView.findViewById(R.id.recyclerview);
@@ -43,7 +46,7 @@ public class CallLogFragment extends Fragment implements Observer {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(layoutManager);
 
-        mRecyclerViewAdapter = new CallLogRecyclerViewAdapter(callLogItemModelList);
+        mRecyclerViewAdapter = new CallLogRecyclerViewAdapter(getContext(), callLogItemModelList);
         mRecyclerView.setAdapter(mRecyclerViewAdapter);
 
         //将自己注册为观察者
@@ -152,5 +155,16 @@ public class CallLogFragment extends Fragment implements Observer {
         pgDialog.setIndeterminate(false);
 
         return pgDialog;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+        @NonNull int[] grantResults) {
+
+        //使用PermissionUtils处理动态权限申请
+        PermissionUtils.onRequestPermissionsResult(getContext(),
+            requestCode, permissions, grantResults);
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }
