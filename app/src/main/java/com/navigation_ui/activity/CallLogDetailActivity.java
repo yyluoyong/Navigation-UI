@@ -12,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import com.navigation_ui.R;
 import com.navigation_ui.adapter.CallLogDetailRecyclerViewAdapter;
+import com.navigation_ui.adapter.CallLogDetailRecyclerViewAdapter.PhoneNumberItemModel;
 import com.navigation_ui.model.CallLogItemModel;
 import com.navigation_ui.tools.LogUtil;
 import com.navigation_ui.tools.PermissionUtils;
@@ -37,7 +38,10 @@ public class CallLogDetailActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private CallLogDetailRecyclerViewAdapter mRecyclerViewAdapter;
 
-    private List<CallLogItemModel> callLogItemModelList = new ArrayList<>();
+    //通话记录item列表
+    private List<CallLogItemModel> mCallLogItemModelList = new ArrayList<>();
+    //电话号码item列表
+    private List<PhoneNumberItemModel> mPhoneNumberItemList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +68,7 @@ public class CallLogDetailActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(layoutManager);
 
         mRecyclerViewAdapter = new CallLogDetailRecyclerViewAdapter(CallLogDetailActivity.this,
-            callLogItemModelList);
+            mPhoneNumberItemList, mCallLogItemModelList);
         mRecyclerView.setAdapter(mRecyclerViewAdapter);
 
         //初始化数据
@@ -95,18 +99,24 @@ public class CallLogDetailActivity extends AppCompatActivity {
                     callLogItemModel.setPhoneNumber("13012341234");
                     callLogItemModel.setDateInMilliseconds("1485602523885");
                     callLogItemModel.setCallCounts(5);
-                    callLogItemModel.setDuration("12");
+                    callLogItemModel.setDuration("1230");
                     callLogItemModel.setCallType(1);
                     callLogItemModel.setCallerLoc("四川省绵阳市");
 
-                    callLogItemModelList.add(callLogItemModel);
+                    mCallLogItemModelList.add(callLogItemModel);
                 }
+
+                mPhoneNumberItemList.add(new PhoneNumberItemModel("15676399228", "广西桂林", "联通"));
+                mPhoneNumberItemList.add(new PhoneNumberItemModel("18989275996", "四川绵阳", "电信"));
+                mPhoneNumberItemList.add(new PhoneNumberItemModel("2345897", "未知归属地", "未知运营商"));
+                mPhoneNumberItemList.add(new PhoneNumberItemModel("08162345897", "四川绵阳", "未知运营商"));
 
                 //更新UI页面
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mRecyclerViewAdapter.setCallLogList(callLogItemModelList);
+                        mRecyclerViewAdapter.setPhoneNumberList(mPhoneNumberItemList);
+                        mRecyclerViewAdapter.setCallLogList(mCallLogItemModelList);
                         mRecyclerViewAdapter.notifyDataSetChanged();
 
                         pgDialog.dismiss();

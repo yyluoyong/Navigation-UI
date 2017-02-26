@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.navigation_ui.R;
 import com.navigation_ui.model.CallLogItemModel;
 import com.navigation_ui.tools.CallDateFormatter;
@@ -42,27 +41,79 @@ public class CallLogDetailRecyclerViewAdapter extends
     private final static int VIEW_TYPE_CALL_ITEM = 2;
 
     //电话号码列表
-    private List<String> mPhoneNumberList;
+    private List<PhoneNumberItemModel> mPhoneNumberList;
     //通话记录列表
     private List<CallLogItemModel> mCallLogList;
 
     private final static int COUNT_STRING_ITEM = 1;
 
-    public CallLogDetailRecyclerViewAdapter(Context context, List<CallLogItemModel> callLogList) {
+    /**
+     * 电话条目数据的Bean
+     */
+    public static class PhoneNumberItemModel {
+        //电话号码
+        private String phoneNumber;
+        //电话号码归属地
+        private String callerLoc;
+        //所属运营商
+        private String phoneOperator;
+
+        //格式化的电话号码
+        private String phoneNumberFormat;
+
+        public PhoneNumberItemModel(String phoneNumber, String callerLoc, String phoneOperator) {
+            setPhoneNumber(phoneNumber);
+            setCallerLoc(callerLoc);
+            setPhoneOperator(phoneOperator);
+        }
+
+        public void setPhoneNumber(String phoneNumber) {
+            setPhoneNumberFormat(PhoneNumberFormatter.phoneNumberFormat(phoneNumber));
+            this.phoneNumber = phoneNumber;
+        }
+
+        public String getCallerLoc() {
+            return callerLoc;
+        }
+
+        public void setCallerLoc(String callerLoc) {
+            this.callerLoc = callerLoc;
+        }
+
+        public String getPhoneOperator() {
+            return phoneOperator;
+        }
+
+        public void setPhoneOperator(String phoneOperator) {
+            this.phoneOperator = phoneOperator;
+        }
+
+        public String getPhoneNumberFormat() {
+            return phoneNumberFormat;
+        }
+
+        private void setPhoneNumberFormat(String phoneNumberFormat) {
+            this.phoneNumberFormat = phoneNumberFormat;
+        }
+    }
+
+    public CallLogDetailRecyclerViewAdapter(Context context,
+                                            List<PhoneNumberItemModel> phoneNumberList,
+                                            List<CallLogItemModel> callLogList) {
 
         mContext = context;
 
         mCallLogList = callLogList;
 
-        mPhoneNumberList = new ArrayList<>();
-        mPhoneNumberList.add("0816 5516 634");
-        mPhoneNumberList.add("155 5566 7788");
+        mPhoneNumberList = phoneNumberList;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        //<-- 电话号码item -->
+        /**
+         * 电话号码item
+         */
         if (viewType == VIEW_TYPE_PHONE_ITEM) {
             final View view = LayoutInflater.from(mContext)
                 .inflate(R.layout.phone_number_item, parent, false);
@@ -75,7 +126,9 @@ public class CallLogDetailRecyclerViewAdapter extends
             return holder;
         }
 
-        //<-- 字符item -->
+        /**
+         * 字符item
+         */
         if (viewType == VIEW_TYPE_STRING) {
             final View view = LayoutInflater.from(mContext)
                 .inflate(R.layout.recent_call_string, parent, false);
@@ -88,7 +141,9 @@ public class CallLogDetailRecyclerViewAdapter extends
             return holder;
         }
 
-        //<-- 通话记录item -->
+        /**
+         * 通话记录item
+         */
         final View view = LayoutInflater.from(mContext)
             .inflate(R.layout.calllog_detail_item, parent, false);
 
@@ -103,12 +158,21 @@ public class CallLogDetailRecyclerViewAdapter extends
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
-        //电话列表项
+        /**
+         * 电话号码item
+         */
         if (position < mPhoneNumberList.size()) {
+
+            PhoneNumberItemModel phoneNumberItem = mPhoneNumberList.get(position);
+
             ((PhoneNumberItemViewHolder) holder).phoneNumberTV
-                .setText(mPhoneNumberList.get(position));
-            ((PhoneNumberItemViewHolder) holder).callerLocTV.setText("四川绵阳");
-            ((PhoneNumberItemViewHolder) holder).phoneOperatorTV.setText("移动");
+                .setText(phoneNumberItem.getPhoneNumberFormat());
+
+            ((PhoneNumberItemViewHolder) holder).callerLocTV
+                .setText(phoneNumberItem.getCallerLoc());
+
+            ((PhoneNumberItemViewHolder) holder).phoneOperatorTV
+                .setText(phoneNumberItem.getPhoneOperator());
 
             if (position == 0) {
                 ((PhoneNumberItemViewHolder) holder).callImage
@@ -118,35 +182,52 @@ public class CallLogDetailRecyclerViewAdapter extends
             return;
         }
 
-        //字符项
+        /**
+         * 字符item
+         */
         if (position == mPhoneNumberList.size() ) {
             return;
         }
 
-        //通话记录项
+        /**
+         * 通话记录item
+         */
         //除去电话列表的长度和一个字符项
         int mPosition = position - mPhoneNumberList.size() - COUNT_STRING_ITEM;
 
         CallLogItemModel callLogItem = mCallLogList.get(mPosition);
 
-        ((DetailItemViewHolder) holder).phoneNumberTV.setText(PhoneNumberFormatter
-            .phoneNumberFormat(callLogItem.getPhoneNumber()));
+        ((DetailItemViewHolder) holder).phoneNumberTV.setText(callLogItem.getPhoneNumberFormat());
 
-        ((DetailItemViewHolder) holder).callDateTV.setText(CallDateFormatter
-            .format(callLogItem.getDateInMilliseconds()));
+        ((DetailItemViewHolder) holder).callDateTV.setText(callLogItem.getDateFormat());
 
+        StringBuilder durationStr = new StringBuilder();
         if (callLogItem.getCallType() == CallLog.Calls.INCOMING_TYPE) {
             ((DetailItemViewHolder) holder).callTypeImage
                 .setImageResource(R.drawable.ic_call_made);
+            durationStr.append("呼出 ");
         } else if (callLogItem.getCallType() == CallLog.Calls.OUTGOING_TYPE) {
             ((DetailItemViewHolder) holder).callTypeImage
                 .setImageResource(R.drawable.ic_call_received);
+            durationStr.append("呼入 ");
         } else {
             ((DetailItemViewHolder) holder).callTypeImage
                 .setImageResource(R.drawable.ic_call_missed);
         }
 
-        ((DetailItemViewHolder) holder).callDurationTV.setText("呼入2分");
+        if (callLogItem.getCallType() == CallLog.Calls.MISSED_TYPE) {
+            ((DetailItemViewHolder) holder).callDurationTV.setText("未接通");
+        } else if ("0".equals(callLogItem.getDuration())) {
+            if (callLogItem.getCallType() == CallLog.Calls.INCOMING_TYPE) {
+                ((DetailItemViewHolder) holder).callDurationTV.setText("未接通");
+            } else {
+                ((DetailItemViewHolder) holder).callDurationTV.setText("未接");
+            }
+        } else {
+            durationStr.append(callLogItem.getDurationFormat());
+            ((DetailItemViewHolder) holder).callDurationTV.setText(durationStr.toString());
+        }
+
     }
 
     /**
@@ -174,6 +255,10 @@ public class CallLogDetailRecyclerViewAdapter extends
         }
 
         return VIEW_TYPE_CALL_ITEM;
+    }
+
+    public void setPhoneNumberList(List<PhoneNumberItemModel> mPhoneNumberList) {
+        this.mPhoneNumberList = mPhoneNumberList;
     }
 
     public void setCallLogList(List<CallLogItemModel> mCallLogList) {

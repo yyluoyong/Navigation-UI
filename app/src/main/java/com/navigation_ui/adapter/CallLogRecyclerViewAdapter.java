@@ -32,9 +32,10 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
     private List<CallLogItemModel> mCallLogList;
 
-    private final static int VIEW_TYPE_BLANK = 0;
-    private final static int VIEW_TYPE_ITEM = 1;
+    private static final int VIEW_TYPE_BLANK = 0;
+    private static final int VIEW_TYPE_ITEM = 1;
 
+    private static final int COUNT_BLACK_ITEM = 1;
 
     public CallLogRecyclerViewAdapter(List<CallLogItemModel> callLogList) {
         mCallLogList = callLogList;
@@ -104,17 +105,15 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         }
 
         //除去空白项
-        int mPosition = position - 1;
+        int mPosition = position - COUNT_BLACK_ITEM;
 
         CallLogItemModel callLogItem = mCallLogList.get(mPosition);
 
         ((CallLogItemViewHolder) holder).contactsNameTV.setText(callLogItem.getContactsName());
 
-        ((CallLogItemViewHolder) holder).phoneNumberTV
-            .setText(PhoneNumberFormatter.phoneNumberFormat(callLogItem.getPhoneNumber()));
+        ((CallLogItemViewHolder) holder).phoneNumberTV.setText(callLogItem.getPhoneNumberFormat());
 
-        ((CallLogItemViewHolder) holder).callDateTV.setText(CallDateFormatter
-            .format(callLogItem.getDateInMilliseconds()));
+        ((CallLogItemViewHolder) holder).callDateTV.setText(callLogItem.getDateFormat());
 
         ((CallLogItemViewHolder) holder).callCountsTV.setText("("+callLogItem.getCallCounts()+")");
 
@@ -166,7 +165,7 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
      */
     @Override
     public int getItemCount() {
-        return mCallLogList.size() + 1;
+        return mCallLogList.size() + COUNT_BLACK_ITEM;
     }
 
     @Override

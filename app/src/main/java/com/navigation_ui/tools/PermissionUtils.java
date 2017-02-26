@@ -45,7 +45,7 @@ public class PermissionUtils {
      * @param permissions
      * @param listener
      */
-    public static void requestPermissions(Context context, int requestCode
+    public static void requestPermissions(@NonNull Context context, int requestCode
         , String[] permissions, @NonNull OnPermissionListener listener) {
 
         //listener 不能为空，否则会出现不同的权限处理回调同一个listener的问题
