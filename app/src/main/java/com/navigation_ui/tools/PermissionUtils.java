@@ -68,11 +68,11 @@ public class PermissionUtils {
         }
     }
 
-    /**
+     /**
      * 在目标Activity中onRequestPermissionsResult()方法中调用该静态方法，
      * 实现对请求结果的回调处理。
      */
-    public static void onRequestPermissionsResult(@NonNull Context context, int requestCode,
+    public static void onRequestPermissionsResult(int requestCode,
         @NonNull String[] permissions, @NonNull int[] grantResults) {
 
         if (mOnPermissionListener == null) {

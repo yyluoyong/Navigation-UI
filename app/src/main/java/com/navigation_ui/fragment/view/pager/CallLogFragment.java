@@ -2,7 +2,6 @@ package com.navigation_ui.fragment.view.pager;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,14 +13,14 @@ import com.navigation_ui.R;
 import com.navigation_ui.adapter.CallLogRecyclerViewAdapter;
 import com.navigation_ui.model.CallLogItemModel;
 import com.navigation_ui.tools.LogUtil;
-import com.navigation_ui.tools.PermissionUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
 public class CallLogFragment extends Fragment implements Observer {
+
+    static final String TAG = "CallLogFragment";
 
     private View mView;
     private RecyclerView mRecyclerView;
@@ -32,8 +31,6 @@ public class CallLogFragment extends Fragment implements Observer {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
     }
 
     @Override
@@ -79,8 +76,8 @@ public class CallLogFragment extends Fragment implements Observer {
         for (int i = 0; i < 10; i++) {
             CallLogItemModel callLogItemModel = new CallLogItemModel();
             callLogItemModel.setContactsName("李四");
-            callLogItemModel.setPhoneNumber("13012341234");
-            callLogItemModel.setDateInMilliseconds("1485602523885");
+            callLogItemModel.setPhoneNumber("13012341235");
+            callLogItemModel.setDateInMilliseconds("1485702523885");
             callLogItemModel.setCallCounts(5);
             callLogItemModel.setDuration("12");
             callLogItemModel.setCallType(3);
@@ -155,16 +152,5 @@ public class CallLogFragment extends Fragment implements Observer {
         pgDialog.setIndeterminate(false);
 
         return pgDialog;
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-        @NonNull int[] grantResults) {
-
-        //使用PermissionUtils处理动态权限申请
-        PermissionUtils.onRequestPermissionsResult(getContext(),
-            requestCode, permissions, grantResults);
-
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }

@@ -1,9 +1,11 @@
 package com.navigation_ui.adapter;
 
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
+import android.net.Uri;
 import android.provider.CallLog;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -16,8 +18,8 @@ import android.widget.TextView;
 import com.navigation_ui.R;
 import com.navigation_ui.activity.CallLogDetailActivity;
 import com.navigation_ui.model.CallLogItemModel;
-import com.navigation_ui.tools.CallDateFormatter;
 import com.navigation_ui.tools.MaterialDesignColor;
+import com.navigation_ui.tools.PermissionUtils;
 import com.navigation_ui.tools.PhoneNumberFormatter;
 
 import java.util.List;
@@ -51,53 +53,67 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-//        final Context mContext = parent.getContext();
-
-        //最开始处的空白
+        /**
+         * 空白item
+         */
         if (viewType == VIEW_TYPE_BLANK) {
             View view = LayoutInflater.from(mContext).inflate(R.layout.blank_view, parent, false);
             return new BlankViewHolder(view);
         }
 
-
-        View view = LayoutInflater.from(mContext).inflate(R.layout.main_calllog_item, parent, false);
+        /**
+         * 通话记录item
+         */
+        final View view = LayoutInflater.from(mContext).inflate(R.layout.main_calllog_item, parent, false);
 
         final CallLogItemViewHolder holder = new CallLogItemViewHolder(view);
 
-        //undo:为单项上更多信息添加监听，计划是展示与该联系人历史通话详细信息。
+        //展示通话详情界面
         holder.callLogItemView.findViewById(R.id.more_info).setOnClickListener(
             new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    Intent intent = new Intent(mContext, CallLogDetailActivity.class);
-//                    intent.putExtra(CallLogDetailActivity.CONTACTS_NAME,
-//                        holder.contactsNameTV.getText().toString());
-//                    intent.putExtra(CallLogDetailActivity.CALL_TYPE,
-//                        CallLogDetailActivity.CALL_ALL);
-//                    mContext.startActivity(intent);
-
                     startDetailActivity(holder.contactsNameTV.getText().toString());
                 }
             }
         );
 
-        //undo：为单项添加监听，计划是拨打条目的电话。
+        //拨打条目的电话。
         holder.callLogItemView.findViewById(R.id.calllog_detail_linearlayout).setOnClickListener(
             new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Snackbar.make(v, "拨打电话："+holder.phoneNumberTV.getText()
-                        .toString().replace(" ", ""),
-                        Snackbar.LENGTH_SHORT).show();
+                    PermissionUtils.requestPermissions(mContext,
+                        PermissionUtils.REQUEST_CODE, new String[]{Manifest.permission.CALL_PHONE},
+                        new PermissionUtils.OnPermissionListener() {
+                            @Override
+                            public void onPermissionGranted() {
+
+                                Intent intent = new Intent();
+                                intent.setAction(Intent.ACTION_CALL);
+                                intent.setData(Uri.parse("tel:" + holder.phoneNumberTV.getText()
+                                    .toString().replace(PhoneNumberFormatter.DELIMITER, "")));
+                                mContext.startActivity(intent);
+                            }
+
+                            /**
+                             * 见PermissionUtils类的“说明一”
+                             */
+                            @Override
+                            public void onPermissionDenied() {
+                                Snackbar.make(view, "您拒绝了权限申请，功能无法使用",
+                                    Snackbar.LENGTH_SHORT).show();
+                            }
+                        });
                 }
             }
         );
 
+        //展示通话详情界面
         holder.contactsImage.setOnClickListener(
             new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    Snackbar.make(v, "点击了联系人头像，功能待完善.", Snackbar.LENGTH_SHORT).show();
                     startDetailActivity(holder.contactsNameTV.getText().toString());
                 }
             }
@@ -158,14 +174,25 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         } else {
             holder.contactsImageText.setText(String.valueOf(firstChar));
 
-            //undo：颜色根据联系人通话信息确定
-            Random random = new Random();
+            String phoneNumberStr = holder.phoneNumberTV.getText().toString()
+                .replace(PhoneNumberFormatter.DELIMITER, "");
+
+            //截取电话号码后两位，通过计算余数来设定头像
+            int cutLength = 2;
+            int headImageIndex;
+
+            if (phoneNumberStr != null &&  phoneNumberStr.length() >= cutLength) {
+                int phoneNumberLastTwo = Integer.parseInt(phoneNumberStr
+                    .substring(phoneNumberStr.length() - cutLength));
+                headImageIndex = phoneNumberLastTwo % MaterialDesignColor.MDColorsDeep.length;
+            } else {
+                Random random = new Random();
+                headImageIndex = random.nextInt(MaterialDesignColor.MDColorsDeep.length);
+            }
+
             ((GradientDrawable) holder.contactsImage.getDrawable())
-                .setColor(MaterialDesignColor
-                    .MDColorsDeep[random.nextInt(MaterialDesignColor.MDColorsDeep.length)]);
+                .setColor(MaterialDesignColor.MDColorsDeep[headImageIndex]);
         }
-
-
     }
 
     /**
@@ -190,6 +217,10 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         this.mCallLogList = mCallLogList;
     }
 
+    /**
+     * 打开通话详情页面的Activity
+     * @param contactsName
+     */
     private void startDetailActivity(@NonNull String contactsName) {
         Intent intent = new Intent(mContext, CallLogDetailActivity.class);
         intent.putExtra(CallLogDetailActivity.CONTACTS_NAME, contactsName);

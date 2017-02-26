@@ -149,8 +149,7 @@ public class CallLogDetailActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         //使用PermissionUtils处理动态权限申请
-        PermissionUtils.onRequestPermissionsResult(CallLogDetailActivity.this,
-            requestCode, permissions, grantResults);
+        PermissionUtils.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
