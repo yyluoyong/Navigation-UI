@@ -10,6 +10,9 @@ package com.navigation_ui.tools;
  */
 public class PhoneNumberFormatter {
 
+    //默认分隔符是空格
+    public static final String DELIMITER = " ";
+
     /**
      * 默认分隔符是空格
      * @param number
@@ -25,7 +28,7 @@ public class PhoneNumberFormatter {
      * @param delimiter
      * @return
      */
-    public static String format(String phoneNum, String delimiter) {
+    private static String format(String phoneNum, String delimiter) {
 
         if (phoneNum.length() < 6) { //长度小于6位的号码直接返回
             return phoneNum;

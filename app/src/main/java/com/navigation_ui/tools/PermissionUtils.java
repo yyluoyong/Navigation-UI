@@ -1,18 +1,11 @@
 package com.navigation_ui.tools;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.PermissionChecker;
-import android.support.v7.app.AppCompatActivity;
-import android.widget.Toast;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Yong on 2017/2/25.
@@ -28,12 +21,9 @@ public class PermissionUtils {
      * 在H2OS 2.0(Android 6.0)中
      * ContextCompat.checkSelfPermission始终返回PackageManager.PERMISSION_GRANTED
      */
-
     private final static String TAG = "PermissionUtils";
 
     public final static int REQUEST_CODE = 1;
-
-//    private static int mRequestCode = -1;
 
     private static OnPermissionListener mOnPermissionListener;
 
@@ -56,40 +46,41 @@ public class PermissionUtils {
      * @param listener
      */
     public static void requestPermissions(Context context, int requestCode
-        , String[] permissions, OnPermissionListener listener) {
+        , String[] permissions, @NonNull OnPermissionListener listener) {
 
-        //Android 6.0之前无需动态申请权限
+        //listener 不能为空，否则会出现不同的权限处理回调同一个listener的问题
+        if (listener == null) {
+            throw new RuntimeException("OnPermissionListener must not be null");
+        }
+
+        mOnPermissionListener = listener;
+
+        //Android 6.0之前无需动态申请权限，直接执行
         if (Build.VERSION.SDK_INT < 23) {
+            mOnPermissionListener.onPermissionGranted();
             return;
         }
 
         if (context instanceof Activity) {
-
-            mOnPermissionListener = listener;
-
-
             ActivityCompat.requestPermissions((Activity) context, permissions, requestCode);
-
-            if (PermissionChecker.checkSelfPermission(context, Manifest.permission.CALL_PHONE)
-                != PackageManager.PERMISSION_GRANTED) {
-                mOnPermissionListener.onPermissionDenied();
-            }
         } else {
             throw new RuntimeException("Context must be an Activity");
         }
     }
 
-
-
     /**
-     * 请求权限结果，对应Activity中onRequestPermissionsResult()方法。
+     * 在目标Activity中onRequestPermissionsResult()方法中调用该静态方法，
+     * 实现对请求结果的回调处理。
      */
-    public static void onRequestPermissionsResult(int requestCode, String[] permissions,
-                                                  int[] grantResults) {
+    public static void onRequestPermissionsResult(Context context, int requestCode,
+                                                  String[] permissions, int[] grantResults) {
         if (mOnPermissionListener == null) {
             return;
         }
 
+        /**
+         * 在“说明一”情形下，失败处理不会被执行。
+         */
         switch (requestCode) {
             case REQUEST_CODE:
                 if (verifyPermissions(grantResults)) {
@@ -105,35 +96,17 @@ public class PermissionUtils {
     }
 
     /**
-     * 该方法在“说明一”情况下，会失效
-     * 获取请求权限中需要授权的权限
-     */
-    private static List<String> getDeniedPermissions(Context context, String... permissions) {
-
-        //Android 6.0之前无需动态申请权限
-        if (Build.VERSION.SDK_INT < 23) {
-            return null;
-        }
-
-        List<String> deniedPermissions = new ArrayList<>();
-        for (String permission : permissions) {
-            if (ContextCompat.checkSelfPermission(context, permission)
-                != PackageManager.PERMISSION_GRANTED) {
-                deniedPermissions.add(permission);
-            }
-        }
-        return deniedPermissions;
-    }
-
-    /**
-     * 该方法在“说明一”情况下，会失效
+     * 在“说明一”情形下失效
      * 验证所有权限是否都已经授权
      */
     private static boolean verifyPermissions(int[] grantResults) {
-
         //Android 6.0之前无需动态申请权限
         if (Build.VERSION.SDK_INT < 23) {
             return true;
+        }
+
+        if (grantResults.length <= 0) {
+            return false;
         }
 
         for (int grantResult : grantResults) {
@@ -141,6 +114,7 @@ public class PermissionUtils {
                 return false;
             }
         }
+
         return true;
     }
 }

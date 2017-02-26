@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.provider.CallLog;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,7 +30,7 @@ import java.util.List;
 public class CallLogDetailRecyclerViewAdapter extends
     RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private String TAG = "CallLogRecyclerViewAdapter";
+    static final String TAG = "CallLogRecyclerViewAdapter";
 
     private Context mContext;
 
@@ -53,7 +54,7 @@ public class CallLogDetailRecyclerViewAdapter extends
 
         mCallLogList = callLogList;
 
-        mPhoneNumberList = new ArrayList<String>();
+        mPhoneNumberList = new ArrayList<>();
         mPhoneNumberList.add("0816 5516 634");
         mPhoneNumberList.add("155 5566 7788");
     }
@@ -61,58 +62,40 @@ public class CallLogDetailRecyclerViewAdapter extends
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        //电话号码item
+        //<-- 电话号码item -->
         if (viewType == VIEW_TYPE_PHONE_ITEM) {
-            View view = LayoutInflater.from(mContext)
+            final View view = LayoutInflater.from(mContext)
                 .inflate(R.layout.phone_number_item, parent, false);
 
             final PhoneNumberItemViewHolder holder = new PhoneNumberItemViewHolder(view);
 
+            //拨打电话
+            setPhoneNumberItemListener(view, holder);
+
             return holder;
         }
 
-        //字符item
+        //<-- 字符item -->
         if (viewType == VIEW_TYPE_STRING) {
-            View view = LayoutInflater.from(mContext)
+            final View view = LayoutInflater.from(mContext)
                 .inflate(R.layout.recent_call_string, parent, false);
 
             final StringViewHolder holder = new StringViewHolder(view);
 
+            //显示通话记录总数量
+            setStringItemListener(view, holder);
+
             return holder;
         }
 
-        //通话记录item
-        View view = LayoutInflater.from(mContext)
+        //<-- 通话记录item -->
+        final View view = LayoutInflater.from(mContext)
             .inflate(R.layout.calllog_detail_item, parent, false);
 
         final DetailItemViewHolder holder = new DetailItemViewHolder(view);
 
-        holder.callLogItemView.findViewById(R.id.layout_item).setOnClickListener(
-            new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-//                    MakeCallActivity.makeCall(MyApplication.getContext(), "1567639928");
-                    PermissionUtils.requestPermissions(mContext,
-                        PermissionUtils.REQUEST_CODE, new String[]{Manifest.permission.CALL_PHONE},
-                        new PermissionUtils.OnPermissionListener() {
-                            @Override
-                            public void onPermissionGranted() {
-                                Intent intent = new Intent();
-                                intent.setAction(Intent.ACTION_CALL);
-                                intent.setData(Uri.parse("tel:10000"));
-                                mContext.startActivity(intent);
-                            }
-
-                            @Override
-                            public void onPermissionDenied() {
-                                Toast.makeText(mContext, "你绝拒了权限申请！",
-                                    Toast.LENGTH_LONG).show();
-                                LogUtil.d(TAG, "权限申请失败!");
-                            }
-                        });
-                }
-            }
-        );
+        //拨打电话
+        setCallLogItemListener(view, holder);
 
         return holder;
     }
@@ -197,6 +180,131 @@ public class CallLogDetailRecyclerViewAdapter extends
         this.mCallLogList = mCallLogList;
     }
 
+    /**
+     * 为电话项设置监听
+     * @param view
+     * @param holder
+     */
+    private void setPhoneNumberItemListener(final View view, final PhoneNumberItemViewHolder holder) {
+        //拨打电话
+        holder.callLogItemView.findViewById(R.id.item_linear_layout).setOnClickListener(
+            new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    PermissionUtils.requestPermissions(mContext,
+                        PermissionUtils.REQUEST_CODE, new String[]{Manifest.permission.CALL_PHONE},
+                        new PermissionUtils.OnPermissionListener() {
+                            @Override
+                            public void onPermissionGranted() {
+
+                                Intent intent = new Intent();
+                                intent.setAction(Intent.ACTION_CALL);
+                                intent.setData(Uri.parse("tel:" + holder.phoneNumberTV.getText()
+                                    .toString().replace(PhoneNumberFormatter.DELIMITER, "")));
+                                mContext.startActivity(intent);
+                            }
+
+                            /**
+                             * 见PermissionUtils类的“说明一”
+                             */
+                            @Override
+                            public void onPermissionDenied() {
+                                Snackbar.make(view, "您拒绝了权限申请，功能无法使用",
+                                    Snackbar.LENGTH_SHORT).show();
+                            }
+                        });
+                }
+            }
+        );
+
+        //发送短信
+        holder.callLogItemView.findViewById(R.id.sms_image).setOnClickListener(
+            new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    PermissionUtils.requestPermissions(mContext,
+                        PermissionUtils.REQUEST_CODE, new String[]{Manifest.permission.CALL_PHONE},
+                        new PermissionUtils.OnPermissionListener() {
+                            @Override
+                            public void onPermissionGranted() {
+
+                                Intent intent = new Intent();
+                                intent.setAction(Intent.ACTION_SENDTO);
+                                intent.setData(Uri.parse("smsto:" + holder.phoneNumberTV.getText()
+                                    .toString().replace(PhoneNumberFormatter.DELIMITER, "")));
+                                mContext.startActivity(intent);
+                            }
+
+                            /**
+                             * 见PermissionUtils类的“说明一”
+                             */
+                            @Override
+                            public void onPermissionDenied() {
+                                Snackbar.make(view, "您拒绝了权限申请，功能无法使用",
+                                    Snackbar.LENGTH_SHORT).show();
+                            }
+                        });
+                }
+            }
+        );
+    }
+
+    /**
+     * 为通话记录项设置监听
+     * @param view
+     * @param holder
+     */
+    private void setCallLogItemListener(final View view, final DetailItemViewHolder holder) {
+        //拨打电话
+        holder.callLogItemView.findViewById(R.id.layout_item).setOnClickListener(
+            new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    PermissionUtils.requestPermissions(mContext,
+                        PermissionUtils.REQUEST_CODE, new String[]{Manifest.permission.CALL_PHONE},
+                        new PermissionUtils.OnPermissionListener() {
+                            @Override
+                            public void onPermissionGranted() {
+
+                                Intent intent = new Intent();
+                                intent.setAction(Intent.ACTION_CALL);
+                                intent.setData(Uri.parse("tel:" + holder.phoneNumberTV.getText()
+                                    .toString().replace(PhoneNumberFormatter.DELIMITER, "")));
+                                mContext.startActivity(intent);
+                            }
+
+                            /**
+                             * 见PermissionUtils类的“说明一”
+                             */
+                            @Override
+                            public void onPermissionDenied() {
+                                Snackbar.make(view, "您拒绝了权限申请，功能无法使用",
+                                    Snackbar.LENGTH_SHORT).show();
+                            }
+                        });
+                }
+            }
+        );
+    }
+
+    /**
+     * 为字符项设置监听
+     * @param view
+     * @param holder
+     */
+    private void setStringItemListener(final View view, final StringViewHolder holder) {
+        holder.blankView.setOnClickListener(
+            new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Snackbar.make(view, "通话记录总数为：" + mCallLogList.size(),
+                        Snackbar.LENGTH_SHORT).show();
+                }
+            }
+        );
+    }
 
     /**
      * 内部类，对应布局文件 phone_number_item.xml，即通话列表每个单项

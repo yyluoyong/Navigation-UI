@@ -26,7 +26,15 @@
         </activity>
     </application>
 
+    <!--读取通话记录-->
+    <uses-permission android:name="android.permission.READ_CALL_LOG"/>
     <!--拨打电话-->
     <uses-permission android:name="android.permission.CALL_PHONE" />
 
+    <!--发送短信-->
+    <uses-permission android:name="android.permission.SEND_SMS"/>
+
+    <!--存储读写-->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 </manifest>

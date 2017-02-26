@@ -10,7 +10,8 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true">
+        android:layout_centerInParent="true"
+        android:id="@+id/item_linear_layout">
 
         <!--第一项使用app:srcCompat="@drawable/phone_image"增加一个电话标志-->
         <ImageView
@@ -75,7 +76,7 @@
             app:srcCompat="@drawable/ic_action_textsms"
             android:layout_gravity="center"
             android:layout_marginRight="@dimen/material_design_item_margin"
-            android:id="@+id/more_info"/>
+            android:id="@+id/sms_image"/>
 
     </LinearLayout>
 
