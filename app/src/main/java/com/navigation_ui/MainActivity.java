@@ -1,10 +1,16 @@
 package com.navigation_ui;
 
+import android.Manifest;
+import android.app.ProgressDialog;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.provider.CallLog;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -17,11 +23,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 import com.navigation_ui.adapter.MainViewPagerAdapter;
+import com.navigation_ui.database.WriteCallLogToDatabaseTool;
 import com.navigation_ui.fragment.view.pager.UpdateFragmentObservable;
+import com.navigation_ui.tools.LogUtil;
 import com.navigation_ui.tools.PermissionUtils;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    static final String TAG = "MainActivity";
 
     private DrawerLayout mDrawerLayout;
     private Toolbar mToolbar;
@@ -37,17 +46,26 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        createToolbar(); //初始化工具栏
+        //初始化工具栏
+        createToolbar();
 
-        createFloatingActionButton(); //初始化悬浮按钮
+        //初始化悬浮按钮
+        createFloatingActionButton();
 
-        createDrawerLayout(); //初始化主界面布局
+        //初始化主界面布局
+        createDrawerLayout();
 
-        createNavigation(); //初始化左边弹出菜单
+        //初始化左边弹出菜单
+        createNavigation();
 
-        createViewPager(); //初始化ViewPager
+        //初始化ViewPager
+        createViewPager();
 
-        createTab(); //初始化TabLayout
+        //初始化TabLayout
+        createTab();
+
+        //更新数据库
+        updateCallLogDatabase();
     }
 
     //初始化工具栏
@@ -62,8 +80,6 @@ public class MainActivity extends AppCompatActivity
         mFloatFB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
                 //让ViewPager中的Fragment更新数据
                 UpdateFragmentObservable.getInstance().notifyFragmentUpdate();
             }
@@ -162,11 +178,106 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    /**
+     * 更新通话记录数据库。
+     */
+    private void updateCallLogDatabase() {
+
+        final String[] queryProjection = new String[]{
+            CallLog.Calls.CACHED_NAME,  //姓名
+            CallLog.Calls.NUMBER,       //号码
+            CallLog.Calls.TYPE,         //呼入/呼出(2)/未接
+            CallLog.Calls.DATE,         //拨打时间
+            CallLog.Calls.DURATION};    //通话时长
+
+        final ProgressDialog pgDialog = createProgressDialog(null, "正在更新数据库，请稍后...");
+        pgDialog.show();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                PermissionUtils.requestPermissions(MainActivity.this,
+                    PermissionUtils.REQUEST_CODE, new String[]{Manifest.permission.READ_CALL_LOG},
+                    new PermissionUtils.OnPermissionListener() {
+                        @Override
+                        public void onPermissionGranted() {
+                            //undo：展示更新耗时操作
+//                            try {
+//                                Thread.sleep(500);
+//                            } catch (InterruptedException e) {
+//                                e.printStackTrace();
+//                            }
+                            /**
+                             * 进行读取通话记录并存储到数据的任务
+                             */
+                            Cursor cursor = null;
+
+                            if (ContextCompat.checkSelfPermission(MainActivity.this,
+                                Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED) {
+                                cursor = MainActivity.this.getContentResolver().query(CallLog.Calls.CONTENT_URI,
+                                    queryProjection, null, null, CallLog.Calls.DEFAULT_SORT_ORDER);
+                            }
+
+                            final int countNewRecords = new WriteCallLogToDatabaseTool()
+                                .getNewCallLogCountAndSaveToDatabase(cursor);
+
+                            /**
+                             * 任务完成，回到UI主线程进行任务
+                             */
+                            MainActivity.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    pgDialog.dismiss();
+
+                                    if (countNewRecords == 0) {
+                                        Toast.makeText(MainActivity.this, "无新的通话记录！", Toast.LENGTH_LONG).show();
+                                    }
+                                    else{
+                                        Toast.makeText(MainActivity.this, "新增 " + countNewRecords + " 条通话记录", Toast.LENGTH_LONG).show();
+                                    }
+                                    
+                                    UpdateFragmentObservable.getInstance().notifyFragmentUpdate();
+                                }
+                            });
+                        }
+
+                        /**
+                         * 见PermissionUtils类的“说明一”
+                         */
+                        @Override
+                        public void onPermissionDenied() {
+                            Toast.makeText(MainActivity.this, "您拒绝了权限申请，功能无法使用",
+                                Toast.LENGTH_LONG).show();
+                        }
+                    });
+            }
+        }).start();
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
         @NonNull int[] grantResults) {
         //使用PermissionUtils处理动态权限申请
         PermissionUtils.onRequestPermissionsResult(requestCode, permissions, grantResults);
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    /**
+     * 一个圆圈的进度对话框
+     * @param title
+     * @param msg
+     * @return
+     */
+    private ProgressDialog createProgressDialog(String title, String msg) {
+
+        ProgressDialog pgDialog = new ProgressDialog(MainActivity.this);
+
+        pgDialog.setTitle(title);
+        pgDialog.setMessage(msg);
+        pgDialog.setCancelable(false);
+        pgDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        pgDialog.setIndeterminate(false);
+
+        return pgDialog;
     }
 }
