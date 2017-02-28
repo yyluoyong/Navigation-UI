@@ -218,15 +218,13 @@ public class MainActivity extends AppCompatActivity
                                     queryProjection, null, null, CallLog.Calls.DEFAULT_SORT_ORDER);
                             }
 
-                            final int countNewRecords = new WriteCallLogToDatabaseTool()
-                                .getNewCallLogCountAndSaveToDatabase(cursor);
 
-                            /**
-                             * 任务完成，回到UI主线程进行任务
-                             */
-                            MainActivity.this.runOnUiThread(new Runnable() {
+                            WriteCallLogToDatabaseTool dbTool = new WriteCallLogToDatabaseTool();
+                            final int countNewRecords = dbTool.getNewCallLogCount(cursor);
+
+                            dbTool.asyncSaveToDatabase(new WriteCallLogToDatabaseTool.DBFlowDatabaseSaveCallback() {
                                 @Override
-                                public void run() {
+                                public void success() {
                                     pgDialog.dismiss();
 
                                     if (countNewRecords == 0) {
@@ -235,7 +233,7 @@ public class MainActivity extends AppCompatActivity
                                     else{
                                         Toast.makeText(MainActivity.this, "新增 " + countNewRecords + " 条通话记录", Toast.LENGTH_LONG).show();
                                     }
-                                    
+
                                     UpdateFragmentObservable.getInstance().notifyFragmentUpdate();
                                 }
                             });

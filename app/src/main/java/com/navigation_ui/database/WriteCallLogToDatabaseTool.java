@@ -35,13 +35,20 @@ public class WriteCallLogToDatabaseTool {
 
     private List<CallLogModelDBFlow> callLogModelDBFlowList = new ArrayList<>();
 
+    private DBFlowDatabaseSaveCallback mCallBack;
+
     /**
-     * 获取新纪录的条目数量，并将新的条目写入到数据中。
-     * @param cursor
-     * @return
+     * 数据库异步存储得到结果后回调接口
      */
-    public Integer getNewCallLogCountAndSaveToDatabase(Cursor cursor) {
-        //新的通话记录数量
+    public interface DBFlowDatabaseSaveCallback {
+        void success();
+    }
+
+    /**
+     * 得到新的通话记录的数量
+     */
+    public int getNewCallLogCount(Cursor cursor) {
+
         int countNewRecords = 0;
 
         try {
@@ -64,7 +71,6 @@ public class WriteCallLogToDatabaseTool {
                 cursor.close();
             }
         }
-//        asyncSaveToDatabase();
 
         return countNewRecords;
     }
@@ -72,7 +78,7 @@ public class WriteCallLogToDatabaseTool {
     /**
      * 异步存储到数据库。
      */
-    private void asyncSaveToDatabase() {
+    public void asyncSaveToDatabase(final DBFlowDatabaseSaveCallback mCallBack) {
         DatabaseDefinition database = FlowManager.getDatabase(CallLogDatabase.class);
         Transaction transaction = database.beginTransactionAsync(new ITransaction() {
             @Override
@@ -81,6 +87,13 @@ public class WriteCallLogToDatabaseTool {
                     for (CallLogModelDBFlow callLogModelDBFlow : callLogModelDBFlowList) {
                         callLogModelDBFlow.save();
                     }
+                }
+            }
+        }).success(new Transaction.Success() {
+            @Override
+            public void onSuccess(Transaction transaction) {
+                if (mCallBack != null) {
+                    mCallBack.success();
                 }
             }
         }).build();
