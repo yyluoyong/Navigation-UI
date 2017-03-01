@@ -3,6 +3,9 @@ package com.navigation_ui.tools;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
+import android.text.TextUtils;
+
+import com.navigation_ui.MyApplication;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -19,7 +22,7 @@ import java.io.OutputStream;
 public class CallerLocQuery {
 
     //归属地数据库名字。
-    private static final String DB_NAME = "caller_loc_simple.db";
+    private static final String DB_NAME = "phone_number_attribution.db";
     //APP包名
     private static final String PACKAGE_NAME = MyApplication.getContext().getPackageName();
     //数据库路径
@@ -28,37 +31,17 @@ public class CallerLocQuery {
 
     private static final String DB_NAME_ABS = DB_PATH + "/" + DB_NAME;
 
-    //undo：这里只考虑了手机号码的归属地数据库，没有座机数据库。
-    //数据库号码长度
-    private static final int DB_PHONE_NUMBER_LEN = 7;
+    //手机号码归属地数据库的表名
+    private static final String CELLPHONE_AREA_DB_TABLE = "cellphone_loc";
+    //手机号码归属地数据库表的列名：手机号前缀
+    private static final String CELLPHONE_AREA_DB_TABLE_COLUMN_NUMBER = "number";
+    //手机号码归属地数据库表的列名：归属地
+    private static final String CELLPHONE_AREA_DB_TABLE_COLUMN_AREA = "area";
+    //手机号码归属地数据库表的列名：运营商
+    private static final String CELLPHONE_AREA_DB_TABLE_COLUMN_OPERATOR = "operator";
 
-    private static SQLiteDatabase callerLocDB = null;
-
-    /**
-     * 查询指定号码的归属地。
-     * @param phoneNumber: String
-     * @return
-     */
-    public static String callerLocQuery(String phoneNumber) {
-
-        SQLiteDatabase db = getDataBase();
-
-        if (phoneNumber.length() < DB_PHONE_NUMBER_LEN) {
-            return null;
-        }
-
-        String phoneNumberSub = phoneNumber.substring(0, DB_PHONE_NUMBER_LEN);
-        String callerLoc = null;
-
-        Cursor cursor = db.rawQuery("select location from caller_loc_simple " +
-                "where phonenumber=?", new String[]{phoneNumberSub});
-
-        if (cursor.moveToNext()) {
-            callerLoc = cursor.getString(0);
-        }
-
-        return callerLoc;
-    }
+    //手机号码数据库号码长度
+    private static final int DB_CELLPHONE_NUMBER_LEN = 7;
 
     /**
      * 查询指定号码的归属地。
@@ -68,6 +51,60 @@ public class CallerLocQuery {
     public static String callerLocQuery(int phoneNumber) {
         return callerLocQuery(String.valueOf(phoneNumber));
     }
+
+    /**
+     * 查询指定号码的归属地。
+     * @param phoneNumber: String
+     * @return
+     */
+    public static String callerLocQuery(String phoneNumber) {
+        if (TextUtils.isEmpty(phoneNumber)) {
+            return null;
+        }
+
+        //手机号码
+        if (phoneNumber.startsWith("1")) {
+            return cellPhoneNumberAreaQuery(phoneNumber);
+        } else { //座机号码
+            return TelephoneAreaCode.getTelephoneAreaByCode(phoneNumber);
+        }
+    }
+
+    /**
+     * 查询手机号码归属地。
+     * @param phoneNumber: int
+     * @return
+     */
+    public static String cellPhoneNumberAreaQuery(int phoneNumber) {
+        return cellPhoneNumberAreaQuery(String.valueOf(phoneNumber));
+    }
+
+    /**
+     * 查询手机号码归属地。
+     * @param phoneNumber: String
+     */
+    public static String cellPhoneNumberAreaQuery(String phoneNumber) {
+        if (phoneNumber.length() < DB_CELLPHONE_NUMBER_LEN) {
+            return null;
+        }
+
+        SQLiteDatabase db = getDataBase();
+
+        String phoneNumberSub = phoneNumber.substring(0, DB_CELLPHONE_NUMBER_LEN);
+        String callerLoc = null;
+
+        Cursor cursor = db.rawQuery("select " + CELLPHONE_AREA_DB_TABLE_COLUMN_AREA
+            + ", " + CELLPHONE_AREA_DB_TABLE_COLUMN_OPERATOR
+            + " from " + CELLPHONE_AREA_DB_TABLE + " where "
+            + CELLPHONE_AREA_DB_TABLE_COLUMN_NUMBER + "=?", new String[]{phoneNumberSub});
+
+        if (cursor.moveToNext()) {
+            callerLoc = cursor.getString(0);
+        }
+
+        return callerLoc;
+    }
+
 
     /**
      * 获得归属地SQLiteDatabase对象。如果数据库不存在，就从APP资源中提取，写到存储中。

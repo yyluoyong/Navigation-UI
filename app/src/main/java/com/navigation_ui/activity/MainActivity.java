@@ -1,4 +1,4 @@
-package com.navigation_ui;
+package com.navigation_ui.activity;
 
 import android.Manifest;
 import android.app.ProgressDialog;
@@ -22,10 +22,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import com.navigation_ui.R;
 import com.navigation_ui.adapter.MainViewPagerAdapter;
 import com.navigation_ui.database.WriteCallLogToDatabaseTool;
 import com.navigation_ui.fragment.view.pager.UpdateFragmentObservable;
-import com.navigation_ui.tools.LogUtil;
 import com.navigation_ui.tools.PermissionUtils;
 
 public class MainActivity extends AppCompatActivity

@@ -1,4 +1,4 @@
-package com.navigation_ui.tools;
+package com.navigation_ui;
 
 import android.app.Application;
 import android.content.Context;

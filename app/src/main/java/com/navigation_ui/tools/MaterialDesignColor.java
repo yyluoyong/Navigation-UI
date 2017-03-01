@@ -1,8 +1,8 @@
 package com.navigation_ui.tools;
 
-import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 
+import com.navigation_ui.MyApplication;
 import com.navigation_ui.R;
 
 /**

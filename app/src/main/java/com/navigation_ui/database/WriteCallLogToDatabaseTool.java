@@ -3,6 +3,8 @@ package com.navigation_ui.database;
 import android.database.Cursor;
 import android.provider.CallLog;
 import android.text.TextUtils;
+
+import com.navigation_ui.tools.CallerLocQuery;
 import com.navigation_ui.tools.LogUtil;
 import com.raizlabs.android.dbflow.config.DatabaseDefinition;
 import com.raizlabs.android.dbflow.config.FlowManager;
@@ -28,14 +30,13 @@ public class WriteCallLogToDatabaseTool {
     private String dateInMilliseconds; //通话发生时间
     private String contactsName;       //联系人名字
     private String phoneNumber;        //电话号码
-    private String duration;           //通话时长
+    private String callerLoc;          //通话时长
     private int callType;              //类型
+    private String duration;           //号码归属地
 
-//    private CallerLocQuery callerLocQuery = new CallerLocQuery();
+    private static final String UNKOWN_AREA = "未知归属地";
 
     private List<CallLogModelDBFlow> callLogModelDBFlowList = new ArrayList<>();
-
-    private DBFlowDatabaseSaveCallback mCallBack;
 
     /**
      * 数据库异步存储得到结果后回调接口
@@ -53,9 +54,7 @@ public class WriteCallLogToDatabaseTool {
 
         try {
             if (cursor != null) {
-
                 while (cursor.moveToNext()) {
-
                     if (getRecordAndExistence(cursor)) {
                         LogUtil.d(TAG, "记录已存在");
                         continue;
@@ -71,7 +70,6 @@ public class WriteCallLogToDatabaseTool {
                 cursor.close();
             }
         }
-
         return countNewRecords;
     }
 
@@ -127,7 +125,11 @@ public class WriteCallLogToDatabaseTool {
         callType = cursor.getInt(cursor
                 .getColumnIndex(CallLog.Calls.TYPE));
 
-//        callerLoc = callerLocQuery.callerLocQuery(phoneNumber);
+        callerLoc = CallerLocQuery.callerLocQuery(phoneNumber);
+
+        if (TextUtils.isEmpty(callerLoc)) {
+            callerLoc = UNKOWN_AREA;
+        }
 
         //记录不存在
         return false;
@@ -153,7 +155,7 @@ public class WriteCallLogToDatabaseTool {
         callLogModelDBFlow.setPhoneNumber(phoneNumber);
         callLogModelDBFlow.setDuration(duration);
         callLogModelDBFlow.setCallType(callType);
-        callLogModelDBFlow.setCallerLoc("暂时无");
+        callLogModelDBFlow.setCallerLoc(callerLoc);
 
         callLogModelDBFlowList.add(callLogModelDBFlow);
 
