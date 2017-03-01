@@ -199,17 +199,11 @@ public class MainActivity extends AppCompatActivity
                 PermissionUtils.requestPermissions(MainActivity.this,
                     PermissionUtils.REQUEST_CODE, new String[]{Manifest.permission.READ_CALL_LOG},
                     new PermissionUtils.OnPermissionListener() {
+                        /**
+                         * 进行读取通话记录并存储到数据的任务
+                         */
                         @Override
                         public void onPermissionGranted() {
-                            //undo：展示更新耗时操作
-//                            try {
-//                                Thread.sleep(500);
-//                            } catch (InterruptedException e) {
-//                                e.printStackTrace();
-//                            }
-                            /**
-                             * 进行读取通话记录并存储到数据的任务
-                             */
                             Cursor cursor = null;
 
                             if (ContextCompat.checkSelfPermission(MainActivity.this,
@@ -218,20 +212,25 @@ public class MainActivity extends AppCompatActivity
                                     queryProjection, null, null, CallLog.Calls.DEFAULT_SORT_ORDER);
                             }
 
-
                             WriteCallLogToDatabaseTool dbTool = new WriteCallLogToDatabaseTool();
                             final int countNewRecords = dbTool.getNewCallLogCount(cursor);
 
-                            dbTool.asyncSaveToDatabase(new WriteCallLogToDatabaseTool.DBFlowDatabaseSaveCallback() {
+                            dbTool.asyncSaveToDatabase(
+                                new WriteCallLogToDatabaseTool.DBFlowDatabaseSaveCallback() {
+                                /**
+                                 * 存储成功后的回调接口
+                                 */
                                 @Override
                                 public void success() {
                                     pgDialog.dismiss();
 
                                     if (countNewRecords == 0) {
-                                        Toast.makeText(MainActivity.this, "无新的通话记录！", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(MainActivity.this, "无新的通话记录！",
+                                            Toast.LENGTH_LONG).show();
                                     }
                                     else{
-                                        Toast.makeText(MainActivity.this, "新增 " + countNewRecords + " 条通话记录", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(MainActivity.this, "新增 " + countNewRecords +
+                                            " 条通话记录", Toast.LENGTH_LONG).show();
                                     }
 
                                     UpdateFragmentObservable.getInstance().notifyFragmentUpdate();
