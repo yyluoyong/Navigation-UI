@@ -95,44 +95,44 @@ public class CallLogFragment extends Fragment implements Observer {
      */
     private void initCallLogs() {
 
-        final ProgressDialog pgDialog = createProgressDialog(null, "正在读取，请稍后...");
-        pgDialog.show();
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                //undo：展示读取耗时操作
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                for (int i = 0; i < 10; i++) {
-                    CallLogItemModel callLogItemModel = new CallLogItemModel();
-                    callLogItemModel.setContactsName("张三");
-                    callLogItemModel.setPhoneNumber("13012341234");
-                    callLogItemModel.setDateInMilliseconds("1485602523885");
-                    callLogItemModel.setCallCounts(5);
-                    callLogItemModel.setDuration("12");
-                    callLogItemModel.setCallType(1);
-                    callLogItemModel.setCallerLoc("四川省绵阳市");
-
-                    callLogItemModelList.add(callLogItemModel);
-                }
-
-                //更新UI页面
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mRecyclerViewAdapter.setCallLogList(callLogItemModelList);
-                        mRecyclerViewAdapter.notifyDataSetChanged();
-
-                        pgDialog.dismiss();
-                    }
-                });
-            }
-        }).start();
+//        final ProgressDialog pgDialog = createProgressDialog(null, "正在读取，请稍后...");
+//        pgDialog.show();
+//
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                //undo：展示读取耗时操作
+//                try {
+//                    Thread.sleep(500);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//
+//                for (int i = 0; i < 10; i++) {
+//                    CallLogItemModel callLogItemModel = new CallLogItemModel();
+//                    callLogItemModel.setContactsName("张三");
+//                    callLogItemModel.setPhoneNumber("13012341234");
+//                    callLogItemModel.setDateInMilliseconds("1485602523885");
+//                    callLogItemModel.setCallCounts(5);
+//                    callLogItemModel.setDuration("12");
+//                    callLogItemModel.setCallType(1);
+//                    callLogItemModel.setCallerLoc("四川省绵阳市");
+//
+//                    callLogItemModelList.add(callLogItemModel);
+//                }
+//
+//                //更新UI页面
+//                getActivity().runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        mRecyclerViewAdapter.setCallLogList(callLogItemModelList);
+//                        mRecyclerViewAdapter.notifyDataSetChanged();
+//
+//                        pgDialog.dismiss();
+//                    }
+//                });
+//            }
+//        }).start();
     }
 
     /**

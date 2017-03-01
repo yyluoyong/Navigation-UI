@@ -55,6 +55,12 @@ public class CallLogModelDBFlow extends BaseModel {
     @Column
     private String callerLoc;
 
+    /**
+     * 运营商
+     */
+    @Column
+    private String operator;
+
     public String getDateInMilliseconds() {
         return dateInMilliseconds;
     }
@@ -103,10 +109,19 @@ public class CallLogModelDBFlow extends BaseModel {
         this.callerLoc = callerLoc;
     }
 
+    public String getOperator() {
+        return operator;
+    }
+
+    public void setOperator(String operator) {
+        this.operator = operator;
+    }
+
     @Override
     public String toString() {
-        return  contactsName + " " + phoneNumber + " " + dateInMilliseconds +
-                " " + duration + " " + callType + " " + callerLoc;
+        return  contactsName + " " + phoneNumber + " " + dateInMilliseconds
+            + " " + duration + " " + callType + " " + callerLoc
+            + " " + operator;
     }
 }
 

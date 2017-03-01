@@ -20,6 +20,7 @@ import java.io.OutputStream;
  * 用于查询电话号码的归属地。
  */
 public class CallerLocQuery {
+    static final String TAG = "CallerLocQuery";
 
     //归属地数据库名字。
     private static final String DB_NAME = "phone_number_attribution.db";
@@ -43,12 +44,14 @@ public class CallerLocQuery {
     //手机号码数据库号码长度
     private static final int DB_CELLPHONE_NUMBER_LEN = 7;
 
+    private static final String UNKOWN_OPERATOR = "未知运营商";
+
     /**
      * 查询指定号码的归属地。
      * @param phoneNumber: int
      * @return
      */
-    public static String callerLocQuery(int phoneNumber) {
+    public static String[] callerLocQuery(int phoneNumber) {
         return callerLocQuery(String.valueOf(phoneNumber));
     }
 
@@ -57,7 +60,7 @@ public class CallerLocQuery {
      * @param phoneNumber: String
      * @return
      */
-    public static String callerLocQuery(String phoneNumber) {
+    public static String[] callerLocQuery(String phoneNumber) {
         if (TextUtils.isEmpty(phoneNumber)) {
             return null;
         }
@@ -66,32 +69,33 @@ public class CallerLocQuery {
         if (phoneNumber.startsWith("1")) {
             return cellPhoneNumberAreaQuery(phoneNumber);
         } else { //座机号码
-            return TelephoneAreaCode.getTelephoneAreaByCode(phoneNumber);
+            return new String[]{TelephoneAreaCode.getTelephoneAreaByCode(phoneNumber), UNKOWN_OPERATOR};
         }
     }
 
     /**
-     * 查询手机号码归属地。
+     * 查询手机号码归属地和运营商。
      * @param phoneNumber: int
      * @return
      */
-    public static String cellPhoneNumberAreaQuery(int phoneNumber) {
+    public static String[] cellPhoneNumberAreaQuery(int phoneNumber) {
         return cellPhoneNumberAreaQuery(String.valueOf(phoneNumber));
     }
 
     /**
-     * 查询手机号码归属地。
+     * 查询手机号码归属地和运营商。
      * @param phoneNumber: String
      */
-    public static String cellPhoneNumberAreaQuery(String phoneNumber) {
+    public static String[] cellPhoneNumberAreaQuery(String phoneNumber) {
         if (phoneNumber.length() < DB_CELLPHONE_NUMBER_LEN) {
-            return null;
+            return new String[]{null, UNKOWN_OPERATOR};
         }
 
         SQLiteDatabase db = getDataBase();
 
         String phoneNumberSub = phoneNumber.substring(0, DB_CELLPHONE_NUMBER_LEN);
         String callerLoc = null;
+        String operator = UNKOWN_OPERATOR;
 
         Cursor cursor = db.rawQuery("select " + CELLPHONE_AREA_DB_TABLE_COLUMN_AREA
             + ", " + CELLPHONE_AREA_DB_TABLE_COLUMN_OPERATOR
@@ -100,9 +104,12 @@ public class CallerLocQuery {
 
         if (cursor.moveToNext()) {
             callerLoc = cursor.getString(0);
+            operator = cursor.getString(1);
         }
 
-        return callerLoc;
+        LogUtil.d(TAG, callerLoc + " " + operator);
+
+        return new String[]{callerLoc, operator};
     }
 
 

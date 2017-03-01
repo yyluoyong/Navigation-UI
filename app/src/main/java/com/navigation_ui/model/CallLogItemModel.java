@@ -48,6 +48,9 @@ public class CallLogItemModel {
     //归属地
     private String callerLoc;
 
+    //运营商
+    private String operator;
+
     public String getContactsName() {
         return contactsName;
     }
@@ -123,9 +126,18 @@ public class CallLogItemModel {
         this.callerLoc = callerLoc;
     }
 
+    public String getOperator() {
+        return operator;
+    }
+
+    public void setOperator(String operator) {
+        this.operator = operator;
+    }
+
     @Override
     public String toString() {
-        return  contactsName + " " + phoneNumber + " " + dateInMilliseconds +
-                " " + duration + " " + callType + " " + callerLoc + " " + callCounts;
+        return  contactsName + " " + phoneNumber + " " + dateInMilliseconds
+            + " " + duration + " " + callType + " " + callerLoc + " "
+            + callCounts + " " + operator;
     }
 }

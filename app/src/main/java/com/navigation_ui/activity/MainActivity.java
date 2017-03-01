@@ -219,7 +219,7 @@ public class MainActivity extends AppCompatActivity
                             dbTool.asyncSaveToDatabase(
                                 new WriteCallLogToDatabaseTool.DBFlowDatabaseSaveCallback() {
                                 /**
-                                 * 存储成功后的回调接口
+                                 * 存储成功后的回调接口。（注：该方法在UI线程执行。）
                                  */
                                 @Override
                                 public void success() {

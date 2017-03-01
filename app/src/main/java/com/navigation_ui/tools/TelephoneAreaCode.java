@@ -7,7 +7,7 @@ package com.navigation_ui.tools;
 import java.util.HashMap;
 
 /**
- * 全国座机区号
+ * 根据座机号码的区号查询其归属地。
  */
 public class TelephoneAreaCode {
     public static final HashMap<String, String> TELEPHONE_AREA_CODE = new HashMap<>();
