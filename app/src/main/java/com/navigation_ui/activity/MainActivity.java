@@ -25,9 +25,11 @@ import android.widget.Toast;
 
 import com.navigation_ui.R;
 import com.navigation_ui.adapter.MainViewPagerAdapter;
+import com.navigation_ui.database.CallLogModelDBFlow;
 import com.navigation_ui.database.WriteCallLogToDatabaseTool;
 import com.navigation_ui.fragment.view.pager.UpdateFragmentObservable;
 import com.navigation_ui.tools.PermissionUtils;
+import com.raizlabs.android.dbflow.sql.language.Delete;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -172,6 +174,8 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_export) {
             Toast.makeText(MainActivity.this, "点击'导出DB'按钮，功能待完善",
                 Toast.LENGTH_SHORT).show();
+        } else if (id == R.id.nav_delete) {
+            Delete.tables(CallLogModelDBFlow.class);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
