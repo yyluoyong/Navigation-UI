@@ -14,8 +14,7 @@ import com.navigation_ui.R;
 import com.navigation_ui.adapter.CallLogDetailRecyclerViewAdapter;
 import com.navigation_ui.adapter.CallLogDetailRecyclerViewAdapter.PhoneNumberItemModel;
 import com.navigation_ui.model.CallLogItemModel;
-import com.navigation_ui.tools.LogUtil;
-import com.navigation_ui.tools.PermissionUtils;
+import com.navigation_ui.utils.PermissionUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -149,7 +148,7 @@ public class CallLogDetailActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         //使用PermissionUtils处理动态权限申请
-        PermissionUtils.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        PermissionUtil.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }

@@ -28,7 +28,7 @@ import com.navigation_ui.adapter.MainViewPagerAdapter;
 import com.navigation_ui.database.CallLogModelDBFlow;
 import com.navigation_ui.database.WriteCallLogToDatabaseTool;
 import com.navigation_ui.fragment.view.pager.UpdateFragmentObservable;
-import com.navigation_ui.tools.PermissionUtils;
+import com.navigation_ui.utils.PermissionUtil;
 import com.raizlabs.android.dbflow.sql.language.Delete;
 
 public class MainActivity extends AppCompatActivity
@@ -201,9 +201,9 @@ public class MainActivity extends AppCompatActivity
         new Thread(new Runnable() {
             @Override
             public void run() {
-                PermissionUtils.requestPermissions(MainActivity.this,
-                    PermissionUtils.REQUEST_CODE, new String[]{Manifest.permission.READ_CALL_LOG},
-                    new PermissionUtils.OnPermissionListener() {
+                PermissionUtil.requestPermissions(MainActivity.this,
+                    PermissionUtil.REQUEST_CODE, new String[]{Manifest.permission.READ_CALL_LOG},
+                    new PermissionUtil.OnPermissionListener() {
                         /**
                          * 进行读取通话记录并存储到数据的任务
                          */
@@ -237,7 +237,6 @@ public class MainActivity extends AppCompatActivity
                                         Toast.makeText(MainActivity.this, "新增 " + countNewRecords +
                                             " 条通话记录", Toast.LENGTH_LONG).show();
                                     }
-
                                     UpdateFragmentObservable.getInstance().notifyFragmentUpdate();
                                 }
                             });
@@ -260,7 +259,7 @@ public class MainActivity extends AppCompatActivity
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
         @NonNull int[] grantResults) {
         //使用PermissionUtils处理动态权限申请
-        PermissionUtils.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        PermissionUtil.onRequestPermissionsResult(requestCode, permissions, grantResults);
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 

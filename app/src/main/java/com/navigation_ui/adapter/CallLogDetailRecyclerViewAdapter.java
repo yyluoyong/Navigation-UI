@@ -14,12 +14,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.navigation_ui.R;
 import com.navigation_ui.model.CallLogItemModel;
-import com.navigation_ui.tools.CallDateFormatter;
-import com.navigation_ui.tools.LogUtil;
-import com.navigation_ui.tools.PermissionUtils;
-import com.navigation_ui.tools.PhoneNumberFormatter;
+import com.navigation_ui.utils.PermissionUtil;
+import com.navigation_ui.utils.PhoneNumberFormatter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -281,9 +278,9 @@ public class CallLogDetailRecyclerViewAdapter extends
                 @Override
                 public void onClick(View v) {
 
-                    PermissionUtils.requestPermissions(mContext,
-                        PermissionUtils.REQUEST_CODE, new String[]{Manifest.permission.CALL_PHONE},
-                        new PermissionUtils.OnPermissionListener() {
+                    PermissionUtil.requestPermissions(mContext,
+                        PermissionUtil.REQUEST_CODE, new String[]{Manifest.permission.CALL_PHONE},
+                        new PermissionUtil.OnPermissionListener() {
                             @Override
                             public void onPermissionGranted() {
 
@@ -312,9 +309,9 @@ public class CallLogDetailRecyclerViewAdapter extends
             new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    PermissionUtils.requestPermissions(mContext,
-                        PermissionUtils.REQUEST_CODE, new String[]{Manifest.permission.CALL_PHONE},
-                        new PermissionUtils.OnPermissionListener() {
+                    PermissionUtil.requestPermissions(mContext,
+                        PermissionUtil.REQUEST_CODE, new String[]{Manifest.permission.CALL_PHONE},
+                        new PermissionUtil.OnPermissionListener() {
                             @Override
                             public void onPermissionGranted() {
 
@@ -351,9 +348,9 @@ public class CallLogDetailRecyclerViewAdapter extends
                 @Override
                 public void onClick(View v) {
 
-                    PermissionUtils.requestPermissions(mContext,
-                        PermissionUtils.REQUEST_CODE, new String[]{Manifest.permission.CALL_PHONE},
-                        new PermissionUtils.OnPermissionListener() {
+                    PermissionUtil.requestPermissions(mContext,
+                        PermissionUtil.REQUEST_CODE, new String[]{Manifest.permission.CALL_PHONE},
+                        new PermissionUtil.OnPermissionListener() {
                             @Override
                             public void onPermissionGranted() {
 

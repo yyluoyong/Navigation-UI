@@ -1,4 +1,4 @@
-package com.navigation_ui.tools;
+package com.navigation_ui.utils;
 
 /**
  * Created by Yong on 2017/3/1.
@@ -9,7 +9,7 @@ import java.util.HashMap;
 /**
  * 根据座机号码的区号查询其归属地。
  */
-public class TelephoneAreaCode {
+public class TelephoneAreaCodeUtil {
     public static final HashMap<String, String> TELEPHONE_AREA_CODE = new HashMap<>();
 
     static {

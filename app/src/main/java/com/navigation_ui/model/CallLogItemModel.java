@@ -5,9 +5,9 @@ package com.navigation_ui.model;
  * Created by Yong on 2017/2/6.
  */
 
-import com.navigation_ui.tools.CallDateFormatter;
-import com.navigation_ui.tools.CallDurationFormatter;
-import com.navigation_ui.tools.PhoneNumberFormatter;
+import com.navigation_ui.utils.CallDateFormatter;
+import com.navigation_ui.utils.CallDurationFormatter;
+import com.navigation_ui.utils.PhoneNumberFormatter;
 
 /**
  * RecyclerView的适配类，对应布局文件 main_calllog_item.xml

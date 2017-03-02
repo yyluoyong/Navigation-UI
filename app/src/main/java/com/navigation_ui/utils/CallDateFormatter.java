@@ -1,4 +1,4 @@
-package com.navigation_ui.tools;
+package com.navigation_ui.utils;
 
 /**
  * Created by Yong on 2017/2/19.

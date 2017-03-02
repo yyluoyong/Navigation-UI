@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import com.navigation_ui.R;
 import com.navigation_ui.adapter.CallLogRecyclerViewAdapter;
 import com.navigation_ui.model.CallLogItemModel;
-import com.navigation_ui.tools.LogUtil;
+import com.navigation_ui.utils.LogUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
@@ -97,10 +97,9 @@ public class CallLogFragment extends Fragment implements Observer {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        pgDialog.dismiss();
                         mRecyclerViewAdapter.setCallLogList(callLogItemModelList);
                         mRecyclerViewAdapter.notifyDataSetChanged();
-
-                        pgDialog.dismiss();
                     }
                 });
             }

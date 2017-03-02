@@ -3,9 +3,7 @@ package com.navigation_ui.database;
 import android.database.Cursor;
 import android.provider.CallLog;
 import android.text.TextUtils;
-
-import com.navigation_ui.tools.CallerLocQuery;
-import com.navigation_ui.tools.LogUtil;
+import com.navigation_ui.utils.CallerLocQueryUtil;
 import com.raizlabs.android.dbflow.config.DatabaseDefinition;
 import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
@@ -35,8 +33,8 @@ public class WriteCallLogToDatabaseTool {
     private String duration;           //号码归属地
     private String operator;           //运营商
 
-    private static final String UNKOWN_AREA = "未知归属地";
-    private static final String UNKOWN_OPERATOR = "未知运营商";
+    private static final String UNKOWN_AREA = "";
+    private static final String UNKOWN_OPERATOR = "";
 
     private List<CallLogModelDBFlow> callLogModelDBFlowList = new ArrayList<>();
 
@@ -58,7 +56,6 @@ public class WriteCallLogToDatabaseTool {
             if (cursor != null) {
                 while (cursor.moveToNext()) {
                     if (getRecordAndExistence(cursor)) {
-                        LogUtil.d(TAG, "记录已存在");
                         continue;
                     }
                     countNewRecords++; //新的记录
@@ -72,6 +69,7 @@ public class WriteCallLogToDatabaseTool {
                 cursor.close();
             }
         }
+
         return countNewRecords;
     }
 
@@ -115,20 +113,12 @@ public class WriteCallLogToDatabaseTool {
             return true;
         }
 
-        contactsName = cursor.getString(cursor
-                .getColumnIndex(CallLog.Calls.CACHED_NAME));
+        contactsName = cursor.getString(cursor.getColumnIndex(CallLog.Calls.CACHED_NAME));
+        phoneNumber = cursor.getString(cursor.getColumnIndex(CallLog.Calls.NUMBER));
+        duration = cursor.getString(cursor.getColumnIndex(CallLog.Calls.DURATION));
+        callType = cursor.getInt(cursor.getColumnIndex(CallLog.Calls.TYPE));
 
-        phoneNumber = cursor.getString(cursor
-                .getColumnIndex(CallLog.Calls.NUMBER));
-
-        duration = cursor.getString(cursor
-                .getColumnIndex(CallLog.Calls.DURATION));
-
-        callType = cursor.getInt(cursor
-                .getColumnIndex(CallLog.Calls.TYPE));
-
-        String[] areaAndOperator = CallerLocQuery.callerLocQuery(phoneNumber);
-//        String[] areaAndOperator = CallerLocQuery.callerLocQuery("10086");
+        String[] areaAndOperator = CallerLocQueryUtil.callerLocQuery(phoneNumber);
         callerLoc = areaAndOperator[0];
         operator = areaAndOperator[1];
 
@@ -165,8 +155,6 @@ public class WriteCallLogToDatabaseTool {
         callLogModelDBFlow.setOperator(operator);
 
         callLogModelDBFlowList.add(callLogModelDBFlow);
-
-        LogUtil.d(TAG, callLogModelDBFlow.toString());
     }
 
     /**

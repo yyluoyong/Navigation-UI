@@ -1,4 +1,4 @@
-package com.navigation_ui.tools;
+package com.navigation_ui.utils;
 
 import android.support.v4.content.ContextCompat;
 

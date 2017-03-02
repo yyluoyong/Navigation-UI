@@ -1,4 +1,4 @@
-package com.navigation_ui.tools;
+package com.navigation_ui.utils;
 
 import android.app.Activity;
 import android.content.Context;
@@ -14,7 +14,7 @@ import android.support.v4.app.ActivityCompat;
 /**
  * 动态权限申请工具类
  */
-public class PermissionUtils {
+public class PermissionUtil {
 
     /**
      * 说明一：

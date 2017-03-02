@@ -1,4 +1,4 @@
-package com.navigation_ui.tools;
+package com.navigation_ui.utils;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -19,7 +19,7 @@ import java.io.OutputStream;
 /**
  * 用于查询电话号码的归属地。
  */
-public class CallerLocQuery {
+public class CallerLocQueryUtil {
     static final String TAG = "CallerLocQuery";
 
     //归属地数据库名字。
@@ -44,7 +44,7 @@ public class CallerLocQuery {
     //手机号码数据库号码长度
     private static final int DB_CELLPHONE_NUMBER_LEN = 7;
 
-    private static final String UNKOWN_OPERATOR = "未知运营商";
+    private static final String UNKOWN_OPERATOR = "";
 
     /**
      * 查询指定号码的归属地。
@@ -69,7 +69,7 @@ public class CallerLocQuery {
         if (phoneNumber.startsWith("1")) {
             return cellPhoneNumberAreaQuery(phoneNumber);
         } else { //座机号码
-            return new String[]{TelephoneAreaCode.getTelephoneAreaByCode(phoneNumber), UNKOWN_OPERATOR};
+            return new String[]{TelephoneAreaCodeUtil.getTelephoneAreaByCode(phoneNumber), UNKOWN_OPERATOR};
         }
     }
 
@@ -100,14 +100,12 @@ public class CallerLocQuery {
         Cursor cursor = db.rawQuery("select " + CELLPHONE_AREA_DB_TABLE_COLUMN_AREA
             + ", " + CELLPHONE_AREA_DB_TABLE_COLUMN_OPERATOR
             + " from " + CELLPHONE_AREA_DB_TABLE + " where "
-            + CELLPHONE_AREA_DB_TABLE_COLUMN_NUMBER + "=?", new String[]{phoneNumberSub});
+            + CELLPHONE_AREA_DB_TABLE_COLUMN_NUMBER + "=? limit 1", new String[]{phoneNumberSub});
 
         if (cursor.moveToNext()) {
             callerLoc = cursor.getString(0);
             operator = cursor.getString(1);
         }
-
-        LogUtil.d(TAG, callerLoc + " " + operator);
 
         return new String[]{callerLoc, operator};
     }
