@@ -22,7 +22,7 @@ import java.util.List;
  * 输入系统通话记录查询Cursor
  * 返回新增通话记录条目的数量Integer
  */
-public class WriteCallLogToDatabaseTool {
+public class WriteCallLogToDatabaseUtil {
     static final String TAG = "WriteCallLogToDatabaseTool";
 
     private String dateInMilliseconds; //通话发生时间

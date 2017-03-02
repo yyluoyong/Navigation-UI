@@ -46,6 +46,8 @@ public class CallerLocQueryUtil {
 
     private static final String UNKOWN_OPERATOR = "";
 
+    private static final SQLiteDatabase CELLPHONE_AREA_DB = getDataBase();
+
     /**
      * 查询指定号码的归属地。
      * @param phoneNumber: int
@@ -91,13 +93,11 @@ public class CallerLocQueryUtil {
             return new String[]{null, UNKOWN_OPERATOR};
         }
 
-        SQLiteDatabase db = getDataBase();
-
         String phoneNumberSub = phoneNumber.substring(0, DB_CELLPHONE_NUMBER_LEN);
         String callerLoc = null;
         String operator = UNKOWN_OPERATOR;
 
-        Cursor cursor = db.rawQuery("select " + CELLPHONE_AREA_DB_TABLE_COLUMN_AREA
+        Cursor cursor = CELLPHONE_AREA_DB.rawQuery("select " + CELLPHONE_AREA_DB_TABLE_COLUMN_AREA
             + ", " + CELLPHONE_AREA_DB_TABLE_COLUMN_OPERATOR
             + " from " + CELLPHONE_AREA_DB_TABLE + " where "
             + CELLPHONE_AREA_DB_TABLE_COLUMN_NUMBER + "=? limit 1", new String[]{phoneNumberSub});

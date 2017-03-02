@@ -26,10 +26,15 @@ import android.widget.Toast;
 import com.navigation_ui.R;
 import com.navigation_ui.adapter.MainViewPagerAdapter;
 import com.navigation_ui.database.CallLogModelDBFlow;
-import com.navigation_ui.database.WriteCallLogToDatabaseTool;
+import com.navigation_ui.database.RecentCallLogListUtil;
+import com.navigation_ui.database.WriteCallLogToDatabaseUtil;
 import com.navigation_ui.fragment.view.pager.UpdateFragmentObservable;
+import com.navigation_ui.model.CallLogItemModel;
+import com.navigation_ui.utils.LogUtil;
 import com.navigation_ui.utils.PermissionUtil;
 import com.raizlabs.android.dbflow.sql.language.Delete;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -172,8 +177,14 @@ public class MainActivity extends AppCompatActivity
             Toast.makeText(MainActivity.this, "点击'复制DB'按钮，功能待完善",
                 Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_export) {
-            Toast.makeText(MainActivity.this, "点击'导出DB'按钮，功能待完善",
-                Toast.LENGTH_SHORT).show();
+//            Toast.makeText(MainActivity.this, "点击'导出DB'按钮，功能待完善",
+//                Toast.LENGTH_SHORT).show();
+
+            List<CallLogItemModel> mItemList = RecentCallLogListUtil.getRecentCallLogItemList();
+
+            for (CallLogItemModel callLogItemModel : mItemList) {
+                LogUtil.d("item", callLogItemModel.toString());
+            }
         } else if (id == R.id.nav_delete) {
             Delete.tables(CallLogModelDBFlow.class);
         }
@@ -217,11 +228,11 @@ public class MainActivity extends AppCompatActivity
                                     queryProjection, null, null, CallLog.Calls.DEFAULT_SORT_ORDER);
                             }
 
-                            WriteCallLogToDatabaseTool dbTool = new WriteCallLogToDatabaseTool();
+                            WriteCallLogToDatabaseUtil dbTool = new WriteCallLogToDatabaseUtil();
                             final int countNewRecords = dbTool.getNewCallLogCount(cursor);
 
                             dbTool.asyncSaveToDatabase(
-                                new WriteCallLogToDatabaseTool.DBFlowDatabaseSaveCallback() {
+                                new WriteCallLogToDatabaseUtil.DBFlowDatabaseSaveCallback() {
                                 /**
                                  * 存储成功后的回调接口。（注：该方法在UI线程执行。）
                                  */

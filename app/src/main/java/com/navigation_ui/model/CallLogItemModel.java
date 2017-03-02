@@ -59,6 +59,10 @@ public class CallLogItemModel {
         this.contactsName = contactsName;
     }
 
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
     public void setPhoneNumber(String phoneNumber) {
         setPhoneNumberFormat(PhoneNumberFormatter.phoneNumberFormat(phoneNumber));
         this.phoneNumber = phoneNumber;
@@ -137,7 +141,7 @@ public class CallLogItemModel {
     @Override
     public String toString() {
         return  contactsName + " " + phoneNumber + " " + dateInMilliseconds
-            + " " + duration + " " + callType + " " + callerLoc + " "
-            + callCounts + " " + operator;
+            + " " + duration + " " + callType + " " + callCounts + " " + callerLoc + " "
+            + operator;
     }
 }

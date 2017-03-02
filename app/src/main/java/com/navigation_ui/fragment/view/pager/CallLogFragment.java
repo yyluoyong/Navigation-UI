@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.navigation_ui.R;
 import com.navigation_ui.adapter.CallLogRecyclerViewAdapter;
+import com.navigation_ui.database.RecentCallLogListUtil;
 import com.navigation_ui.model.CallLogItemModel;
 import com.navigation_ui.utils.LogUtil;
 import java.util.ArrayList;
@@ -80,18 +81,19 @@ public class CallLogFragment extends Fragment implements Observer {
             @Override
             public void run() {
 
-                for (int i = 0; i < 20; i++) {
-                    CallLogItemModel callLogItemModel = new CallLogItemModel();
-                    callLogItemModel.setContactsName("张三");
-                    callLogItemModel.setPhoneNumber("13012341234");
-                    callLogItemModel.setDateInMilliseconds("1485602523885");
-                    callLogItemModel.setCallCounts(5);
-                    callLogItemModel.setDuration("12");
-                    callLogItemModel.setCallType(1);
-                    callLogItemModel.setCallerLoc("四川省绵阳市");
-
-                    callLogItemModelList.add(callLogItemModel);
-                }
+//                for (int i = 0; i < 20; i++) {
+//                    CallLogItemModel callLogItemModel = new CallLogItemModel();
+//                    callLogItemModel.setContactsName("张三");
+//                    callLogItemModel.setPhoneNumber("13012341234");
+//                    callLogItemModel.setDateInMilliseconds("1485602523885");
+//                    callLogItemModel.setCallCounts(5);
+//                    callLogItemModel.setDuration("12");
+//                    callLogItemModel.setCallType(1);
+//                    callLogItemModel.setCallerLoc("四川省绵阳市");
+//
+//                    callLogItemModelList.add(callLogItemModel);
+//                }
+                callLogItemModelList = RecentCallLogListUtil.getRecentCallLogItemList();
 
                 //更新UI页面
                 getActivity().runOnUiThread(new Runnable() {

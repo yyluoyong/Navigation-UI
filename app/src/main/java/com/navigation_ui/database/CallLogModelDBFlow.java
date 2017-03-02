@@ -13,6 +13,7 @@ import com.raizlabs.android.dbflow.structure.BaseModel;
 /**
  * 每条通话记录包含的信息。
  * DBFlow使用存储的模型。
+ * 注意：该模型的列名被用于数据库查询，若修改列名，可能会使其他类中的查询函数出错。
  */
 @Table(database = CallLogDatabase.class)
 public class CallLogModelDBFlow extends BaseModel {

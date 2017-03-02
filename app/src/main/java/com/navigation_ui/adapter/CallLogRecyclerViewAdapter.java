@@ -134,7 +134,13 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
         CallLogItemModel callLogItem = mCallLogList.get(mPosition);
 
-        ((CallLogItemViewHolder) holder).contactsNameTV.setText(callLogItem.getContactsName());
+        //联系人为空，数据库将其设置成了电话号码。
+        if (callLogItem.getPhoneNumber().equals(callLogItem.getContactsName())) {
+            ((CallLogItemViewHolder) holder).contactsNameTV.setText(callLogItem.getPhoneNumberFormat());
+        } else {
+            ((CallLogItemViewHolder) holder).contactsNameTV.setText(callLogItem.getContactsName());
+        }
+
 
         ((CallLogItemViewHolder) holder).phoneNumberTV.setText(callLogItem.getPhoneNumberFormat());
 
@@ -154,6 +160,7 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         }
 
         ((CallLogItemViewHolder) holder).callerLocTV.setText(callLogItem.getCallerLoc());
+        ((CallLogItemViewHolder) holder).operatorTV.setText(callLogItem.getOperator());
 
         setContactsImage(((CallLogItemViewHolder) holder), mPosition);
     }
@@ -168,31 +175,35 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
         char firstChar = mCallLogList.get(position).toString().charAt(0);
 
+        holder.contactsImage.setImageResource(R.mipmap.ic_person);
+
+        return;
+
         //数字不显示字符，其余显示第一个字符
-        if (firstChar >= '0' && firstChar <= '9') {
-            holder.contactsImage.setImageResource(R.mipmap.ic_person);
-        } else {
-            holder.contactsImageText.setText(String.valueOf(firstChar));
-
-            String phoneNumberStr = holder.phoneNumberTV.getText().toString()
-                .replace(PhoneNumberFormatter.DELIMITER, "");
-
-            //截取电话号码后两位，通过计算余数来设定头像
-            int cutLength = 2;
-            int headImageIndex;
-
-            if (phoneNumberStr != null &&  phoneNumberStr.length() >= cutLength) {
-                int phoneNumberLastTwo = Integer.parseInt(phoneNumberStr
-                    .substring(phoneNumberStr.length() - cutLength));
-                headImageIndex = phoneNumberLastTwo % MaterialDesignColor.MDColorsDeep.length;
-            } else {
-                Random random = new Random();
-                headImageIndex = random.nextInt(MaterialDesignColor.MDColorsDeep.length);
-            }
-
-            ((GradientDrawable) holder.contactsImage.getDrawable())
-                .setColor(MaterialDesignColor.MDColorsDeep[headImageIndex]);
-        }
+//        if (firstChar >= '0' && firstChar <= '9') {
+//            holder.contactsImage.setImageResource(R.mipmap.ic_person);
+//        } else {
+//            holder.contactsImageText.setText(String.valueOf(firstChar));
+//
+//            String phoneNumberStr = holder.phoneNumberTV.getText().toString()
+//                .replace(PhoneNumberFormatter.DELIMITER, "");
+//
+//            //截取电话号码后两位，通过计算余数来设定头像
+//            int cutLength = 2;
+//            int headImageIndex;
+//
+//            if (phoneNumberStr != null &&  phoneNumberStr.length() >= cutLength) {
+//                int phoneNumberLastTwo = Integer.parseInt(phoneNumberStr
+//                    .substring(phoneNumberStr.length() - cutLength));
+//                headImageIndex = phoneNumberLastTwo % MaterialDesignColor.MDColorsDeep.length;
+//            } else {
+//                Random random = new Random();
+//                headImageIndex = random.nextInt(MaterialDesignColor.MDColorsDeep.length);
+//            }
+//
+//            ((GradientDrawable) holder.contactsImage.getDrawable())
+//                .setColor(MaterialDesignColor.MDColorsDeep[headImageIndex]);
+//        }
     }
 
     /**
@@ -256,6 +267,7 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         TextView callCountsTV;       //通话次数
         ImageView callTypeImage;     //通话类型对应的图片
         TextView callerLocTV;        //归属地
+        TextView operatorTV;         //运营商
 
         public CallLogItemViewHolder(View view) {
             super(view);
@@ -269,6 +281,7 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             callCountsTV   = (TextView) view.findViewById(R.id.call_counts);
             callTypeImage  = (ImageView) view.findViewById(R.id.call_type_image);
             callerLocTV    = (TextView) view.findViewById(R.id.caller_loc);
+            operatorTV = (TextView) view.findViewById(R.id.operator);
         }
     }
 

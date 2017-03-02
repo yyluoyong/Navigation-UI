@@ -81,6 +81,13 @@
                     android:layout_marginLeft="@dimen/material_design_item_margin"
                     android:id="@+id/caller_loc"
                     android:textSize="12sp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/material_design_item_margin"
+                    android:textSize="12sp"
+                    android:id="@+id/operator"/>
             </LinearLayout>
 
             <!--通话类型：来电、去电、未接  通话发生时间-->
