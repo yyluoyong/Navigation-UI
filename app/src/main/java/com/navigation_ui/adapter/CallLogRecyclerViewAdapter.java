@@ -148,10 +148,10 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
         ((CallLogItemViewHolder) holder).callCountsTV.setText("("+callLogItem.getCallCounts()+")");
 
-        if (callLogItem.getCallType() == CallLog.Calls.INCOMING_TYPE) {
+        if (callLogItem.getCallType() == CallLog.Calls.OUTGOING_TYPE) {
             ((CallLogItemViewHolder) holder).callTypeImage
                 .setImageResource(R.drawable.ic_call_made);
-        } else if (callLogItem.getCallType() == CallLog.Calls.OUTGOING_TYPE) {
+        } else if (callLogItem.getCallType() == CallLog.Calls.INCOMING_TYPE) {
             ((CallLogItemViewHolder) holder).callTypeImage
                 .setImageResource(R.drawable.ic_call_received);
         } else {

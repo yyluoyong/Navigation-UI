@@ -90,12 +90,14 @@ public class CallLogFragment extends Fragment implements Observer {
 
         int mPosition = getArguments().getInt(POSITION, POSITION_ALL);
 
+        //所有通话
         if (mPosition == POSITION_ALL) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
 
-                    callLogItemModelList = RecentCallLogListUtil.getRecentCallLogItemList();
+                    callLogItemModelList = RecentCallLogListUtil
+                        .getRecentCallLogItemList(RecentCallLogListUtil.TYPE_ALL);
 
                     //更新UI页面
                     getActivity().runOnUiThread(new Runnable() {
@@ -108,26 +110,18 @@ public class CallLogFragment extends Fragment implements Observer {
                     });
                 }
             }).start();
-            
+
             return;
         }
 
+        //来电
         if (mPosition == POSITION_RECEIVED) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    for (int i = 0; i < 20; i++) {
-                        CallLogItemModel callLogItemModel = new CallLogItemModel();
-                        callLogItemModel.setContactsName("张三");
-                        callLogItemModel.setPhoneNumber("13012341256");
-                        callLogItemModel.setDateInMilliseconds("1485602523885");
-                        callLogItemModel.setCallCounts(5);
-                        callLogItemModel.setDuration("12");
-                        callLogItemModel.setCallType(CallLog.Calls.INCOMING_TYPE);
-                        callLogItemModel.setCallerLoc("四川省绵阳市");
 
-                        callLogItemModelList.add(callLogItemModel);
-                    }
+                    callLogItemModelList = RecentCallLogListUtil
+                        .getRecentCallLogItemList(CallLog.Calls.INCOMING_TYPE);
 
                     //更新UI页面
                     getActivity().runOnUiThread(new Runnable() {
@@ -144,22 +138,14 @@ public class CallLogFragment extends Fragment implements Observer {
             return;
         }
 
+        //去电
         if (mPosition == POSITION_MADE) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    for (int i = 0; i < 20; i++) {
-                        CallLogItemModel callLogItemModel = new CallLogItemModel();
-                        callLogItemModel.setContactsName("李四");
-                        callLogItemModel.setPhoneNumber("13012341234");
-                        callLogItemModel.setDateInMilliseconds("1485602523885");
-                        callLogItemModel.setCallCounts(5);
-                        callLogItemModel.setDuration("12");
-                        callLogItemModel.setCallType(CallLog.Calls.OUTGOING_TYPE);
-                        callLogItemModel.setCallerLoc("四川省绵阳市");
 
-                        callLogItemModelList.add(callLogItemModel);
-                    }
+                    callLogItemModelList = RecentCallLogListUtil
+                        .getRecentCallLogItemList(CallLog.Calls.OUTGOING_TYPE);
 
                     //更新UI页面
                     getActivity().runOnUiThread(new Runnable() {
@@ -176,22 +162,14 @@ public class CallLogFragment extends Fragment implements Observer {
             return;
         }
 
+        //未接
         if (mPosition == POSITION_MISSED) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    for (int i = 0; i < 20; i++) {
-                        CallLogItemModel callLogItemModel = new CallLogItemModel();
-                        callLogItemModel.setContactsName("王五");
-                        callLogItemModel.setPhoneNumber("13012341222");
-                        callLogItemModel.setDateInMilliseconds("1485602523885");
-                        callLogItemModel.setCallCounts(5);
-                        callLogItemModel.setDuration("12");
-                        callLogItemModel.setCallType(CallLog.Calls.MISSED_TYPE);
-                        callLogItemModel.setCallerLoc("四川省绵阳市");
 
-                        callLogItemModelList.add(callLogItemModel);
-                    }
+                    callLogItemModelList = RecentCallLogListUtil
+                        .getRecentCallLogItemList(CallLog.Calls.MISSED_TYPE);
 
                     //更新UI页面
                     getActivity().runOnUiThread(new Runnable() {

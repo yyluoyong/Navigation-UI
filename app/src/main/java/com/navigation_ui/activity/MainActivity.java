@@ -180,11 +180,11 @@ public class MainActivity extends AppCompatActivity
 //            Toast.makeText(MainActivity.this, "点击'导出DB'按钮，功能待完善",
 //                Toast.LENGTH_SHORT).show();
 
-            List<CallLogItemModel> mItemList = RecentCallLogListUtil.getRecentCallLogItemList();
-
-            for (CallLogItemModel callLogItemModel : mItemList) {
-                LogUtil.d("item", callLogItemModel.toString());
-            }
+//            List<CallLogItemModel> mItemList = RecentCallLogListUtil.getRecentCallLogItemList();
+//
+//            for (CallLogItemModel callLogItemModel : mItemList) {
+//                LogUtil.d("item", callLogItemModel.toString());
+//            }
         } else if (id == R.id.nav_delete) {
             Delete.tables(CallLogModelDBFlow.class);
         }

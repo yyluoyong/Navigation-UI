@@ -1,6 +1,7 @@
 package com.navigation_ui.database;
 
 import android.database.Cursor;
+import android.provider.CallLog;
 
 import com.navigation_ui.model.CallLogItemModel;
 import com.navigation_ui.utils.LogUtil;
@@ -64,18 +65,42 @@ public class RecentCallLogListUtil {
         + "on tb_1." + CONTACTS_NAME_COLUMN_NAME + " = tb_2." + CONTACTS_NAME_COLUMN_NAME
         + " order by tb_1." + TIME_COLUMN_NAME + " desc";
 
+    //查询每个联系人指定通话类型的通话
+    private static String RECENT_CALL_TYPE_SQL = "select tb_1.*, tb_2." + CALL_COUNTS_COLUMN_NAME
+        + " from (select a.* from " + DATABASE_TABLE_NAME + " as a where "
+        + TYPE_COLUMN_NAME + " = ? and " + TIME_COLUMN_NAME
+        + " = (select max(" + TIME_COLUMN_NAME + ") from " + DATABASE_TABLE_NAME
+        + " where " + TYPE_COLUMN_NAME + " = ? and " + CONTACTS_NAME_COLUMN_NAME
+        + " = a." + CONTACTS_NAME_COLUMN_NAME + ") order by a." + TIME_COLUMN_NAME + ") "
+        + "as tb_1 "
+        + "join "
+        + "(select " + CONTACTS_NAME_COLUMN_NAME + ", count(" + CONTACTS_NAME_COLUMN_NAME
+        + ") as " + CALL_COUNTS_COLUMN_NAME + " from " + DATABASE_TABLE_NAME + " where "
+        + TYPE_COLUMN_NAME + " = ? " +  " group by " + CONTACTS_NAME_COLUMN_NAME + ") "
+        + "as tb_2 "
+        + "on tb_1." + CONTACTS_NAME_COLUMN_NAME + " = tb_2." + CONTACTS_NAME_COLUMN_NAME
+        + " order by tb_1." + TIME_COLUMN_NAME + " desc";
+
+    public static final int TYPE_ALL = 10;
+
     /**
      * 从数据库中得到最近的通话列表。
      * @return
      */
-    public static List<CallLogItemModel> getRecentCallLogItemList() {
+    public static List<CallLogItemModel> getRecentCallLogItemList(int type) {
         List<CallLogItemModel> callLogList = new ArrayList<>();
 
         Cursor cursor = null;
 
         try{
-            cursor = FlowManager.getDatabase(CallLogDatabase.class).getWritableDatabase()
-                .rawQuery(RECENT_CALL_SQL, null);
+            if (type == TYPE_ALL) {
+                cursor = FlowManager.getDatabase(CallLogDatabase.class).getWritableDatabase()
+                    .rawQuery(RECENT_CALL_SQL, null);
+            } else {
+                String typeToStr = String.valueOf(type);
+                cursor = FlowManager.getDatabase(CallLogDatabase.class).getWritableDatabase()
+                    .rawQuery(RECENT_CALL_TYPE_SQL, new String[]{typeToStr, typeToStr, typeToStr});
+            }
 
             if (cursor != null) {
                 while (cursor.moveToNext()) {
