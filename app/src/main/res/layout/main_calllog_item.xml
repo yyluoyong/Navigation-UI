@@ -27,7 +27,6 @@
                 android:layout_height="@dimen/material_design_item_image_height"
                 android:layout_marginLeft="@dimen/material_design_item_image_left_margin"
                 android:layout_marginRight="@dimen/material_design_item_image_right_margin"
-                app:srcCompat="@drawable/green_circle"
                 android:layout_gravity="center"
                 android:id="@+id/contacts_image"/>
 
@@ -121,14 +120,19 @@
             android:layout_weight="1" />
 
         <!--水平方向第三个部分，信息按钮-->
-        <ImageView
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_info"
-            android:layout_gravity="center"
-            android:layout_marginRight="@dimen/material_design_item_margin"
-            android:id="@+id/more_info"/>
+            android:layout_height="match_parent"
+            android:id="@+id/more_info_layout">
 
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_info"
+                android:layout_gravity="center"
+                android:layout_marginRight="@dimen/material_design_item_margin"
+                android:id="@+id/more_info"/>
+        </LinearLayout>
     </LinearLayout>
 
     <!--水平分隔线-->

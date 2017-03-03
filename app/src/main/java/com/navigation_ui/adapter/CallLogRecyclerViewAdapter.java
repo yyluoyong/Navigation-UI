@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.navigation_ui.R;
 import com.navigation_ui.activity.CallLogDetailActivity;
 import com.navigation_ui.model.CallLogItemModel;
+import com.navigation_ui.utils.LogUtil;
 import com.navigation_ui.utils.MaterialDesignColor;
 import com.navigation_ui.utils.PermissionUtil;
 import com.navigation_ui.utils.PhoneNumberFormatter;
@@ -69,7 +70,7 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         final CallLogItemViewHolder holder = new CallLogItemViewHolder(view);
 
         //展示通话详情界面
-        holder.callLogItemView.findViewById(R.id.more_info).setOnClickListener(
+        holder.callLogItemView.findViewById(R.id.more_info_layout).setOnClickListener(
             new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -141,7 +142,6 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             ((CallLogItemViewHolder) holder).contactsNameTV.setText(callLogItem.getContactsName());
         }
 
-
         ((CallLogItemViewHolder) holder).phoneNumberTV.setText(callLogItem.getPhoneNumberFormat());
 
         ((CallLogItemViewHolder) holder).callDateTV.setText(callLogItem.getDateFormat());
@@ -162,48 +162,49 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         ((CallLogItemViewHolder) holder).callerLocTV.setText(callLogItem.getCallerLoc());
         ((CallLogItemViewHolder) holder).operatorTV.setText(callLogItem.getOperator());
 
-        setContactsImage(((CallLogItemViewHolder) holder), mPosition);
+        setContactsImage(((CallLogItemViewHolder) holder), callLogItem.getContactsName());
     }
 
 
     /**
      * 设置联系人头像：背景色和字符
      * @param holder
-     * @param position
+     * @param name
      */
-    private void setContactsImage(CallLogItemViewHolder holder, int position) {
+    private void setContactsImage(CallLogItemViewHolder holder, String name) {
 
-        char firstChar = mCallLogList.get(position).toString().charAt(0);
-
-        holder.contactsImage.setImageResource(R.mipmap.ic_person);
-
-        return;
+        char firstChar = name.charAt(0);
 
         //数字不显示字符，其余显示第一个字符
-//        if (firstChar >= '0' && firstChar <= '9') {
-//            holder.contactsImage.setImageResource(R.mipmap.ic_person);
-//        } else {
-//            holder.contactsImageText.setText(String.valueOf(firstChar));
-//
-//            String phoneNumberStr = holder.phoneNumberTV.getText().toString()
-//                .replace(PhoneNumberFormatter.DELIMITER, "");
-//
-//            //截取电话号码后两位，通过计算余数来设定头像
-//            int cutLength = 2;
-//            int headImageIndex;
-//
-//            if (phoneNumberStr != null &&  phoneNumberStr.length() >= cutLength) {
-//                int phoneNumberLastTwo = Integer.parseInt(phoneNumberStr
-//                    .substring(phoneNumberStr.length() - cutLength));
-//                headImageIndex = phoneNumberLastTwo % MaterialDesignColor.MDColorsDeep.length;
-//            } else {
-//                Random random = new Random();
-//                headImageIndex = random.nextInt(MaterialDesignColor.MDColorsDeep.length);
-//            }
-//
-//            ((GradientDrawable) holder.contactsImage.getDrawable())
-//                .setColor(MaterialDesignColor.MDColorsDeep[headImageIndex]);
-//        }
+        if (firstChar >= '0' && firstChar <= '9') {
+            holder.contactsImage.setImageResource(R.mipmap.ic_person);
+            //这个置空必须有，否则会因为缓存导致混乱？
+            holder.contactsImageText.setText("");
+        } else {
+            holder.contactsImageText.setText(String.valueOf(firstChar));
+
+            String phoneNumberStr = holder.phoneNumberTV.getText().toString()
+                .replace(PhoneNumberFormatter.DELIMITER, "");
+
+            //截取电话号码后两位，通过计算余数来设定头像
+            int cutLength = 2;
+            int headImageIndex;
+
+            if (phoneNumberStr != null &&  phoneNumberStr.length() >= cutLength) {
+                int phoneNumberLastTwo = Integer.parseInt(phoneNumberStr
+                    .substring(phoneNumberStr.length() - cutLength));
+                headImageIndex = phoneNumberLastTwo % MaterialDesignColor.MDColorsDeep.length;
+            } else {
+                Random random = new Random();
+                headImageIndex = random.nextInt(MaterialDesignColor.MDColorsDeep.length);
+            }
+
+            GradientDrawable circleBackground = new GradientDrawable();
+            circleBackground.setShape(GradientDrawable.OVAL);
+            circleBackground.setColor(MaterialDesignColor.MDColorsDeep[headImageIndex]);
+
+            holder.contactsImage.setImageDrawable(circleBackground);
+        }
     }
 
     /**
@@ -249,7 +250,7 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         public BlankViewHolder(View view) {
             super(view);
 
-            blankView = (View) view.findViewById(R.id.blank_view);
+            blankView = view.findViewById(R.id.blank_view);
         }
     }
 
