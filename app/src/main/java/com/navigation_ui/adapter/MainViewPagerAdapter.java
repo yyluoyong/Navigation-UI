@@ -1,11 +1,14 @@
 package com.navigation_ui.adapter;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import com.navigation_ui.R;
+import com.navigation_ui.database.CallLogDatabase;
 import com.navigation_ui.fragment.view.pager.CallLogFragment;
+import com.navigation_ui.utils.LogUtil;
 
 /**
  * Created by Yong on 2017/2/11.
@@ -16,7 +19,7 @@ import com.navigation_ui.fragment.view.pager.CallLogFragment;
  */
 public class MainViewPagerAdapter extends FragmentPagerAdapter {
 
-    private static final String TAG = "PagerAdapter";
+    private static final String TAG = "MainViewPagerAdapter";
 
     private FragmentManager mFragmentManager;
 
@@ -48,7 +51,13 @@ public class MainViewPagerAdapter extends FragmentPagerAdapter {
      */
     @Override
     public Fragment getItem(final int position) {
-        return new CallLogFragment();
+        CallLogFragment callLogFragment = new CallLogFragment();
+
+        Bundle bundle = new Bundle();
+        bundle.putInt(CallLogFragment.POSITION, position);
+        callLogFragment.setArguments(bundle);
+
+        return callLogFragment;
     }
 
     @Override

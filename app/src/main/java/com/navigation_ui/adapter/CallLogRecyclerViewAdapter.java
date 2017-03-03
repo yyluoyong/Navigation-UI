@@ -165,7 +165,6 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         setContactsImage(((CallLogItemViewHolder) holder), callLogItem.getContactsName());
     }
 
-
     /**
      * 设置联系人头像：背景色和字符
      * @param holder

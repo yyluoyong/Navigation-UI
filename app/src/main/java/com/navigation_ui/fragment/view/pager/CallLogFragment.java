@@ -2,6 +2,7 @@ package com.navigation_ui.fragment.view.pager;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.provider.CallLog;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -28,6 +29,16 @@ public class CallLogFragment extends Fragment implements Observer {
     private CallLogRecyclerViewAdapter mRecyclerViewAdapter;
 
     private List<CallLogItemModel> callLogItemModelList = new ArrayList<>();
+
+    public static final String POSITION = "POSITION";
+    //所有通话
+    private static final int POSITION_ALL = 0;
+    //来电
+    private static final int POSITION_RECEIVED = 1;
+    //去电
+    private static final int POSITION_MADE = 2;
+    //未接
+    private static final int POSITION_MISSED = 3;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,35 +88,125 @@ public class CallLogFragment extends Fragment implements Observer {
         final ProgressDialog pgDialog = createProgressDialog(null, "正在读取，请稍后...");
         pgDialog.show();
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
+        int mPosition = getArguments().getInt(POSITION, POSITION_ALL);
 
-//                for (int i = 0; i < 20; i++) {
-//                    CallLogItemModel callLogItemModel = new CallLogItemModel();
-//                    callLogItemModel.setContactsName("张三");
-//                    callLogItemModel.setPhoneNumber("13012341234");
-//                    callLogItemModel.setDateInMilliseconds("1485602523885");
-//                    callLogItemModel.setCallCounts(5);
-//                    callLogItemModel.setDuration("12");
-//                    callLogItemModel.setCallType(1);
-//                    callLogItemModel.setCallerLoc("四川省绵阳市");
-//
-//                    callLogItemModelList.add(callLogItemModel);
-//                }
-                callLogItemModelList = RecentCallLogListUtil.getRecentCallLogItemList();
+        if (mPosition == POSITION_ALL) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
 
-                //更新UI页面
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        pgDialog.dismiss();
-                        mRecyclerViewAdapter.setCallLogList(callLogItemModelList);
-                        mRecyclerViewAdapter.notifyDataSetChanged();
+                    callLogItemModelList = RecentCallLogListUtil.getRecentCallLogItemList();
+
+                    //更新UI页面
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            pgDialog.dismiss();
+                            mRecyclerViewAdapter.setCallLogList(callLogItemModelList);
+                            mRecyclerViewAdapter.notifyDataSetChanged();
+                        }
+                    });
+                }
+            }).start();
+            
+            return;
+        }
+
+        if (mPosition == POSITION_RECEIVED) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    for (int i = 0; i < 20; i++) {
+                        CallLogItemModel callLogItemModel = new CallLogItemModel();
+                        callLogItemModel.setContactsName("张三");
+                        callLogItemModel.setPhoneNumber("13012341256");
+                        callLogItemModel.setDateInMilliseconds("1485602523885");
+                        callLogItemModel.setCallCounts(5);
+                        callLogItemModel.setDuration("12");
+                        callLogItemModel.setCallType(CallLog.Calls.INCOMING_TYPE);
+                        callLogItemModel.setCallerLoc("四川省绵阳市");
+
+                        callLogItemModelList.add(callLogItemModel);
                     }
-                });
-            }
-        }).start();
+
+                    //更新UI页面
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            pgDialog.dismiss();
+                            mRecyclerViewAdapter.setCallLogList(callLogItemModelList);
+                            mRecyclerViewAdapter.notifyDataSetChanged();
+                        }
+                    });
+                }
+            }).start();
+
+            return;
+        }
+
+        if (mPosition == POSITION_MADE) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    for (int i = 0; i < 20; i++) {
+                        CallLogItemModel callLogItemModel = new CallLogItemModel();
+                        callLogItemModel.setContactsName("李四");
+                        callLogItemModel.setPhoneNumber("13012341234");
+                        callLogItemModel.setDateInMilliseconds("1485602523885");
+                        callLogItemModel.setCallCounts(5);
+                        callLogItemModel.setDuration("12");
+                        callLogItemModel.setCallType(CallLog.Calls.OUTGOING_TYPE);
+                        callLogItemModel.setCallerLoc("四川省绵阳市");
+
+                        callLogItemModelList.add(callLogItemModel);
+                    }
+
+                    //更新UI页面
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            pgDialog.dismiss();
+                            mRecyclerViewAdapter.setCallLogList(callLogItemModelList);
+                            mRecyclerViewAdapter.notifyDataSetChanged();
+                        }
+                    });
+                }
+            }).start();
+
+            return;
+        }
+
+        if (mPosition == POSITION_MISSED) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    for (int i = 0; i < 20; i++) {
+                        CallLogItemModel callLogItemModel = new CallLogItemModel();
+                        callLogItemModel.setContactsName("王五");
+                        callLogItemModel.setPhoneNumber("13012341222");
+                        callLogItemModel.setDateInMilliseconds("1485602523885");
+                        callLogItemModel.setCallCounts(5);
+                        callLogItemModel.setDuration("12");
+                        callLogItemModel.setCallType(CallLog.Calls.MISSED_TYPE);
+                        callLogItemModel.setCallerLoc("四川省绵阳市");
+
+                        callLogItemModelList.add(callLogItemModel);
+                    }
+
+                    //更新UI页面
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            pgDialog.dismiss();
+                            mRecyclerViewAdapter.setCallLogList(callLogItemModelList);
+                            mRecyclerViewAdapter.notifyDataSetChanged();
+                        }
+                    });
+                }
+            }).start();
+
+            return;
+        }
     }
 
     /**
@@ -113,6 +214,7 @@ public class CallLogFragment extends Fragment implements Observer {
      */
     private void initCallLogs() {
         //undo:从数据库读取数据
+        LogUtil.d(TAG, "position " + getArguments().getInt(POSITION, POSITION_ALL));
     }
 
     /**
