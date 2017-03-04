@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.navigation_ui.R;
 import com.navigation_ui.adapter.MainViewPagerAdapter;
 import com.navigation_ui.database.CallLogModelDBFlow;
+import com.navigation_ui.database.CallLogModelDBFlow_Table;
 import com.navigation_ui.database.RecentCallLogListUtil;
 import com.navigation_ui.database.WriteCallLogToDatabaseUtil;
 import com.navigation_ui.fragment.view.pager.UpdateFragmentObservable;
@@ -33,6 +34,7 @@ import com.navigation_ui.model.CallLogItemModel;
 import com.navigation_ui.utils.LogUtil;
 import com.navigation_ui.utils.PermissionUtil;
 import com.raizlabs.android.dbflow.sql.language.Delete;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import java.util.List;
 
@@ -185,6 +187,15 @@ public class MainActivity extends AppCompatActivity
 //            for (CallLogItemModel callLogItemModel : mItemList) {
 //                LogUtil.d("item", callLogItemModel.toString());
 //            }
+            String SQL2 = "select * from CallLogModelDBFlow where callType = 3";
+
+            List<CallLogModelDBFlow> callLogModelDBFlow = SQLite.select().from(CallLogModelDBFlow.class)
+                .where(CallLogModelDBFlow_Table.callType.eq(3)).queryList();
+
+            for (CallLogModelDBFlow model : callLogModelDBFlow) {
+                LogUtil.d(TAG, model.getContactsName() + " " + model.getPhoneNumber() + " " + model.getCallType());
+            }
+
         } else if (id == R.id.nav_delete) {
             Delete.tables(CallLogModelDBFlow.class);
         }

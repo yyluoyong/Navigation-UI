@@ -6,6 +6,8 @@ import android.provider.CallLog;
 import com.navigation_ui.model.CallLogItemModel;
 import com.navigation_ui.utils.LogUtil;
 import com.raizlabs.android.dbflow.config.FlowManager;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
+import com.raizlabs.android.dbflow.structure.database.AndroidDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,14 +22,17 @@ import java.util.List;
 public class RecentCallLogListUtil {
     static final String TAG = "RecentCallLogListUtil";
 
-    private static String dateInMilliseconds; //通话发生时间
-    private static String contactsName;       //联系人名字
-    private static String phoneNumber;        //电话号码
-    private static String duration;           //通话时长
-    private static int callType;              //类型
-    private static String callerLoc;          //归属地
-    private static int callCounts;            //通话次数
-    private static String operator;           //运营商
+    //查询所有类型的通话
+    public static final int TYPE_ALL = 10;
+
+    private String dateInMilliseconds; //通话发生时间
+    private String contactsName;       //联系人名字
+    private String phoneNumber;        //电话号码
+    private String duration;           //通话时长
+    private int callType;              //类型
+    private String callerLoc;          //归属地
+    private int callCounts;            //通话次数
+    private String operator;           //运营商
 
     /**
      * 注意：以下数据与DBFlow使用的模型类CallLogModelDBFlow一致。
@@ -50,6 +55,7 @@ public class RecentCallLogListUtil {
     private static final String CALL_COUNTS_COLUMN_NAME = "counts";
     //数据库中运营商列的列名
     private static final String OPERATOR_COLUMN_NAME = "operator";
+
 
     //查询每个联系人的最近一次通话的SQL语句
     private static final String RECENT_CALL_SQL = "select tb_1.*, tb_2." + CALL_COUNTS_COLUMN_NAME
@@ -81,25 +87,26 @@ public class RecentCallLogListUtil {
         + "on tb_1." + CONTACTS_NAME_COLUMN_NAME + " = tb_2." + CONTACTS_NAME_COLUMN_NAME
         + " order by tb_1." + TIME_COLUMN_NAME + " desc";
 
-    public static final int TYPE_ALL = 10;
-
     /**
      * 从数据库中得到最近的通话列表。
      * @return
      */
-    public static List<CallLogItemModel> getRecentCallLogItemList(int type) {
+    public List<CallLogItemModel> getRecentCallLogItemList(int type) {
         List<CallLogItemModel> callLogList = new ArrayList<>();
 
         Cursor cursor = null;
 
         try{
+            AndroidDatabase db = (AndroidDatabase) FlowManager.getDatabase(CallLogDatabase.class)
+                .getWritableDatabase();
+
             if (type == TYPE_ALL) {
-                cursor = FlowManager.getDatabase(CallLogDatabase.class).getWritableDatabase()
-                    .rawQuery(RECENT_CALL_SQL, null);
+                cursor = db.rawQuery(RECENT_CALL_SQL, null);
             } else {
                 String typeToStr = String.valueOf(type);
-                cursor = FlowManager.getDatabase(CallLogDatabase.class).getWritableDatabase()
+                cursor = db
                     .rawQuery(RECENT_CALL_TYPE_SQL, new String[]{typeToStr, typeToStr, typeToStr});
+
             }
 
             if (cursor != null) {
@@ -123,7 +130,7 @@ public class RecentCallLogListUtil {
      * 从给定的cursor读取一行数据。
      * @param cursor
      */
-    private static void getRecord(Cursor cursor) {
+    private void getRecord(Cursor cursor) {
         /**
          * LitePal：注意getColumnIndex传入字符串使用小写，否则会找不到列名。
          * DBFlow： 注意getColumnIndex与表定义一样，区分大小写。
@@ -142,7 +149,7 @@ public class RecentCallLogListUtil {
      * 根据读取的一行数据创建一个模型对象。
      * @return
      */
-    private static CallLogItemModel newCallLogModel() {
+    private CallLogItemModel newCallLogModel() {
         CallLogItemModel model = new CallLogItemModel();
 
         model.setDateInMilliseconds(dateInMilliseconds);

@@ -96,7 +96,7 @@ public class CallLogFragment extends Fragment implements Observer {
                 @Override
                 public void run() {
 
-                    callLogItemModelList = RecentCallLogListUtil
+                    callLogItemModelList = new RecentCallLogListUtil()
                         .getRecentCallLogItemList(RecentCallLogListUtil.TYPE_ALL);
 
                     //更新UI页面
@@ -120,7 +120,7 @@ public class CallLogFragment extends Fragment implements Observer {
                 @Override
                 public void run() {
 
-                    callLogItemModelList = RecentCallLogListUtil
+                    callLogItemModelList = new RecentCallLogListUtil()
                         .getRecentCallLogItemList(CallLog.Calls.INCOMING_TYPE);
 
                     //更新UI页面
@@ -144,7 +144,7 @@ public class CallLogFragment extends Fragment implements Observer {
                 @Override
                 public void run() {
 
-                    callLogItemModelList = RecentCallLogListUtil
+                    callLogItemModelList = new RecentCallLogListUtil()
                         .getRecentCallLogItemList(CallLog.Calls.OUTGOING_TYPE);
 
                     //更新UI页面
@@ -168,8 +168,12 @@ public class CallLogFragment extends Fragment implements Observer {
                 @Override
                 public void run() {
 
-                    callLogItemModelList = RecentCallLogListUtil
+                    callLogItemModelList = new RecentCallLogListUtil()
                         .getRecentCallLogItemList(CallLog.Calls.MISSED_TYPE);
+
+                    for( CallLogItemModel model : callLogItemModelList) {
+                        LogUtil.d(TAG, model.toString());
+                    }
 
                     //更新UI页面
                     getActivity().runOnUiThread(new Runnable() {
