@@ -71,7 +71,8 @@ public class CallerLocQueryUtil {
         if (phoneNumber.startsWith("1")) {
             return cellPhoneNumberAreaQuery(phoneNumber);
         } else { //座机号码
-            return new String[]{TelephoneAreaCodeUtil.getTelephoneAreaByCode(phoneNumber), UNKOWN_OPERATOR};
+            return new String[]{TelephoneAreaCodeUtil
+                .getTelephoneAreaByPhoneNumber(phoneNumber), UNKOWN_OPERATOR};
         }
     }
 

@@ -4,13 +4,25 @@ package com.navigation_ui.utils;
  * Created by Yong on 2017/3/1.
  */
 
+import android.text.TextUtils;
+
 import java.util.HashMap;
 
 /**
  * 根据座机号码的区号查询其归属地。
  */
 public class TelephoneAreaCodeUtil {
+    static final String TAG = "TelephoneAreaCodeUtil";
+
     public static final HashMap<String, String> TELEPHONE_AREA_CODE = new HashMap<>();
+
+    //带区号的电话号码是10位或者11位
+    private static final int TELEPHONE_NUMBER_LENGTH_MIN = 10;
+    private static final int TELEPHONE_NUMBER_LENGTH_MAX = 11;
+
+    //区号是3位或者4位
+    private static final int MIN_CODE_LENGTH = 3;
+    private static final int MAX_CODE_LENGTH = 4;
 
     static {
         TELEPHONE_AREA_CODE.put("010", "北京");
@@ -18,8 +30,8 @@ public class TelephoneAreaCodeUtil {
         TELEPHONE_AREA_CODE.put("022", "天津");
         TELEPHONE_AREA_CODE.put("023", "重庆");
 
-        TELEPHONE_AREA_CODE.put("852", "香港");
-        TELEPHONE_AREA_CODE.put("853", "澳门");
+//        TELEPHONE_AREA_CODE.put("852", "香港");
+//        TELEPHONE_AREA_CODE.put("853", "澳门");
 
         TELEPHONE_AREA_CODE.put("0550", "安徽 滁州");
         TELEPHONE_AREA_CODE.put("0551", "安徽 合肥");
@@ -372,5 +384,19 @@ public class TelephoneAreaCodeUtil {
 
     public static String getTelephoneAreaByCode(String code) {
         return TELEPHONE_AREA_CODE.get(code);
+    }
+
+    public static String getTelephoneAreaByPhoneNumber(String phoneNumber) {
+        if (TextUtils.isEmpty(phoneNumber)) {
+            return null;
+        }
+
+        if (phoneNumber.length() == TELEPHONE_NUMBER_LENGTH_MIN) {
+            return getTelephoneAreaByCode(phoneNumber.substring(0, MIN_CODE_LENGTH));
+        } else if (phoneNumber.length() == TELEPHONE_NUMBER_LENGTH_MAX) {
+            return getTelephoneAreaByCode(phoneNumber.substring(0, MAX_CODE_LENGTH));
+        }
+
+        return null;
     }
 }

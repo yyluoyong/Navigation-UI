@@ -1,14 +1,10 @@
 package com.navigation_ui.database;
 
 import android.database.Cursor;
-import android.provider.CallLog;
-
 import com.navigation_ui.model.CallLogItemModel;
 import com.navigation_ui.utils.LogUtil;
 import com.raizlabs.android.dbflow.config.FlowManager;
-import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.database.AndroidDatabase;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -106,7 +102,6 @@ public class RecentCallLogListUtil {
                 String typeToStr = String.valueOf(type);
                 cursor = db
                     .rawQuery(RECENT_CALL_TYPE_SQL, new String[]{typeToStr, typeToStr, typeToStr});
-
             }
 
             if (cursor != null) {
