@@ -52,14 +52,14 @@ public class CallLogModelDBFlow extends BaseModel {
 
     /**
      * 电话号码的归属地
+     * 注：该属性并非一层不变，因此不存储到数据库中。
      */
-    @Column
     private String callerLoc;
 
     /**
      * 运营商
+     * 注：该属性并非一层不变，因此不存储到数据库中。
      */
-    @Column
     private String operator;
 
     public String getDateInMilliseconds() {

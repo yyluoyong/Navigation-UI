@@ -1,8 +1,10 @@
 package com.navigation_ui.database;
 
 import android.database.Cursor;
+import android.text.TextUtils;
+
 import com.navigation_ui.model.CallLogItemModel;
-import com.navigation_ui.utils.LogUtil;
+import com.navigation_ui.utils.CallerLocQueryUtil;
 import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.structure.database.AndroidDatabase;
 import java.util.ArrayList;
@@ -30,6 +32,9 @@ public class RecentCallLogListUtil {
     private int callCounts;            //通话次数
     private String operator;           //运营商
 
+    private static final String UNKOWN_AREA = "";
+    private static final String UNKOWN_OPERATOR = "";
+
     /**
      * 注意：以下数据与DBFlow使用的模型类CallLogModelDBFlow一致。
      */
@@ -45,12 +50,8 @@ public class RecentCallLogListUtil {
     private static final String DURATION_COLUMN_NAME = "duration";
     //数据库中通话类型列的列名
     private static final String TYPE_COLUMN_NAME = "callType";
-    //数据库中归属地列的列名
-    private static final String LOCATION_COLUMN_NAME = "callerLoc";
     //数据库中通话次数的列名
     private static final String CALL_COUNTS_COLUMN_NAME = "counts";
-    //数据库中运营商列的列名
-    private static final String OPERATOR_COLUMN_NAME = "operator";
 
 
     //查询每个联系人的最近一次通话的SQL语句
@@ -135,9 +136,16 @@ public class RecentCallLogListUtil {
         phoneNumber = cursor.getString(cursor.getColumnIndex(PHONE_NUMBER_COLUMN_NAME));
         duration = cursor.getString(cursor.getColumnIndex(DURATION_COLUMN_NAME));
         callType = cursor.getInt(cursor.getColumnIndex(TYPE_COLUMN_NAME));
-        callerLoc = cursor.getString(cursor.getColumnIndex(LOCATION_COLUMN_NAME));
         callCounts = cursor.getInt(cursor.getColumnIndex(CALL_COUNTS_COLUMN_NAME));
-        operator = cursor.getString(cursor.getColumnIndex(OPERATOR_COLUMN_NAME));
+
+        String[] areaAndOperator = CallerLocQueryUtil.callerLocQuery(phoneNumber);
+        callerLoc = areaAndOperator[0];
+        operator = areaAndOperator[1];
+
+        if (TextUtils.isEmpty(callerLoc)) {
+            callerLoc = UNKOWN_AREA;
+            operator = UNKOWN_OPERATOR;
+        }
     }
 
     /**

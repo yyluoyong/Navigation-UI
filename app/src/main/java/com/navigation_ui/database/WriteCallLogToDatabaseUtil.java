@@ -28,13 +28,8 @@ public class WriteCallLogToDatabaseUtil {
     private String dateInMilliseconds; //通话发生时间
     private String contactsName;       //联系人名字
     private String phoneNumber;        //电话号码
-    private String callerLoc;          //通话时长
     private int callType;              //类型
-    private String duration;           //号码归属地
-    private String operator;           //运营商
-
-    private static final String UNKOWN_AREA = "";
-    private static final String UNKOWN_OPERATOR = "";
+    private String duration;           //通话时长
 
     private List<CallLogModelDBFlow> callLogModelDBFlowList = new ArrayList<>();
 
@@ -118,15 +113,6 @@ public class WriteCallLogToDatabaseUtil {
         duration = cursor.getString(cursor.getColumnIndex(CallLog.Calls.DURATION));
         callType = cursor.getInt(cursor.getColumnIndex(CallLog.Calls.TYPE));
 
-        String[] areaAndOperator = CallerLocQueryUtil.callerLocQuery(phoneNumber);
-        callerLoc = areaAndOperator[0];
-        operator = areaAndOperator[1];
-
-        if (TextUtils.isEmpty(callerLoc)) {
-            callerLoc = UNKOWN_AREA;
-            operator = UNKOWN_OPERATOR;
-        }
-
         //记录不存在
         return false;
     }
@@ -151,8 +137,6 @@ public class WriteCallLogToDatabaseUtil {
         callLogModelDBFlow.setPhoneNumber(phoneNumber);
         callLogModelDBFlow.setDuration(duration);
         callLogModelDBFlow.setCallType(callType);
-        callLogModelDBFlow.setCallerLoc(callerLoc);
-        callLogModelDBFlow.setOperator(operator);
 
         callLogModelDBFlowList.add(callLogModelDBFlow);
     }
