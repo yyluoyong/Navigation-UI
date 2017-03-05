@@ -137,26 +137,34 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
         CallLogItemModel callLogItem = mCallLogList.get(mPosition);
 
-        //联系人为空，数据库将其设置成了电话号码。
+        //设置联系人头像
+        setContactsImage(((CallLogItemViewHolder) holder), callLogItem.getContactsName());
+
+        //通话次数信息
+        String countsString = "";
+        if (callLogItem.getCallCounts() != 1) {
+            String callCountsMessage = MyApplication.getContext().getString(R.string.callCountsMessage);
+            countsString = String.format(callCountsMessage, callLogItem.getCallCounts());
+        }
+
+        //电话号码信息
+        String phoneNumberString = "";
         if (callLogItem.getPhoneNumber().equals(callLogItem.getContactsName())) {
             ((CallLogItemViewHolder) holder).contactsNameTV.setText(callLogItem.getPhoneNumberFormat());
-            ((CallLogItemViewHolder) holder).phoneNumberTV.setText("");
         } else {
             ((CallLogItemViewHolder) holder).contactsNameTV.setText(callLogItem.getContactsName());
-            ((CallLogItemViewHolder) holder).phoneNumberTV.setText(callLogItem.getPhoneNumberFormat());
+            phoneNumberString = callLogItem.getPhoneNumberFormat();
         }
 
-        ((CallLogItemViewHolder) holder).callDateTV.setText(callLogItem.getDateFormat());
+        String countsPhoneNumberAreaOperatorText = MyApplication.getContext()
+            .getString(R.string.countsPhoneNumberAreaOperatorText);
 
-        if (callLogItem.getCallCounts() == 1) {
-            ((CallLogItemViewHolder) holder).callCountsTV.setText("");
-        } else {
-            String callCountsMessage = MyApplication.getContext().getString(R.string.callCountsMessage);
-            ((CallLogItemViewHolder) holder).callCountsTV
-                .setText(String.format(callCountsMessage, callLogItem.getCallCounts()));
-        }
+        String formatString = String.format(countsPhoneNumberAreaOperatorText,
+            countsString, phoneNumberString, callLogItem.getCallerLoc(), callLogItem.getOperator());
 
+        ((CallLogItemViewHolder) holder).callCountsTV.setText(formatString.trim());
 
+        //设置箭头标志
         if (callLogItem.getCallType() == CallLog.Calls.OUTGOING_TYPE) {
             ((CallLogItemViewHolder) holder).callTypeImage
                 .setImageResource(R.drawable.ic_call_made);
@@ -168,10 +176,8 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
                 .setImageResource(R.drawable.ic_call_missed);
         }
 
-        ((CallLogItemViewHolder) holder).callerLocTV.setText(callLogItem.getCallerLoc());
-        ((CallLogItemViewHolder) holder).operatorTV.setText(callLogItem.getOperator());
-
-        setContactsImage(((CallLogItemViewHolder) holder), callLogItem.getContactsName());
+        //设置通话时间
+        ((CallLogItemViewHolder) holder).callDateTV.setText(callLogItem.getDateFormat());
     }
 
     /**
