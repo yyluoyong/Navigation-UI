@@ -7,6 +7,8 @@ import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.navigation_ui.utils.LogUtil;
+
 /**
  * Created by Yong on 2017/2/13.
  */
@@ -16,6 +18,7 @@ import android.view.View;
  * 动画效果为：隐藏和复现。
  */
 public class ScrollAwareFABBehaviorDefault extends FloatingActionButton.Behavior{
+    static final String TAG = "ScrollAwareFABBehaviorDefault";
 
     public ScrollAwareFABBehaviorDefault(Context context, AttributeSet attrs) {
         super();
@@ -45,6 +48,8 @@ public class ScrollAwareFABBehaviorDefault extends FloatingActionButton.Behavior
 
         super.onNestedScroll(coordinatorLayout, child, target,
                 dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
+
+        LogUtil.d(TAG, "dyConsumed = " + dyConsumed);
 
         if (dyConsumed > 0 && child.getVisibility() == View.VISIBLE) {
             // User scrolled down and the FAB is currently visible -> hide the FAB
