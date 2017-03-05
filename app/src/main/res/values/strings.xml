@@ -19,7 +19,7 @@
     <string name="CallerLocationDatabaseTableColumnArea">area</string>
     <string name="CallerLocationDatabaseTableColumnOperator">operator</string>
     <string name="UnkownOperator"></string>
-    <string name="UnkownArea"></string>
+    <string name="UnkownArea">未知归属地</string>
     <!--手机号码归属地数据库信息-->
 
     <string name="dialog_ok">确认</string>
