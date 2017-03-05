@@ -74,6 +74,6 @@
     <string name="callMissed">未接</string>
     <string name="callOutFailed">未接通</string>
     <string name="callCountsMessage">(%1$d)</string>
-    <string name="countsPhoneNumberAreaOperatorText">%1$s%2$s %3$s %4$s</string>
+    <string name="countsPhoneNumberAreaOperatorText">%1$s%2$s  %3$s  %4$s</string>
     <!--电话接通时间信息-->
 </resources>

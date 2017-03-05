@@ -138,7 +138,7 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         CallLogItemModel callLogItem = mCallLogList.get(mPosition);
 
         //设置联系人头像
-        setContactsImage(((CallLogItemViewHolder) holder), callLogItem.getContactsName());
+        setContactsImage(((CallLogItemViewHolder) holder), callLogItem);
 
         //通话次数信息
         String countsString = "";
@@ -183,9 +183,11 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
     /**
      * 设置联系人头像：背景色和字符
      * @param holder
-     * @param name
+     * @param callLogItemModel
      */
-    private void setContactsImage(CallLogItemViewHolder holder, String name) {
+    private void setContactsImage(CallLogItemViewHolder holder, CallLogItemModel callLogItemModel) {
+
+        String name = callLogItemModel.getContactsName();
 
         char firstChar = name.charAt(0);
 
@@ -197,8 +199,7 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         } else {
             holder.contactsImageText.setText(String.valueOf(firstChar));
 
-            String phoneNumberStr = holder.phoneNumberTV.getText().toString()
-                .replace(PhoneNumberFormatter.DELIMITER, "");
+            String phoneNumberStr = callLogItemModel.getPhoneNumber();
 
             //截取电话号码后两位，通过计算余数来设定头像
             int cutLength = 2;
