@@ -3,6 +3,8 @@ package com.navigation_ui.database;
 import android.database.Cursor;
 import android.text.TextUtils;
 
+import com.navigation_ui.MyApplication;
+import com.navigation_ui.R;
 import com.navigation_ui.model.CallLogItemModel;
 import com.navigation_ui.utils.CallerLocQueryUtil;
 import com.raizlabs.android.dbflow.config.FlowManager;
@@ -32,26 +34,35 @@ public class RecentCallLogListUtil {
     private int callCounts;            //通话次数
     private String operator;           //运营商
 
-    private static final String UNKOWN_AREA = "";
-    private static final String UNKOWN_OPERATOR = "";
+    private static final String UNKOWN_AREA = MyApplication.getContext()
+        .getString(R.string.UnkownArea);
+    private static final String UNKOWN_OPERATOR = MyApplication.getContext()
+        .getString(R.string.UnkownOperator);
 
     /**
      * 注意：以下数据与DBFlow使用的模型类CallLogModelDBFlow一致。
      */
     //数据库表名
-    private static final String DATABASE_TABLE_NAME = "CallLogModelDBFlow";
+    private static final String DATABASE_TABLE_NAME = MyApplication.getContext()
+        .getString(R.string.CallLogDatabaseTable);
     //数据库中通话时间列的列名
-    private static final String TIME_COLUMN_NAME = "dateInMilliseconds";
+    private static final String TIME_COLUMN_NAME = MyApplication.getContext()
+        .getString(R.string.CallLogDatabaseTableColumnTime);
     //数据库中联系人列的列名
-    private static final String CONTACTS_NAME_COLUMN_NAME = "contactsName";
+    private static final String CONTACTS_NAME_COLUMN_NAME = MyApplication.getContext()
+        .getString(R.string.CallLogDatabaseTableColumnContactsName);
     //数据库中电话号码列的列名
-    private static final String PHONE_NUMBER_COLUMN_NAME = "phoneNumber";
+    private static final String PHONE_NUMBER_COLUMN_NAME = MyApplication.getContext()
+        .getString(R.string.CallLogDatabaseTableColumnPhoneNumber);
     //数据库中通话时长列的列名
-    private static final String DURATION_COLUMN_NAME = "duration";
+    private static final String DURATION_COLUMN_NAME = MyApplication.getContext()
+        .getString(R.string.CallLogDatabaseTableColumnDuration);
     //数据库中通话类型列的列名
-    private static final String TYPE_COLUMN_NAME = "callType";
+    private static final String TYPE_COLUMN_NAME = MyApplication.getContext()
+        .getString(R.string.CallLogDatabaseTableColumnCallType);
     //数据库中通话次数的列名
-    private static final String CALL_COUNTS_COLUMN_NAME = "counts";
+    private static final String CALL_COUNTS_COLUMN_NAME = MyApplication.getContext()
+        .getString(R.string.CallLogDatabaseTableColumnCounts);
 
 
     //查询每个联系人的最近一次通话的SQL语句

@@ -6,6 +6,7 @@ import android.os.Environment;
 import android.text.TextUtils;
 
 import com.navigation_ui.MyApplication;
+import com.navigation_ui.R;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -23,7 +24,8 @@ public class CallerLocQueryUtil {
     static final String TAG = "CallerLocQuery";
 
     //归属地数据库名字。
-    private static final String DB_NAME = "phone_number_attribution.db";
+    private static final String DB_NAME = MyApplication.getContext()
+        .getString(R.string.CallerLocationDatabaseName);
     //APP包名
     private static final String PACKAGE_NAME = MyApplication.getContext().getPackageName();
     //数据库路径
@@ -33,18 +35,23 @@ public class CallerLocQueryUtil {
     private static final String DB_NAME_ABS = DB_PATH + "/" + DB_NAME;
 
     //手机号码归属地数据库的表名
-    private static final String CELLPHONE_AREA_DB_TABLE = "cellphone_loc";
+    private static final String CELLPHONE_AREA_DB_TABLE = MyApplication.getContext()
+        .getString(R.string.CallerLocationDatabaseTable);
     //手机号码归属地数据库表的列名：手机号前缀
-    private static final String CELLPHONE_AREA_DB_TABLE_COLUMN_NUMBER = "number";
+    private static final String CELLPHONE_AREA_DB_TABLE_COLUMN_NUMBER = MyApplication.getContext()
+        .getString(R.string.CallerLocationDatabaseTableColumnNumber);
     //手机号码归属地数据库表的列名：归属地
-    private static final String CELLPHONE_AREA_DB_TABLE_COLUMN_AREA = "area";
+    private static final String CELLPHONE_AREA_DB_TABLE_COLUMN_AREA = MyApplication.getContext()
+        .getString(R.string.CallerLocationDatabaseTableColumnArea);
     //手机号码归属地数据库表的列名：运营商
-    private static final String CELLPHONE_AREA_DB_TABLE_COLUMN_OPERATOR = "operator";
+    private static final String CELLPHONE_AREA_DB_TABLE_COLUMN_OPERATOR = MyApplication.getContext()
+        .getString(R.string.CallerLocationDatabaseTableColumnOperator);
 
     //手机号码数据库号码长度
     private static final int DB_CELLPHONE_NUMBER_LEN = 7;
 
-    private static final String UNKOWN_OPERATOR = "";
+    private static final String UNKOWN_OPERATOR = MyApplication.getContext()
+        .getString(R.string.UnkownOperator);
 
     private static final SQLiteDatabase CELLPHONE_AREA_DB = getDataBase();
 

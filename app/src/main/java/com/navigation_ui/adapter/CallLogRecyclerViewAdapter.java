@@ -15,6 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.navigation_ui.MyApplication;
 import com.navigation_ui.R;
 import com.navigation_ui.activity.CallLogDetailActivity;
 import com.navigation_ui.model.CallLogItemModel;
@@ -138,15 +140,22 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         //联系人为空，数据库将其设置成了电话号码。
         if (callLogItem.getPhoneNumber().equals(callLogItem.getContactsName())) {
             ((CallLogItemViewHolder) holder).contactsNameTV.setText(callLogItem.getPhoneNumberFormat());
+            ((CallLogItemViewHolder) holder).phoneNumberTV.setText("");
         } else {
             ((CallLogItemViewHolder) holder).contactsNameTV.setText(callLogItem.getContactsName());
+            ((CallLogItemViewHolder) holder).phoneNumberTV.setText(callLogItem.getPhoneNumberFormat());
         }
-
-        ((CallLogItemViewHolder) holder).phoneNumberTV.setText(callLogItem.getPhoneNumberFormat());
 
         ((CallLogItemViewHolder) holder).callDateTV.setText(callLogItem.getDateFormat());
 
-        ((CallLogItemViewHolder) holder).callCountsTV.setText("("+callLogItem.getCallCounts()+")");
+        if (callLogItem.getCallCounts() == 1) {
+            ((CallLogItemViewHolder) holder).callCountsTV.setText("");
+        } else {
+            String callCountsMessage = MyApplication.getContext().getString(R.string.callCountsMessage);
+            ((CallLogItemViewHolder) holder).callCountsTV
+                .setText(String.format(callCountsMessage, callLogItem.getCallCounts()));
+        }
+
 
         if (callLogItem.getCallType() == CallLog.Calls.OUTGOING_TYPE) {
             ((CallLogItemViewHolder) holder).callTypeImage
