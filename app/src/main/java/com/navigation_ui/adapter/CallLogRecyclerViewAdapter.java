@@ -19,6 +19,8 @@ import android.widget.TextView;
 import com.navigation_ui.MyApplication;
 import com.navigation_ui.R;
 import com.navigation_ui.activity.CallLogDetailActivity;
+import com.navigation_ui.constant.ViewPagerPosition;
+import com.navigation_ui.fragment.view.pager.CallLogFragment;
 import com.navigation_ui.model.CallLogItemModel;
 import com.navigation_ui.utils.LogUtil;
 import com.navigation_ui.utils.MaterialDesignColor;
@@ -36,7 +38,10 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
     private String TAG = "CallLogRecyclerViewAdapter";
 
+    private Context mContext;
     private List<CallLogItemModel> mCallLogList;
+    //在ViewPager中的位置
+    private int mPosition;
 
     //对应空白item类型
     private static final int VIEW_TYPE_BLANK = 0;
@@ -46,11 +51,11 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
     //空白item数目
     private static final int COUNT_BLACK_ITEM = 1;
 
-    private Context mContext;
 
-    public CallLogRecyclerViewAdapter(Context context, List<CallLogItemModel> callLogList) {
+    public CallLogRecyclerViewAdapter(Context context, List<CallLogItemModel> callLogList, int position) {
         mContext = context;
         mCallLogList = callLogList;
+        mPosition = position;
     }
 
     @Override
@@ -76,7 +81,7 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startDetailActivity(holder.contactsNameTV.getText().toString());
+                    startDetailActivity(holder.contactsName, holder.phoneNumber);
                 }
             }
         );
@@ -116,7 +121,7 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startDetailActivity(holder.contactsNameTV.getText().toString());
+                    startDetailActivity(holder.contactsName, holder.phoneNumber);
                 }
             }
         );
@@ -137,6 +142,7 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         CallLogItemModel callLogItem = mCallLogList.get(mPosition);
 
         ((CallLogItemViewHolder) holder).setPhoneNumber(callLogItem.getPhoneNumber());
+        ((CallLogItemViewHolder) holder).setContactsName(callLogItem.getContactsName());
 
         //设置联系人头像
         setContactsImage(((CallLogItemViewHolder) holder), callLogItem);
@@ -249,10 +255,11 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
      * 打开通话详情页面的Activity
      * @param contactsName
      */
-    private void startDetailActivity(@NonNull String contactsName) {
+    private void startDetailActivity(@NonNull String contactsName, @NonNull String phoneNumber) {
         Intent intent = new Intent(mContext, CallLogDetailActivity.class);
         intent.putExtra(CallLogDetailActivity.CONTACTS_NAME, contactsName);
-        intent.putExtra(CallLogDetailActivity.CALL_TYPE, CallLogDetailActivity.CALL_ALL);
+        intent.putExtra(CallLogDetailActivity.PHONE_NUMBER, phoneNumber);
+        intent.putExtra(ViewPagerPosition.POSITION, mPosition);
         mContext.startActivity(intent);
     }
 
@@ -283,6 +290,7 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         TextView callDateTV;         //通话发生时间
         ImageView callTypeImage;     //通话类型对应的图片
 
+        String contactsName;
         String phoneNumber;
 
         public CallLogItemViewHolder(View view) {
@@ -295,6 +303,10 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             countsNumberAreaOperator = (TextView) view.findViewById(R.id.counts_number_area_operator);
             callDateTV     = (TextView) view.findViewById(R.id.call_date);
             callTypeImage  = (ImageView) view.findViewById(R.id.call_type_image);
+        }
+
+        public void setContactsName(String name) {
+            contactsName = name;
         }
 
         public void setPhoneNumber(String number) {

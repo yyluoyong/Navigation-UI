@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.navigation_ui.R;
 import com.navigation_ui.adapter.CallLogRecyclerViewAdapter;
+import com.navigation_ui.constant.ViewPagerPosition;
 import com.navigation_ui.database.RecentCallLogListUtil;
 import com.navigation_ui.model.CallLogItemModel;
 import com.navigation_ui.utils.LogUtil;
@@ -30,16 +31,6 @@ public class CallLogFragment extends Fragment implements Observer {
 
     private List<CallLogItemModel> callLogItemModelList = new ArrayList<>();
 
-    public static final String POSITION = "POSITION";
-    //所有通话
-    private static final int POSITION_ALL = 0;
-    //来电
-    private static final int POSITION_RECEIVED = 1;
-    //去电
-    private static final int POSITION_MADE = 2;
-    //未接
-    private static final int POSITION_MISSED = 3;
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,7 +46,9 @@ public class CallLogFragment extends Fragment implements Observer {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(layoutManager);
 
-        mRecyclerViewAdapter = new CallLogRecyclerViewAdapter(getContext(), callLogItemModelList);
+        int mPosition = getArguments().getInt(ViewPagerPosition.POSITION, ViewPagerPosition.POSITION_ALL_TYPE);
+        mRecyclerViewAdapter = new CallLogRecyclerViewAdapter(getContext(),
+            callLogItemModelList, mPosition);
         mRecyclerView.setAdapter(mRecyclerViewAdapter);
 
         //将自己注册为观察者
@@ -88,10 +81,10 @@ public class CallLogFragment extends Fragment implements Observer {
         final ProgressDialog pgDialog = createProgressDialog(null, getString(R.string.readDatabaseIng));
         pgDialog.show();
 
-        int mPosition = getArguments().getInt(POSITION, POSITION_ALL);
+        int mPosition = getArguments().getInt(ViewPagerPosition.POSITION, ViewPagerPosition.POSITION_ALL_TYPE);
 
         //所有通话
-        if (mPosition == POSITION_ALL) {
+        if (mPosition == ViewPagerPosition.POSITION_ALL_TYPE) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -115,7 +108,7 @@ public class CallLogFragment extends Fragment implements Observer {
         }
 
         //来电
-        if (mPosition == POSITION_RECEIVED) {
+        if (mPosition == ViewPagerPosition.POSITION_INCOMING_TYPE) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -139,7 +132,7 @@ public class CallLogFragment extends Fragment implements Observer {
         }
 
         //去电
-        if (mPosition == POSITION_MADE) {
+        if (mPosition == ViewPagerPosition.POSITION_OUTGOING_TYPE) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -163,17 +156,13 @@ public class CallLogFragment extends Fragment implements Observer {
         }
 
         //未接
-        if (mPosition == POSITION_MISSED) {
+        if (mPosition == ViewPagerPosition.POSITION_MISSED_TYPE) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
 
                     callLogItemModelList = new RecentCallLogListUtil()
                         .getRecentCallLogItemList(CallLog.Calls.MISSED_TYPE);
-
-                    for( CallLogItemModel model : callLogItemModelList) {
-                        LogUtil.d(TAG, model.toString());
-                    }
 
                     //更新UI页面
                     getActivity().runOnUiThread(new Runnable() {
@@ -196,7 +185,7 @@ public class CallLogFragment extends Fragment implements Observer {
      */
     private void initCallLogs() {
         //undo:从数据库读取数据
-        LogUtil.d(TAG, "position " + getArguments().getInt(POSITION, POSITION_ALL));
+//        LogUtil.d(TAG, "position " + getArguments().getInt(POSITION, POSITION_ALL));
     }
 
     /**

@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import com.navigation_ui.R;
+import com.navigation_ui.constant.ViewPagerPosition;
 import com.navigation_ui.database.CallLogDatabase;
 import com.navigation_ui.fragment.view.pager.CallLogFragment;
 import com.navigation_ui.utils.LogUtil;
@@ -54,7 +55,7 @@ public class MainViewPagerAdapter extends FragmentPagerAdapter {
         CallLogFragment callLogFragment = new CallLogFragment();
 
         Bundle bundle = new Bundle();
-        bundle.putInt(CallLogFragment.POSITION, position);
+        bundle.putInt(ViewPagerPosition.POSITION, position);
         callLogFragment.setArguments(bundle);
 
         return callLogFragment;

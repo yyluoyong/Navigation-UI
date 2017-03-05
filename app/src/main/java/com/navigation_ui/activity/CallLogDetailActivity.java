@@ -10,37 +10,44 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+
+import com.navigation_ui.MyApplication;
 import com.navigation_ui.R;
 import com.navigation_ui.adapter.CallLogDetailRecyclerViewAdapter;
 import com.navigation_ui.adapter.CallLogDetailRecyclerViewAdapter.PhoneNumberItemModel;
-import com.navigation_ui.model.CallLogItemModel;
+import com.navigation_ui.constant.ViewPagerPosition;
+import com.navigation_ui.database.CallLogModelDBFlow;
+import com.navigation_ui.database.CallLogModelDBFlow_Table;
+import com.navigation_ui.utils.LogUtil;
 import com.navigation_ui.utils.PermissionUtil;
+import com.navigation_ui.utils.PhoneNumberFormatter;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CallLogDetailActivity extends AppCompatActivity {
+    static final String TAG = "CallLogDetailActivity";
 
     //联系人的姓名
-    public static final String CONTACTS_NAME = "contacts_name";
-    //去电
-    public static final String CALL_MADE = "call_made";
-    //来电
-    public static final String CALL_RECEIVED = "call_received";
-    //未接
-    public static final String CALL_MISSED = "call_missed";
-    //所有类型
-    public static final String CALL_ALL = "call_all";
-    //要展示的类型
-    public static final String CALL_TYPE = CALL_ALL;
+    public static final String CONTACTS_NAME = "CONTACTS_NAME";
+    //电话号码
+    public static final String PHONE_NUMBER = "PHONE_NUMBER";
 
     private RecyclerView mRecyclerView;
     private CallLogDetailRecyclerViewAdapter mRecyclerViewAdapter;
 
     //通话记录item列表
-    private List<CallLogItemModel> mCallLogItemModelList = new ArrayList<>();
+    private List<CallLogModelDBFlow> mCallLogModelDBFlowList = new ArrayList<>();
     //电话号码item列表
     private List<PhoneNumberItemModel> mPhoneNumberItemList = new ArrayList<>();
+
+    //该页面要展示的联系人的姓名
+    private String mContactsName;
+    //该页面对应的最近一次通话的电话号码
+    private String mPhoneNumber;
+    //该页面从ViewPager哪一页触发启动
+    private int mPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,13 +60,18 @@ public class CallLogDetailActivity extends AppCompatActivity {
         AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
 
         Intent intent = getIntent();
-        String contactsName = intent.getStringExtra(CONTACTS_NAME);
-        String callType = intent.getStringExtra(CALL_TYPE);
+        mContactsName = intent.getStringExtra(CONTACTS_NAME);
+        mPhoneNumber = intent.getStringExtra(PHONE_NUMBER);
+        mPosition = intent.getIntExtra(ViewPagerPosition.POSITION, ViewPagerPosition.POSITION_ALL_TYPE);
 
         CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout)
             findViewById(R.id.toolbar_layout);
-        collapsingToolbar.setTitle(contactsName);
-//        collapsingToolbar.setContentScrimColor(MaterialDesignColor.MDAmber);
+
+        if (mContactsName.equals(mPhoneNumber)) {
+            collapsingToolbar.setTitle(PhoneNumberFormatter.phoneNumberFormat(mPhoneNumber));
+        } else {
+            collapsingToolbar.setTitle(mContactsName);
+        }
 
         mRecyclerView = (RecyclerView) findViewById(R.id.detail_recyclerview);
         LinearLayoutManager layoutManager = new LinearLayoutManager(CallLogDetailActivity.this);
@@ -67,7 +79,7 @@ public class CallLogDetailActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(layoutManager);
 
         mRecyclerViewAdapter = new CallLogDetailRecyclerViewAdapter(CallLogDetailActivity.this,
-            mPhoneNumberItemList, mCallLogItemModelList);
+            mPhoneNumberItemList, mCallLogModelDBFlowList);
         mRecyclerView.setAdapter(mRecyclerViewAdapter);
 
         //初始化数据
@@ -79,43 +91,21 @@ public class CallLogDetailActivity extends AppCompatActivity {
      */
     private void initCallLogs() {
 
-        final ProgressDialog pgDialog = createProgressDialog(null, "正在读取，请稍后...");
+        final ProgressDialog pgDialog = createProgressDialog(null,
+            MyApplication.getContext().getString(R.string.readDatabaseIng));
         pgDialog.show();
 
         new Thread(new Runnable() {
             @Override
             public void run() {
-                //undo：展示读取耗时操作
-                try {
-                    Thread.sleep(200);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                for (int i = 0; i < 10; i++) {
-                    CallLogItemModel callLogItemModel = new CallLogItemModel();
-                    callLogItemModel.setContactsName("张三");
-                    callLogItemModel.setPhoneNumber("13012341234");
-                    callLogItemModel.setDateInMilliseconds("1485602523885");
-                    callLogItemModel.setCallCounts(5);
-                    callLogItemModel.setDuration("135");
-                    callLogItemModel.setCallType(2);
-                    callLogItemModel.setCallerLoc("四川省绵阳市");
-
-                    mCallLogItemModelList.add(callLogItemModel);
-                }
-
-                mPhoneNumberItemList.add(new PhoneNumberItemModel("15676399228", "广西桂林", "联通"));
-                mPhoneNumberItemList.add(new PhoneNumberItemModel("18989275996", "四川绵阳", "电信"));
-                mPhoneNumberItemList.add(new PhoneNumberItemModel("2345897", "未知归属地", "未知运营商"));
-                mPhoneNumberItemList.add(new PhoneNumberItemModel("08162345897", "四川绵阳", "未知运营商"));
+                getCallModelList(mContactsName, mPosition);
 
                 //更新UI页面
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         mRecyclerViewAdapter.setPhoneNumberList(mPhoneNumberItemList);
-                        mRecyclerViewAdapter.setCallLogList(mCallLogItemModelList);
+                        mRecyclerViewAdapter.setCallLogList(mCallLogModelDBFlowList);
                         mRecyclerViewAdapter.notifyDataSetChanged();
 
                         pgDialog.dismiss();
@@ -123,6 +113,23 @@ public class CallLogDetailActivity extends AppCompatActivity {
                 });
             }
         }).start();
+    }
+
+    private void getCallModelList(String name, int type) {
+        if (type == ViewPagerPosition.POSITION_ALL_TYPE) {
+            mCallLogModelDBFlowList = SQLite.select().from(CallLogModelDBFlow.class)
+                .where(CallLogModelDBFlow_Table.contactsName.eq(name))
+                .queryList();
+        } else {
+            mCallLogModelDBFlowList = SQLite.select().from(CallLogModelDBFlow.class)
+                .where(CallLogModelDBFlow_Table.contactsName.eq(name))
+                .and(CallLogModelDBFlow_Table.callType.eq(type))
+                .queryList();
+        }
+
+        for (CallLogModelDBFlow model : mCallLogModelDBFlowList) {
+            LogUtil.d(TAG, model.toString());
+        }
     }
 
     /**

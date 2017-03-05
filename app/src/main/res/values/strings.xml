@@ -69,8 +69,9 @@
     <!--日期格式-->
 
     <!--电话接通信息-->
-    <string name="callInDuration">呼入 %1$s</string>
-    <string name="callOutDuration">呼出 %1$s</string>
+    <string name="callInStringName">呼入</string>
+    <string name="callOutStringName">呼出</string>
+    <string name="callDuration">%1$s %2$s</string>
     <string name="callMissed">未接</string>
     <string name="callOutFailed">未接通</string>
     <string name="callCountsMessage">(%1$d)</string>

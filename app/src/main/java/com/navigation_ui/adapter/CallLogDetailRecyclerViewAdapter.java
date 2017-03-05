@@ -12,8 +12,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.navigation_ui.MyApplication;
 import com.navigation_ui.R;
+import com.navigation_ui.database.CallLogModelDBFlow;
 import com.navigation_ui.model.CallLogItemModel;
+import com.navigation_ui.utils.CallDateFormatter;
+import com.navigation_ui.utils.CallDurationFormatter;
 import com.navigation_ui.utils.PermissionUtil;
 import com.navigation_ui.utils.PhoneNumberFormatter;
 
@@ -40,14 +45,14 @@ public class CallLogDetailRecyclerViewAdapter extends
     //电话号码列表
     private List<PhoneNumberItemModel> mPhoneNumberList;
     //通话记录列表
-    private List<CallLogItemModel> mCallLogList;
+    private List<CallLogModelDBFlow> mCallLogList;
     //字符item数目
     private static final int COUNT_STRING_ITEM = 1;
 
-    private static final String CALL_MADE_STRING = "呼出";
-    private static final String CALL_MISSED_STRING = "未接";
-    private static final String CALL_RECEIVED_STRING = "呼入";
-    private static final String CALL_MADE_FAILED_STRING = "未接通";
+    private static final String CALL_MADE_IN = MyApplication.getContext().getString(R.string.callInStringName);
+    private static final String CALL_MADE_OUT = MyApplication.getContext().getString(R.string.callOutStringName);
+    private static final String CALL_MISSED_STRING = MyApplication.getContext().getString(R.string.callMissed);
+    private static final String CALL_MADE_FAILED_STRING = MyApplication.getContext().getString(R.string.callOutFailed);
 
     /**
      * 电话条目数据的Bean
@@ -100,12 +105,10 @@ public class CallLogDetailRecyclerViewAdapter extends
     }
 
     public CallLogDetailRecyclerViewAdapter(Context context,
-        List<PhoneNumberItemModel> phoneNumberList, List<CallLogItemModel> callLogList) {
+        List<PhoneNumberItemModel> phoneNumberList, List<CallLogModelDBFlow> callLogList) {
 
         mContext = context;
-
         mCallLogList = callLogList;
-
         mPhoneNumberList = phoneNumberList;
     }
 
@@ -196,21 +199,28 @@ public class CallLogDetailRecyclerViewAdapter extends
         //除去电话列表的长度和一个字符项
         int mPosition = position - mPhoneNumberList.size() - COUNT_STRING_ITEM;
 
-        CallLogItemModel callLogItem = mCallLogList.get(mPosition);
+        CallLogModelDBFlow callLogItem = mCallLogList.get(mPosition);
 
-        ((DetailItemViewHolder) holder).phoneNumberTV.setText(callLogItem.getPhoneNumberFormat());
+        ((DetailItemViewHolder) holder).phoneNumberTV
+            .setText(PhoneNumberFormatter.phoneNumberFormat(callLogItem.getPhoneNumber()));
 
-        ((DetailItemViewHolder) holder).callDateTV.setText(callLogItem.getDateFormat());
+        ((DetailItemViewHolder) holder).callDateTV
+            .setText(CallDateFormatter.format(callLogItem.getDateInMilliseconds()));
 
-        StringBuilder durationStr = new StringBuilder();
+        String durationString = "";
+
         if (callLogItem.getCallType() == CallLog.Calls.INCOMING_TYPE) {
             ((DetailItemViewHolder) holder).callTypeImage
-                .setImageResource(R.drawable.ic_call_made);
-            durationStr.append(CALL_MADE_STRING + " ");
+                .setImageResource(R.drawable.ic_call_received);
+
+            durationString = String.format(MyApplication.getContext().getString(R.string.callDuration),
+                CALL_MADE_IN, CallDurationFormatter.format(callLogItem.getDuration()));
         } else if (callLogItem.getCallType() == CallLog.Calls.OUTGOING_TYPE) {
             ((DetailItemViewHolder) holder).callTypeImage
-                .setImageResource(R.drawable.ic_call_received);
-            durationStr.append(CALL_RECEIVED_STRING + " ");
+                .setImageResource(R.drawable.ic_call_made);
+
+            durationString = String.format(MyApplication.getContext().getString(R.string.callDuration),
+                CALL_MADE_OUT, CallDurationFormatter.format(callLogItem.getDuration()));
         } else {
             ((DetailItemViewHolder) holder).callTypeImage
                 .setImageResource(R.drawable.ic_call_missed);
@@ -225,10 +235,8 @@ public class CallLogDetailRecyclerViewAdapter extends
                 ((DetailItemViewHolder) holder).callDurationTV.setText(CALL_MISSED_STRING);
             }
         } else {
-            durationStr.append(callLogItem.getDurationFormat());
-            ((DetailItemViewHolder) holder).callDurationTV.setText(durationStr.toString());
+            ((DetailItemViewHolder) holder).callDurationTV.setText(durationString);
         }
-
     }
 
     /**
@@ -262,7 +270,7 @@ public class CallLogDetailRecyclerViewAdapter extends
         this.mPhoneNumberList = mPhoneNumberList;
     }
 
-    public void setCallLogList(List<CallLogItemModel> mCallLogList) {
+    public void setCallLogList(List<CallLogModelDBFlow> mCallLogList) {
         this.mCallLogList = mCallLogList;
     }
 

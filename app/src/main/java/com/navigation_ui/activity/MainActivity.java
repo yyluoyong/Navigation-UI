@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 //让ViewPager中的Fragment更新数据
-                UpdateFragmentObservable.getInstance().notifyFragmentUpdate();
+                updateCallLogDatabase();
             }
         });
     }
@@ -127,8 +127,6 @@ public class MainActivity extends AppCompatActivity
 
         //设置页面缓存数量，防止重新加载
         mViewPager.setOffscreenPageLimit(getResources().getInteger(R.integer.TAB_COUNTS));
-
-        //Listener
     }
 
     //初始化TabLayout
@@ -186,11 +184,8 @@ public class MainActivity extends AppCompatActivity
             Toast.makeText(MainActivity.this, "点击'复制DB'按钮，功能待完善",
                 Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_export) {
-//            Toast.makeText(MainActivity.this, "点击'导出DB'按钮，功能待完善",
-//                Toast.LENGTH_SHORT).show();
-            Toast.makeText(MainActivity.this,
-                String.format(getString(R.string.newRecordMessage), 100),
-                Toast.LENGTH_LONG).show();
+            Toast.makeText(MainActivity.this, "点击'导出DB'按钮，功能待完善",
+                Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_delete) {
             setClearDababaseTableListener();
         }
