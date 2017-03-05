@@ -88,6 +88,7 @@ public class MainActivity extends AppCompatActivity
     //初始化工具栏
     private void createToolbar() {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar.setTitle(getString(R.string.toolbar_title));
         setSupportActionBar(mToolbar);
     }
 
