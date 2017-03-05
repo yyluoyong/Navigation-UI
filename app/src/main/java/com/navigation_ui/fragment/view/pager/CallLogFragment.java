@@ -85,7 +85,7 @@ public class CallLogFragment extends Fragment implements Observer {
     public void update(Observable o, Object arg) {
         callLogItemModelList.clear();
 
-        final ProgressDialog pgDialog = createProgressDialog(null, "正在读取，请稍后...");
+        final ProgressDialog pgDialog = createProgressDialog(null, getString(R.string.readDatabaseIng));
         pgDialog.show();
 
         int mPosition = getArguments().getInt(POSITION, POSITION_ALL);

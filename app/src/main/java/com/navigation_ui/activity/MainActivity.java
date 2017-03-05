@@ -2,6 +2,7 @@ package com.navigation_ui.activity;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -12,6 +13,10 @@ import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
+import android.text.Html;
+import android.text.Spanned;
+import android.view.KeyEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -23,6 +28,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.navigation_ui.R;
 import com.navigation_ui.adapter.MainViewPagerAdapter;
 import com.navigation_ui.database.CallLogModelDBFlow;
@@ -181,28 +188,30 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_export) {
 //            Toast.makeText(MainActivity.this, "点击'导出DB'按钮，功能待完善",
 //                Toast.LENGTH_SHORT).show();
-
-//            List<CallLogItemModel> mItemList = RecentCallLogListUtil.getRecentCallLogItemList();
-//
-//            for (CallLogItemModel callLogItemModel : mItemList) {
-//                LogUtil.d("item", callLogItemModel.toString());
-//            }
-            String SQL2 = "select * from CallLogModelDBFlow where callType = 3";
-
-            List<CallLogModelDBFlow> callLogModelDBFlow = SQLite.select().from(CallLogModelDBFlow.class)
-                .where(CallLogModelDBFlow_Table.callType.eq(3)).queryList();
-
-            for (CallLogModelDBFlow model : callLogModelDBFlow) {
-                LogUtil.d(TAG, model.getContactsName() + " " + model.getPhoneNumber() + " " + model.getCallType());
-            }
-
+            Toast.makeText(MainActivity.this,
+                String.format(getString(R.string.newRecordMessage), 100),
+                Toast.LENGTH_LONG).show();
         } else if (id == R.id.nav_delete) {
-            Delete.tables(CallLogModelDBFlow.class);
+            setClearDababaseTableListener();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    /**
+     * 权限请求的回调方法。
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+        @NonNull int[] grantResults) {
+        //使用PermissionUtils处理动态权限申请
+        PermissionUtil.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     /**
@@ -217,7 +226,7 @@ public class MainActivity extends AppCompatActivity
             CallLog.Calls.DATE,         //拨打时间
             CallLog.Calls.DURATION};    //通话时长
 
-        final ProgressDialog pgDialog = createProgressDialog(null, "正在更新数据库，请稍后...");
+        final ProgressDialog pgDialog = createProgressDialog(null, getString(R.string.updateDatabaseIng));
         pgDialog.show();
 
         new Thread(new Runnable() {
@@ -244,24 +253,25 @@ public class MainActivity extends AppCompatActivity
 
                             dbTool.asyncSaveToDatabase(
                                 new WriteCallLogToDatabaseUtil.DBFlowDatabaseSaveCallback() {
-                                /**
-                                 * 存储成功后的回调接口。（注：该方法在UI线程执行。）
-                                 */
-                                @Override
-                                public void success() {
-                                    pgDialog.dismiss();
+                                    /**
+                                     * 存储成功后的回调接口。（注：该方法在UI线程执行。）
+                                     */
+                                    @Override
+                                    public void success() {
+                                        pgDialog.dismiss();
 
-                                    if (countNewRecords == 0) {
-                                        Toast.makeText(MainActivity.this, "无新的通话记录！",
-                                            Toast.LENGTH_LONG).show();
+                                        if (countNewRecords == 0) {
+                                            Toast.makeText(MainActivity.this, getString(R.string.newRecordNull),
+                                                Toast.LENGTH_LONG).show();
+                                        }
+                                        else{
+                                            Toast.makeText(MainActivity.this,
+                                                String.format(getString(R.string.newRecordMessage), countNewRecords),
+                                                Toast.LENGTH_LONG).show();
+                                        }
+                                        UpdateFragmentObservable.getInstance().notifyFragmentUpdate();
                                     }
-                                    else{
-                                        Toast.makeText(MainActivity.this, "新增 " + countNewRecords +
-                                            " 条通话记录", Toast.LENGTH_LONG).show();
-                                    }
-                                    UpdateFragmentObservable.getInstance().notifyFragmentUpdate();
-                                }
-                            });
+                                });
                         }
 
                         /**
@@ -269,20 +279,12 @@ public class MainActivity extends AppCompatActivity
                          */
                         @Override
                         public void onPermissionDenied() {
-                            Toast.makeText(MainActivity.this, "您拒绝了权限申请，功能无法使用",
+                            Toast.makeText(MainActivity.this, R.string.refusePermissionMessage,
                                 Toast.LENGTH_LONG).show();
                         }
                     });
             }
         }).start();
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-        @NonNull int[] grantResults) {
-        //使用PermissionUtils处理动态权限申请
-        PermissionUtil.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     /**
@@ -302,5 +304,32 @@ public class MainActivity extends AppCompatActivity
         pgDialog.setIndeterminate(false);
 
         return pgDialog;
+    }
+
+    /**
+     * 清空数据库的监听事件，产生一个对话框。
+     */
+    private void setClearDababaseTableListener() {
+        new MaterialDialog.Builder(this)
+            .iconRes(R.drawable.ic_warning)
+            .limitIconToDefaultSize() // limits the displayed icon size to 48dp
+            .title(R.string.clearDatabaseTableTitle)
+            .content(R.string.clearDatabaseTablePrompt, true)
+            .positiveText(R.string.goOn)
+            .negativeText(R.string.dialog_cancel)
+            .neutralText(R.string.backupThenClear)
+            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                @Override
+                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    Delete.tables(CallLogModelDBFlow.class);
+                }
+            })
+            .onNeutral(new MaterialDialog.SingleButtonCallback() {
+                @Override
+                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    Toast.makeText(MainActivity.this, "onNeutral", Toast.LENGTH_LONG).show();
+                }
+            })
+            .show();
     }
 }

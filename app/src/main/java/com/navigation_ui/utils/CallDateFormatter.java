@@ -4,6 +4,9 @@ package com.navigation_ui.utils;
  * Created by Yong on 2017/2/19.
  */
 
+import com.navigation_ui.MyApplication;
+import com.navigation_ui.R;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -14,14 +17,17 @@ import java.util.Date;
 public class CallDateFormatter {
 
     //一天包含的毫秒数
-    private final static long A_DAY_IN_MILLISECOND = 86400000L;
+    private static final long A_DAY_IN_MILLISECOND = 86400000L;
     //一个小时包含的毫秒数
-    private final static long A_HOUR_IN_MILLISECOND = 3600000L;
+    private static final long A_HOUR_IN_MILLISECOND = 3600000L;
     //一分钟包含的毫秒数
-    private final static long A_MINUTE_IN_MILLISECOND = 60000L;
+    private static final long A_MINUTE_IN_MILLISECOND = 60000L;
     //一秒钟包含的毫秒数
-    private final static long A_SECOND_IN_MILLISECOND = 1000L;
+    private static final long A_SECOND_IN_MILLISECOND = 1000L;
 
+    private static final String YEAR_MONTH_DAY = MyApplication.getContext().getString(R.string.yearMonthDay);
+    private static final String MONTH_DAY_HOUR_MINUTE = MyApplication.getContext().getString(R.string.monthDayHourMinute);
+    private static final String HOUR_MINUTE = MyApplication.getContext().getString(R.string.hourMinute);
 
     public static String format(String dateInMillis) {
         return format(Long.parseLong(dateInMillis));
@@ -52,41 +58,29 @@ public class CallDateFormatter {
 
         if ( pastTimeMillis <= currentYearPastMillis ) {
             //今年
-
             if ( pastTimeMillis <= currentDayPastMillis ) {
                 //今天 几点:几分
-
-                SimpleDateFormat dayFormat = new SimpleDateFormat("HH:mm");
-
-                return result.append("今天 ")
-                    .append(dayFormat.format(new Date(dateInMillis)))
-                    .toString();
+                SimpleDateFormat dayFormat = new SimpleDateFormat(HOUR_MINUTE);
+                String todayCall = MyApplication.getContext().getString(R.string.todayCall);
+                return String.format(todayCall, dayFormat.format(new Date(dateInMillis)));
             }
 
             if ( pastTimeMillis <= currentDayPastMillis + A_DAY_IN_MILLISECOND) {
                 //昨天 几点:几分
-
-                SimpleDateFormat dayFormat = new SimpleDateFormat("HH:mm");
-
-                return result.append("昨天 ")
-                    .append(dayFormat.format(new Date(dateInMillis)))
-                    .toString();
+                SimpleDateFormat dayFormat = new SimpleDateFormat(HOUR_MINUTE);
+                String yesterdayCall = MyApplication.getContext().getString(R.string.yesterdayCall);
+                return String.format(yesterdayCall, dayFormat.format(new Date(dateInMillis)));
             }
 
-
             //几月几日 几点:几分
-            SimpleDateFormat monthFormat = new SimpleDateFormat("M月d日 HH:mm");
+            SimpleDateFormat monthFormat = new SimpleDateFormat(MONTH_DAY_HOUR_MINUTE);
 
             return result.append(monthFormat.format(new Date(dateInMillis))).toString();
-
-
         }
 
         //多少年几月几日
-        SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy年M月d日");
+        SimpleDateFormat yearFormat = new SimpleDateFormat(YEAR_MONTH_DAY);
 
         return result.append(yearFormat.format(new Date(dateInMillis))).toString();
-
     }
-
 }
