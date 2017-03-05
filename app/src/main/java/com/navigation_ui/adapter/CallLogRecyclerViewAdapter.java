@@ -94,8 +94,7 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
                                 Intent intent = new Intent();
                                 intent.setAction(Intent.ACTION_CALL);
-                                intent.setData(Uri.parse("tel:" + holder.phoneNumberTV.getText()
-                                    .toString().replace(PhoneNumberFormatter.DELIMITER, "")));
+                                intent.setData(Uri.parse("tel:" + holder.phoneNumber));
                                 mContext.startActivity(intent);
                             }
 
@@ -137,6 +136,8 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
         CallLogItemModel callLogItem = mCallLogList.get(mPosition);
 
+        ((CallLogItemViewHolder) holder).setPhoneNumber(callLogItem.getPhoneNumber());
+
         //设置联系人头像
         setContactsImage(((CallLogItemViewHolder) holder), callLogItem);
 
@@ -162,7 +163,7 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         String formatString = String.format(countsPhoneNumberAreaOperatorText,
             countsString, phoneNumberString, callLogItem.getCallerLoc(), callLogItem.getOperator());
 
-        ((CallLogItemViewHolder) holder).callCountsTV.setText(formatString.trim());
+        ((CallLogItemViewHolder) holder).countsNumberAreaOperator.setText(formatString.trim());
 
         //设置箭头标志
         if (callLogItem.getCallType() == CallLog.Calls.OUTGOING_TYPE) {
@@ -278,12 +279,11 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         ImageView contactsImage;     //联系人头像
         TextView contactsImageText;  //联系人头像上的文字
         TextView contactsNameTV;     //联系人
-        TextView phoneNumberTV;      //电话号码
+        TextView countsNumberAreaOperator; //通话次数、电话号码等信息
         TextView callDateTV;         //通话发生时间
-        TextView callCountsTV;       //通话次数
         ImageView callTypeImage;     //通话类型对应的图片
-        TextView callerLocTV;        //归属地
-        TextView operatorTV;         //运营商
+
+        String phoneNumber;
 
         public CallLogItemViewHolder(View view) {
             super(view);
@@ -292,12 +292,13 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             contactsImage = (ImageView) view.findViewById(R.id.contacts_image);
             contactsImageText = (TextView) view.findViewById(R.id.contacts_image_text);
             contactsNameTV = (TextView) view.findViewById(R.id.contacts_name);
-            phoneNumberTV  = (TextView) view.findViewById(R.id.phone_number);
+            countsNumberAreaOperator = (TextView) view.findViewById(R.id.counts_number_area_operator);
             callDateTV     = (TextView) view.findViewById(R.id.call_date);
-            callCountsTV   = (TextView) view.findViewById(R.id.call_counts);
             callTypeImage  = (ImageView) view.findViewById(R.id.call_type_image);
-            callerLocTV    = (TextView) view.findViewById(R.id.caller_loc);
-            operatorTV = (TextView) view.findViewById(R.id.operator);
+        }
+
+        public void setPhoneNumber(String number) {
+            phoneNumber = number;
         }
     }
 
