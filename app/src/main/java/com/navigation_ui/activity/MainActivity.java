@@ -32,8 +32,10 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.navigation_ui.R;
 import com.navigation_ui.adapter.MainViewPagerAdapter;
+import com.navigation_ui.database.CallLogDatabase;
 import com.navigation_ui.database.CallLogModelDBFlow;
 import com.navigation_ui.database.CallLogModelDBFlow_Table;
+import com.navigation_ui.database.CopyDatabaseToSDCardUtil;
 import com.navigation_ui.database.RecentCallLogListUtil;
 import com.navigation_ui.database.WriteCallLogToDatabaseUtil;
 import com.navigation_ui.fragment.view.pager.UpdateFragmentObservable;
@@ -182,8 +184,7 @@ public class MainActivity extends AppCompatActivity
             Toast.makeText(MainActivity.this, "点击'刷新DB联系人'按钮，功能待完善",
                 Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_copy) {
-            Toast.makeText(MainActivity.this, "点击'复制DB'按钮，功能待完善",
-                Toast.LENGTH_SHORT).show();
+            setCopyDatabaseListener();
         } else if (id == R.id.nav_export) {
             Toast.makeText(MainActivity.this, "点击'导出DB'按钮，功能待完善",
                 Toast.LENGTH_SHORT).show();
@@ -300,6 +301,33 @@ public class MainActivity extends AppCompatActivity
         pgDialog.setIndeterminate(false);
 
         return pgDialog;
+    }
+
+    /**
+     * 复制数据库的监听事件。
+     */
+    private void setCopyDatabaseListener() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final boolean isSuccess = CopyDatabaseToSDCardUtil.copyDatabaseToSDCard(MainActivity.this
+                    .getDatabasePath(CallLogDatabase.NAME + ".db").getPath());
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (isSuccess) {
+                            String successString = String.format(getString(R.string.copyDatabaseSuccess),
+                                getPackageName(), CallLogDatabase.NAME + ".db");
+                            Toast.makeText(MainActivity.this, successString, Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(MainActivity.this, getString(R.string.copyDatabaseFailed),
+                                Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+            }
+        }).start();
     }
 
     /**

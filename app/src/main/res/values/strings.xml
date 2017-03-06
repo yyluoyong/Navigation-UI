@@ -59,6 +59,7 @@
     <!--数据操作的提示信息-->
 
     <!--日期格式-->
+    <string name="yearMonthDayHourMinuteSecond">yyyy_MM_dd_HH_mm_ss</string>
     <string name="yearMonthDay">yyyy年M月d日</string>
     <string name="monthDayHourMinute">M月d日 HH:mm</string>
     <string name="hourMinute">HH:mm</string>
@@ -78,4 +79,7 @@
     <string name="callCountsMessage">(%1$d)</string>
     <string name="countsPhoneNumberAreaOperatorText">%1$s%2$s  %3$s  %4$s</string>
     <!--电话接通时间信息-->
+
+    <string name="copyDatabaseSuccess">复制成功，见“%1$s/日期_%2$s”</string>
+    <string name="copyDatabaseFailed">抱歉，复制失败！</string>
 </resources>

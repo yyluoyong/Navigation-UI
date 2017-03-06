@@ -7,6 +7,7 @@ import com.navigation_ui.MyApplication;
 import com.navigation_ui.R;
 import com.navigation_ui.model.CallLogItemModel;
 import com.navigation_ui.utils.CallerLocQueryUtil;
+import com.navigation_ui.utils.LogUtil;
 import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.structure.database.AndroidDatabase;
 import java.util.ArrayList;
