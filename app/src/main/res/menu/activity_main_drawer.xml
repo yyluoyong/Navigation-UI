@@ -8,10 +8,10 @@
 
     <item
         android:id="@+id/nav_refresh"
-        android:icon="@drawable/ic_refresh_white"
+        android:icon="@drawable/ic_refresh"
         android:title="刷新DB联系人" />
 
-    <item android:title="Database Move">
+    <item android:title="Database Manipulation">
         <menu>
             <item
                 android:id="@+id/nav_copy"
@@ -23,7 +23,7 @@
                 android:title="导出DB为Excel" />
             <item
                 android:id="@+id/nav_delete"
-                android:icon="@drawable/ic_export"
+                android:icon="@drawable/ic_clear"
                 android:title="清空数据库表格" />
         </menu>
     </item>

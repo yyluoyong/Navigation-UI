@@ -119,6 +119,7 @@ public class MainActivity extends AppCompatActivity
     private void createNavigation() {
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
         mNavigationView.setNavigationItemSelectedListener(this);
+        mNavigationView.setItemIconTintList(null);
     }
 
     //初始化ViewPager
@@ -351,7 +352,8 @@ public class MainActivity extends AppCompatActivity
             .onNeutral(new MaterialDialog.SingleButtonCallback() {
                 @Override
                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                    Toast.makeText(MainActivity.this, "onNeutral", Toast.LENGTH_LONG).show();
+                    setCopyDatabaseListener();
+                    Delete.tables(CallLogModelDBFlow.class);
                 }
             })
             .show();
