@@ -8,7 +8,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.navigation_ui.activity.MainActivity">
+    tools:context="com.call.log.infinity.activity.MainActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -46,6 +46,6 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         app:srcCompat="@drawable/ic_refresh_white"
-        app:layout_behavior="com.navigation_ui.view.ScrollAwareFABBehaviorDefault"/>
+        app:layout_behavior="com.call.log.infinity.view.ScrollAwareFABBehaviorDefault"/>
 
 </android.support.design.widget.CoordinatorLayout>
