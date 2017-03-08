@@ -1,6 +1,8 @@
 package com.call.log.infinity.view;
 
 import android.app.Dialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,18 +15,26 @@ import android.view.ViewGroup;
 import android.view.Window;
 
 import com.call.log.infinity.R;
+import com.call.log.infinity.utils.LogUtil;
 
 /**
  * Created by Yong on 2017/3/7.
  */
 
 public class ThemeDialog extends DialogFragment implements View.OnClickListener {
+    static final String TAG = "ThemeDialog";
 
     private int primary;
     private int primaryDark;
     private int accent;
 
     private CallBack mCallBack;
+
+    //颜色在数组中的对应位置
+    public static final int PRIMARY_COLOR_INDEX = 0;
+    public static final int PRIMARY_DARK_COLOR_INDEX = 1;
+    public static final int ACCENT_COLOR_INDEX = 2;
+
 
     public interface CallBack {
         void getTheme(int[] colors);
@@ -117,6 +127,16 @@ public class ThemeDialog extends DialogFragment implements View.OnClickListener 
         if (mCallBack != null) {
             mCallBack.getTheme(new int[]{primary, primaryDark, accent});
         }
+
+        LogUtil.d(TAG, "" + primary + " " + primaryDark + " " + accent);
+
+        SharedPreferences sharedPreferences = getActivity()
+            .getSharedPreferences(getString(R.string.theme), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(getString(R.string.themePrimaryColor), primary);
+        editor.putInt(getString(R.string.themePrimaryDarkColor), primaryDark);
+        editor.putInt(getString(R.string.themeAccentColor), accent);
+        editor.commit();
 
         ThemeDialog.this.dismiss();
     }

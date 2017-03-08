@@ -2,9 +2,12 @@ package com.call.log.infinity.activity;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -28,6 +31,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.call.log.infinity.MyApplication;
 import com.call.log.infinity.R;
 import com.call.log.infinity.adapter.MainViewPagerAdapter;
 import com.call.log.infinity.database.CallLogDatabase;
@@ -35,6 +39,7 @@ import com.call.log.infinity.database.CallLogModelDBFlow;
 import com.call.log.infinity.database.CopyDatabaseToSDCardUtil;
 import com.call.log.infinity.database.WriteCallLogToDatabaseUtil;
 import com.call.log.infinity.pager.UpdateFragmentObservable;
+import com.call.log.infinity.utils.LogUtil;
 import com.call.log.infinity.utils.PermissionUtil;
 import com.call.log.infinity.view.ThemeDialog;
 import com.raizlabs.android.dbflow.sql.language.Delete;
@@ -77,6 +82,13 @@ public class MainActivity extends AppCompatActivity
 
         //更新数据库
         updateCallLogDatabase();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onPostResume();
+        //设置主题
+        setThemeAtStart();
     }
 
     //初始化工具栏
@@ -372,15 +384,35 @@ public class MainActivity extends AppCompatActivity
      * @param colors：分别对应primary, primaryDark, accent
      */
     private void setTheme(int[] colors) {
-        mToolbar.setBackgroundColor(colors[0]);
-        mTabLayout.setBackgroundColor(colors[0]);
-        mFloatFB.setBackgroundTintList(ColorStateList.valueOf(colors[2]));
+        mToolbar.setBackgroundColor(colors[ThemeDialog.PRIMARY_COLOR_INDEX]);
+        mTabLayout.setBackgroundColor(colors[ThemeDialog.PRIMARY_COLOR_INDEX]);
+        mFloatFB.setBackgroundTintList(ColorStateList.valueOf(colors[ThemeDialog.ACCENT_COLOR_INDEX]));
 
-        mNavigationView.findViewById(R.id.nav_header_layout)
-            .setBackground(new ColorDrawable(colors[1]));
+        View navHeaderLayout = (View) mNavigationView.findViewById(R.id.nav_header_layout);
+        if (navHeaderLayout == null) {
+            LogUtil.d(TAG, "navHeaderLayout == null");
+        } else {
+            navHeaderLayout.setBackground(new ColorDrawable(colors[ThemeDialog.PRIMARY_DARK_COLOR_INDEX]));
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(colors[1]);
+            getWindow().setStatusBarColor(colors[ThemeDialog.PRIMARY_DARK_COLOR_INDEX]);
         }
+    }
+
+    /**
+     * 程序初始化时，设置主题
+     */
+    private void setThemeAtStart() {
+        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.theme), Context.MODE_PRIVATE);
+
+        int primary = sharedPreferences.getInt(getString(R.string.themePrimaryColor),
+            ContextCompat.getColor(MainActivity.this, R.color.blue_primary));
+        int primaryDark = sharedPreferences.getInt(getString(R.string.themePrimaryDarkColor),
+            ContextCompat.getColor(MainActivity.this, R.color.blue_primary_dark));
+        int accent = sharedPreferences.getInt(getString(R.string.themeAccentColor),
+            ContextCompat.getColor(MainActivity.this, R.color.blue_accent));
+
+        setTheme(new int[]{primary, primaryDark, accent});
     }
 }

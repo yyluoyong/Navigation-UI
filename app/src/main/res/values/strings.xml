@@ -8,6 +8,10 @@
     <!--菜单栏信息-->
 
     <string name="themeDialog">themeDialog</string>
+    <string name="theme">theme</string>
+    <string name="themePrimaryColor">primary</string>
+    <string name="themePrimaryDarkColor">primaryDark</string>
+    <string name="themeAccentColor">accent</string>
 
     <!--通话记录数据库的信息-->
     <string name="CallLogDatabaseTable">CallLogModelDBFlow</string>
