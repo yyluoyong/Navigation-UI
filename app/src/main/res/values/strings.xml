@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">通话数据库</string>
+    <string name="app_name">通话记录本</string>
     <string name="toolbar_title">Call Log Infinity</string>
 
     <!--通话记录数据库的信息-->
