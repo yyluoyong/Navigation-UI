@@ -28,4 +28,15 @@
         </menu>
     </item>
 
+    <item android:title="@string/menuSettings">
+        <menu>
+            <item
+                android:id="@+id/nav_theme"
+                android:icon="@drawable/ic_theme"
+                android:title="设置主题" />
+        </menu>
+    </item>
+
+
+
 </menu>

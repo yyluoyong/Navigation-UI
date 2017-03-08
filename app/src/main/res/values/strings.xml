@@ -2,6 +2,13 @@
     <string name="app_name">通话记录本</string>
     <string name="toolbar_title">Call Log Infinity</string>
 
+    <!--菜单栏信息-->
+    <string name="menuSettings">设置</string>
+    <string name="menuAbount">关于</string>
+    <!--菜单栏信息-->
+
+    <string name="themeDialog">themeDialog</string>
+
     <!--通话记录数据库的信息-->
     <string name="CallLogDatabaseTable">CallLogModelDBFlow</string>
     <string name="CallLogDatabaseTableColumnTime">dateInMilliseconds</string>

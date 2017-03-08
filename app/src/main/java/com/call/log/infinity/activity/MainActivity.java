@@ -3,7 +3,10 @@ package com.call.log.infinity.activity;
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.CallLog;
 import android.support.annotation.NonNull;
@@ -21,6 +24,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.Toast;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -32,6 +36,7 @@ import com.call.log.infinity.database.CopyDatabaseToSDCardUtil;
 import com.call.log.infinity.database.WriteCallLogToDatabaseUtil;
 import com.call.log.infinity.pager.UpdateFragmentObservable;
 import com.call.log.infinity.utils.PermissionUtil;
+import com.call.log.infinity.view.ThemeDialog;
 import com.raizlabs.android.dbflow.sql.language.Delete;
 
 public class MainActivity extends AppCompatActivity
@@ -178,6 +183,8 @@ public class MainActivity extends AppCompatActivity
                 Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_delete) {
             setClearDababaseTableListener();
+        } else if (id == R.id.nav_theme) {
+            setThemeListener();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -344,5 +351,36 @@ public class MainActivity extends AppCompatActivity
                 }
             })
             .show();
+    }
+
+    /**
+     * 为选择主题设置监听事件。
+     */
+    private void setThemeListener() {
+        ThemeDialog dialog = new ThemeDialog();
+        dialog.setCallBack(new ThemeDialog.CallBack() {
+            @Override
+            public void getTheme(int[] colors) {
+                setTheme(colors);
+            }
+        });
+        dialog.show(getSupportFragmentManager(), getString(R.string.themeDialog));
+    }
+
+    /**
+     * 设置主题颜色。
+     * @param colors：分别对应primary, primaryDark, accent
+     */
+    private void setTheme(int[] colors) {
+        mToolbar.setBackgroundColor(colors[0]);
+        mTabLayout.setBackgroundColor(colors[0]);
+        mFloatFB.setBackgroundTintList(ColorStateList.valueOf(colors[2]));
+
+        mNavigationView.findViewById(R.id.nav_header_layout)
+            .setBackground(new ColorDrawable(colors[1]));
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(colors[1]);
+        }
     }
 }

@@ -40,5 +40,61 @@
     <color name="oneplusMsg">#33C8BA</color>
     <color name="oneplusMsgSecond">#3DF0DF</color>
     <color name="oneplusFB">#FFB400</color>
+
+    <!--不同的主题组合：www.materialpalette.com-->
+    <!--红色-->
+    <color name="red_primary">#F44336</color>
+    <color name="red_primary_dark">#D32F2F</color>
+    <color name="red_primary_light">#EF9A9A</color>
+    <color name="red_accent">#4CAF50</color>
+
+    <!--绿色-->
+    <color name="green_primary">#4CAF50</color>
+    <color name="green_primary_dark">#388E3C</color>
+    <color name="green_primary_light">#C8E6C9</color>
+    <color name="green_accent">#FF5252</color>
+
+    <!--蓝色-->
+    <color name="blue_primary">#2196F3</color>
+    <color name="blue_primary_dark">#1976D2</color>
+    <color name="blue_primary_light">#BBDEFB</color>
+    <color name="blue_accent">#FFC107</color>
+
+    <!--黑色-->
+    <color name="black_primary">#000</color>
+    <color name="black_primary_dark">#000</color>
+    <color name="black_primary_light">#666</color>
+    <color name="black_accent">#FFC107</color>
+
+    <!--靛蓝色-->
+    <color name="indigo_primary">#3F51B5</color>
+    <color name="indigo_primary_dark">#303F9F</color>
+    <color name="indigo_primary_light">#C5CAE9</color>
+    <color name="indigo_accent">#FF5722</color>
+
+    <!--紫色-->
+    <color name="purple_primary">#9C27B0</color>
+    <color name="purple_primary_dark">#7B1FA2</color>
+    <color name="purple_primary_light">#CE93D8</color>
+    <color name="purple_accent">#8BC34A</color>
+
+    <!--橘色-->
+    <color name="orange_primary">#FF9800</color>
+    <color name="orange_primary_dark">#F57C00</color>
+    <color name="orange_primary_light">#FFCC80</color>
+    <color name="orange_accent">#448AFF</color>
+
+    <!--蓝灰色-->
+    <color name="blue_grey_primary">#607D8B</color>
+    <color name="blue_grey_primary_dark">#455A64</color>
+    <color name="blue_grey_primary_light">#B0BEC5</color>
+    <color name="blue_grey_accent">#FF5252</color>
+
+    <!--青绿色-->
+    <color name="teal_primary">#009688</color>
+    <color name="teal_primary_dark">#00796B</color>
+    <color name="teal_primary_light">#B2DFDB</color>
+    <color name="teal_accent">#FF9800</color>
+    <!--不同的主题组合：www.materialpalette.com-->
 </resources>
 
