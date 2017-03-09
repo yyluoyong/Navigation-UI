@@ -169,15 +169,22 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         ((CallLogItemViewHolder) holder).countsNumberAreaOperator.setText(formatString.trim());
 
         //设置箭头标志
-        if (callLogItem.getCallType() == CallLog.Calls.OUTGOING_TYPE) {
-            ((CallLogItemViewHolder) holder).callTypeImage
-                .setImageResource(R.drawable.ic_call_made);
-        } else if (callLogItem.getCallType() == CallLog.Calls.INCOMING_TYPE) {
+        boolean isMissed = (callLogItem.getCallType() == CallLog.Calls.MISSED_TYPE) ||
+            ("0".equals(callLogItem.getDuration()) && callLogItem.getCallType() == CallLog.Calls.INCOMING_TYPE);
+        if (isMissed) {
+            //未接电话
+            ((CallLogItemViewHolder) holder).callTypeImage.setImageResource(R.drawable.ic_call_missed);
+        } else if (callLogItem.getCallType() == CallLog.Calls.OUTGOING_TYPE) {
+            //拨出电话
+            if ("0".equals(callLogItem.getDuration())) {
+                ((CallLogItemViewHolder) holder).callTypeImage.setImageResource(R.drawable.ic_call_failed);
+            } else {
+                ((CallLogItemViewHolder) holder).callTypeImage.setImageResource(R.drawable.ic_call_made);
+            }
+        } else {
+            //接入电话
             ((CallLogItemViewHolder) holder).callTypeImage
                 .setImageResource(R.drawable.ic_call_received);
-        } else {
-            ((CallLogItemViewHolder) holder).callTypeImage
-                .setImageResource(R.drawable.ic_call_missed);
         }
 
         //设置通话时间
