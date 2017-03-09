@@ -3,6 +3,7 @@ package com.call.log.infinity.adapter;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.provider.CallLog;
 import android.support.design.widget.Snackbar;
@@ -206,34 +207,30 @@ public class CallLogDetailRecyclerViewAdapter extends
         ((DetailItemViewHolder) holder).callDateTV
             .setText(CallDateFormatter.format(callLogItem.getDateInMilliseconds()));
 
-        String durationString = "";
-
-        if (callLogItem.getCallType() == CallLog.Calls.INCOMING_TYPE) {
-            ((DetailItemViewHolder) holder).callTypeImage
-                .setImageResource(R.drawable.ic_call_received);
+        String durationString;
+        boolean isMissed = (callLogItem.getCallType() == CallLog.Calls.MISSED_TYPE) ||
+            ("0".equals(callLogItem.getDuration()) && callLogItem.getCallType() == CallLog.Calls.INCOMING_TYPE);
+        if (isMissed) {
+            //未接电话
+            ((DetailItemViewHolder) holder).callTypeImage.setImageResource(R.drawable.ic_call_missed);
+            ((DetailItemViewHolder) holder).callDurationTV.setText(CALL_MISSED_STRING);
+        } else if (callLogItem.getCallType() == CallLog.Calls.OUTGOING_TYPE) {
+            //拨出电话
+            if ("0".equals(callLogItem.getDuration())) {
+                ((DetailItemViewHolder) holder).callTypeImage.setImageResource(R.drawable.ic_call_failed);
+                ((DetailItemViewHolder) holder).callDurationTV.setText(CALL_MADE_FAILED_STRING);
+            } else {
+                ((DetailItemViewHolder) holder).callTypeImage.setImageResource(R.drawable.ic_call_made);
+                durationString = String.format(MyApplication.getContext().getString(R.string.callDuration),
+                    CALL_MADE_OUT, CallDurationFormatter.format(callLogItem.getDuration()));
+                ((DetailItemViewHolder) holder).callDurationTV.setText(durationString);
+            }
+        } else {
+            //接入电话
+            ((DetailItemViewHolder) holder).callTypeImage.setImageResource(R.drawable.ic_call_received);
 
             durationString = String.format(MyApplication.getContext().getString(R.string.callDuration),
                 CALL_MADE_IN, CallDurationFormatter.format(callLogItem.getDuration()));
-        } else if (callLogItem.getCallType() == CallLog.Calls.OUTGOING_TYPE) {
-            ((DetailItemViewHolder) holder).callTypeImage
-                .setImageResource(R.drawable.ic_call_made);
-
-            durationString = String.format(MyApplication.getContext().getString(R.string.callDuration),
-                CALL_MADE_OUT, CallDurationFormatter.format(callLogItem.getDuration()));
-        } else {
-            ((DetailItemViewHolder) holder).callTypeImage
-                .setImageResource(R.drawable.ic_call_missed);
-        }
-
-        if (callLogItem.getCallType() == CallLog.Calls.MISSED_TYPE) {
-            ((DetailItemViewHolder) holder).callDurationTV.setText(CALL_MISSED_STRING);
-        } else if ("0".equals(callLogItem.getDuration())) {
-            if (callLogItem.getCallType() == CallLog.Calls.INCOMING_TYPE) {
-                ((DetailItemViewHolder) holder).callDurationTV.setText(CALL_MADE_FAILED_STRING);
-            } else {
-                ((DetailItemViewHolder) holder).callDurationTV.setText(CALL_MISSED_STRING);
-            }
-        } else {
             ((DetailItemViewHolder) holder).callDurationTV.setText(durationString);
         }
     }
