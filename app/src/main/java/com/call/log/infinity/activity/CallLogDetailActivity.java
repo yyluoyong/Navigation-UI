@@ -2,6 +2,9 @@ package com.call.log.infinity.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
@@ -10,6 +13,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.ImageView;
 
 import com.call.log.infinity.MyApplication;
 import com.call.log.infinity.R;
@@ -49,28 +54,28 @@ public class CallLogDetailActivity extends AppCompatActivity {
     //该页面从ViewPager哪一页触发启动
     private int mPosition;
 
+    private CollapsingToolbarLayout mCollapsingToolbar;
+    private Toolbar mToolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_calllog_detail);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
 
         Intent intent = getIntent();
         mContactsName = intent.getStringExtra(CONTACTS_NAME);
         mPhoneNumber = intent.getStringExtra(PHONE_NUMBER);
         mPosition = intent.getIntExtra(ViewPagerPosition.POSITION, ViewPagerPosition.POSITION_ALL_TYPE);
 
-        CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout)
-            findViewById(R.id.toolbar_layout);
-
+        //设置联系人姓名
+        mCollapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbarLayout);
         if (mContactsName.equals(mPhoneNumber)) {
-            collapsingToolbar.setTitle(PhoneNumberFormatter.phoneNumberFormat(mPhoneNumber));
+            mCollapsingToolbar.setTitle(PhoneNumberFormatter.phoneNumberFormat(mPhoneNumber));
         } else {
-            collapsingToolbar.setTitle(mContactsName);
+            mCollapsingToolbar.setTitle(mContactsName);
         }
 
         mRecyclerView = (RecyclerView) findViewById(R.id.detail_recyclerview);
@@ -81,6 +86,9 @@ public class CallLogDetailActivity extends AppCompatActivity {
         mRecyclerViewAdapter = new CallLogDetailRecyclerViewAdapter(CallLogDetailActivity.this,
             mPhoneNumberItemList, mCallLogModelDBFlowList);
         mRecyclerView.setAdapter(mRecyclerViewAdapter);
+
+        //初始化主题颜色
+        setThemeAtStart();
 
         //初始化数据
         initCallLogs();
@@ -160,5 +168,15 @@ public class CallLogDetailActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
+    /**
+     * 程序初始化时，设置主题颜色。
+     */
+    private void setThemeAtStart() {
+        ((ImageView) findViewById(R.id.imageView)).setColorFilter(MyApplication.getThemeColorPrimary());
+        mToolbar.setBackgroundColor(MyApplication.getThemeColorPrimary());
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(MyApplication.getThemeColorPrimaryDark());
+        }
+    }
 }

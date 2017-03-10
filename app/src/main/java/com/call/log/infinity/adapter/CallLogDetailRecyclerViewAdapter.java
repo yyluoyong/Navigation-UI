@@ -181,6 +181,8 @@ public class CallLogDetailRecyclerViewAdapter extends
             if (position == 0) {
                 ((PhoneNumberItemViewHolder) holder).callImage
                     .setImageResource(R.drawable.phone_image);
+                ((PhoneNumberItemViewHolder) holder).callImage
+                    .setColorFilter(MyApplication.getThemeColorPrimary());
             }
 
             return;
@@ -190,6 +192,7 @@ public class CallLogDetailRecyclerViewAdapter extends
          * 字符item
          */
         if (position == mPhoneNumberList.size() ) {
+            ((StringViewHolder) holder).blankView.setTextColor(MyApplication.getThemeColorPrimary());
             return;
         }
 
@@ -233,6 +236,12 @@ public class CallLogDetailRecyclerViewAdapter extends
                 CALL_MADE_IN, CallDurationFormatter.format(callLogItem.getDuration()));
             ((DetailItemViewHolder) holder).callDurationTV.setText(durationString);
         }
+
+        //设置电话标志的颜色
+        ImageView callImageView = (ImageView) ((DetailItemViewHolder) holder).callLogItemView
+            .findViewById(R.id.callImageView);
+        callImageView.setColorFilter(MyApplication.getThemeColorPrimary());
+
     }
 
     /**
@@ -446,12 +455,12 @@ public class CallLogDetailRecyclerViewAdapter extends
      * 添加字符串。
      */
     private static class StringViewHolder extends RecyclerView.ViewHolder {
-        View blankView;
+        TextView blankView;
 
         public StringViewHolder(View view) {
             super(view);
 
-            blankView = (View) view.findViewById(R.id.recent_call_tv);
+            blankView = (TextView) view.findViewById(R.id.recent_call_tv);
         }
     }
 }
