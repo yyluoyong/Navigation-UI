@@ -7,12 +7,16 @@
     <string name="menuAbount">关于</string>
     <!--菜单栏信息-->
 
+    <!--主体颜色-->
     <string name="themeDialog">themeDialog</string>
     <string name="theme">theme</string>
     <string name="themePrimaryColor">primary</string>
     <string name="themePrimaryDarkColor">primaryDark</string>
     <string name="themePrimaryLightColor">primaryLight</string>
     <string name="themeAccentColor">accent</string>
+    <!--主体颜色-->
+
+    <string name="recentCallString">最近通话</string>
 
     <!--通话记录数据库的信息-->
     <string name="CallLogDatabaseTable">CallLogModelDBFlow</string>

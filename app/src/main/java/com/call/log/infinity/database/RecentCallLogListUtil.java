@@ -66,13 +66,25 @@ public class RecentCallLogListUtil {
     private static final String CALL_COUNTS_COLUMN_NAME = MyApplication.getContext()
         .getString(R.string.CallLogDatabaseTableColumnCounts);
 
+    private static final String CONDITION_POSITION_1 = "%1$s";
+    private static final String CONDITION_POSITION_2 = "%2$s";
+    private static final String CONDITION_POSITION_3 = "%3$s";
+
     //和每个联系人符合某种条件的最近一次通话
     private static final String CONTACTS_RECENT_TIME_FORMAT = "select a.* from %1$s as a where %2$s and " +
         "%3$s = (select max(%4$s) from %5$s where %6$s and %7$s = a.%8$s) order by a.%9$s";
 
+    private static final String CONTACTS_RECENT_TIME_CONDITION = String.format(CONTACTS_RECENT_TIME_FORMAT,
+        DATABASE_TABLE_NAME, CONDITION_POSITION_1, TIME_COLUMN_NAME, TIME_COLUMN_NAME, DATABASE_TABLE_NAME,
+        CONDITION_POSITION_2, CONTACTS_NAME_COLUMN_NAME, CONTACTS_NAME_COLUMN_NAME, TIME_COLUMN_NAME);
+
     //和每个联系人符合某种条件的通话次数
     private static final String CONTACTS_CALL_COUNTS_FORMAT = "select %1$s, count(%2$s) as %3$s " +
         "from %4$s where %5$s group by %6$s";
+
+    private static final String CONTACTS_CALL_COUNTS_CONDITION = String.format(CONTACTS_CALL_COUNTS_FORMAT,
+        CONTACTS_NAME_COLUMN_NAME, CONTACTS_NAME_COLUMN_NAME, CALL_COUNTS_COLUMN_NAME,
+        DATABASE_TABLE_NAME, CONDITION_POSITION_3, CONTACTS_NAME_COLUMN_NAME);
 
     /*
     查询每个联系人某种条件的通话（统计出符合该条件的通话次数和最近一次符合该条件的通话时间），
@@ -81,6 +93,9 @@ public class RecentCallLogListUtil {
     private static final String RECENT_CALL_TYPE_FORMAT = "select tb_1.*, tb_2.%1$s from (%2$s) as tb_1 " +
         "join (%3$s) as tb_2 on tb_1.%4$s = tb_2.%5$s order by tb_1.%6$s desc";
 
+    private static String RECENT_CALL_TYPE_CONDITION = String.format(RECENT_CALL_TYPE_FORMAT,
+        CALL_COUNTS_COLUMN_NAME, CONTACTS_RECENT_TIME_CONDITION, CONTACTS_CALL_COUNTS_CONDITION,
+        CONTACTS_NAME_COLUMN_NAME, CONTACTS_NAME_COLUMN_NAME, TIME_COLUMN_NAME);
 
     //查询每个联系人的最近一次通话的SQL语句
     private static final String RECENT_CALL_SQL = "select tb_1.*, tb_2." + CALL_COUNTS_COLUMN_NAME
@@ -96,22 +111,6 @@ public class RecentCallLogListUtil {
         + "on tb_1." + CONTACTS_NAME_COLUMN_NAME + " = tb_2." + CONTACTS_NAME_COLUMN_NAME
         + " order by tb_1." + TIME_COLUMN_NAME + " desc";
 
-    //查询每个联系人指定通话类型的通话
-    private static String RECENT_CALL_TYPE_SQL = "select tb_1.*, tb_2." + CALL_COUNTS_COLUMN_NAME
-        + " from (select a.* from " + DATABASE_TABLE_NAME + " as a where "
-        + TYPE_COLUMN_NAME + " = ? and " + TIME_COLUMN_NAME
-        + " = (select max(" + TIME_COLUMN_NAME + ") from " + DATABASE_TABLE_NAME
-        + " where " + TYPE_COLUMN_NAME + " = ? and " + CONTACTS_NAME_COLUMN_NAME
-        + " = a." + CONTACTS_NAME_COLUMN_NAME + ") order by a." + TIME_COLUMN_NAME + ") "
-        + "as tb_1 "
-        + "join "
-        + "(select " + CONTACTS_NAME_COLUMN_NAME + ", count(" + CONTACTS_NAME_COLUMN_NAME
-        + ") as " + CALL_COUNTS_COLUMN_NAME + " from " + DATABASE_TABLE_NAME + " where "
-        + TYPE_COLUMN_NAME + " = ? " +  " group by " + CONTACTS_NAME_COLUMN_NAME + ") "
-        + "as tb_2 "
-        + "on tb_1." + CONTACTS_NAME_COLUMN_NAME + " = tb_2." + CONTACTS_NAME_COLUMN_NAME
-        + " order by tb_1." + TIME_COLUMN_NAME + " desc";
-
     //********************************
     //判断通话类型为未接电话
     private static final String MISSED_CONDITION_FORMAT = "(%1$s = %2$d or (%3$s = %4$d and %5$s = 0))";
@@ -119,24 +118,33 @@ public class RecentCallLogListUtil {
         TYPE_COLUMN_NAME, CallLog.Calls.MISSED_TYPE, TYPE_COLUMN_NAME, CallLog.Calls.INCOMING_TYPE,
         DURATION_COLUMN_NAME);
 
-    //CONTACTS_RECENT_TIME_FORMAT：条件设置为未接电话
-    private static final String CONTACTS_RECENT_TIME_MISSED = String.format(CONTACTS_RECENT_TIME_FORMAT,
-        DATABASE_TABLE_NAME, MISSED_CONDITION, TIME_COLUMN_NAME, TIME_COLUMN_NAME, DATABASE_TABLE_NAME,
-        MISSED_CONDITION, CONTACTS_NAME_COLUMN_NAME, CONTACTS_NAME_COLUMN_NAME, TIME_COLUMN_NAME);
+    //未接电话
+    private static String RECENT_CALL_MISSED_SQL = String.format(RECENT_CALL_TYPE_CONDITION,
+        MISSED_CONDITION, MISSED_CONDITION, MISSED_CONDITION);
+    //================================
 
-    //CONTACTS_CALL_COUNTS_FORMAT：条件设置为未接电话
-    private static final String CONTACTS_CALL_COUNTS_MISSED = String.format(CONTACTS_CALL_COUNTS_FORMAT,
-        CONTACTS_NAME_COLUMN_NAME, CONTACTS_NAME_COLUMN_NAME, CALL_COUNTS_COLUMN_NAME,
-        DATABASE_TABLE_NAME, MISSED_CONDITION, CONTACTS_NAME_COLUMN_NAME);
+    //********************************
+    //拨出电话
+    private static final String OUTGOING_CONDITION = TYPE_COLUMN_NAME + " = "
+        + CallLog.Calls.OUTGOING_TYPE;
 
-    //RECENT_CALL_TYPE_FORMAT：未接电话
-    private static String RECENT_CALL_MISSED_SQL = String.format(RECENT_CALL_TYPE_FORMAT,
-        CALL_COUNTS_COLUMN_NAME, CONTACTS_RECENT_TIME_MISSED, CONTACTS_CALL_COUNTS_MISSED,
-        CONTACTS_NAME_COLUMN_NAME, CONTACTS_NAME_COLUMN_NAME, TIME_COLUMN_NAME);
+    private static String RECENT_CALL_MADE_SQL = String.format(RECENT_CALL_TYPE_CONDITION,
+        OUTGOING_CONDITION, OUTGOING_CONDITION, OUTGOING_CONDITION);
+    //================================
+
+    //********************************
+    //接入电话
+    private static final String INCOMING_CONDITION_FORMAT = "(%1$s = %2$d or %3$s = %4$d )";
+
+    private static final String INCOMING_CONDITION = String.format(INCOMING_CONDITION_FORMAT,
+        TYPE_COLUMN_NAME, CallLog.Calls.INCOMING_TYPE, TYPE_COLUMN_NAME, CallLog.Calls.MISSED_TYPE);
+
+    private static String RECENT_CALL_RECEIVED_SQL = String.format(RECENT_CALL_TYPE_CONDITION,
+        INCOMING_CONDITION, INCOMING_CONDITION, INCOMING_CONDITION);
     //================================
 
     static {
-        LogUtil.d(TAG, RECENT_CALL_MISSED_SQL);
+        LogUtil.d(TAG, RECENT_CALL_RECEIVED_SQL);
     }
 
     /**
@@ -155,12 +163,12 @@ public class RecentCallLogListUtil {
             if (type == TYPE_ALL) {
                 cursor = db.rawQuery(RECENT_CALL_SQL, null);
             } else {
-                if (type == CallLog.Calls.MISSED_TYPE) {
+                if (type == CallLog.Calls.INCOMING_TYPE) {
+                    cursor = db.rawQuery(RECENT_CALL_RECEIVED_SQL, null);
+                } else if (type == CallLog.Calls.MISSED_TYPE) {
                     cursor = db.rawQuery(RECENT_CALL_MISSED_SQL, null);
                 } else {
-                    String typeToStr = String.valueOf(type);
-                    cursor = db
-                        .rawQuery(RECENT_CALL_TYPE_SQL, new String[]{typeToStr, typeToStr, typeToStr});
+                    cursor = db.rawQuery(RECENT_CALL_MADE_SQL, null);
                 }
             }
 

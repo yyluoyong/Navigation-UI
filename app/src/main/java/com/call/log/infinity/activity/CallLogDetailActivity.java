@@ -6,6 +6,7 @@ import android.content.res.ColorStateList;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.CallLog;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -26,6 +27,7 @@ import com.call.log.infinity.database.CallLogModelDBFlow_Table;
 import com.call.log.infinity.utils.LogUtil;
 import com.call.log.infinity.utils.PermissionUtil;
 import com.call.log.infinity.utils.PhoneNumberFormatter;
+import com.raizlabs.android.dbflow.sql.language.ConditionGroup;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import java.util.ArrayList;
@@ -129,10 +131,25 @@ public class CallLogDetailActivity extends AppCompatActivity {
                 .where(CallLogModelDBFlow_Table.contactsName.eq(name))
                 .queryList();
         } else {
-            mCallLogModelDBFlowList = SQLite.select().from(CallLogModelDBFlow.class)
-                .where(CallLogModelDBFlow_Table.contactsName.eq(name))
-                .and(CallLogModelDBFlow_Table.callType.eq(type))
-                .queryList();
+            if (type == ViewPagerPosition.POSITION_INCOMING_TYPE) {
+                mCallLogModelDBFlowList = SQLite.select().from(CallLogModelDBFlow.class)
+                    .where(CallLogModelDBFlow_Table.contactsName.eq(name))
+                    .and(ConditionGroup.clause().and(CallLogModelDBFlow_Table.callType.eq(CallLog.Calls.INCOMING_TYPE))
+                        .or(ConditionGroup.clause().and(CallLogModelDBFlow_Table.callType.eq(CallLog.Calls.MISSED_TYPE))))
+                    .queryList();
+            } else if (type == ViewPagerPosition.POSITION_MISSED_TYPE){
+                mCallLogModelDBFlowList = SQLite.select().from(CallLogModelDBFlow.class)
+                    .where(CallLogModelDBFlow_Table.contactsName.eq(name))
+                    .and(ConditionGroup.clause().and(CallLogModelDBFlow_Table.callType.eq(CallLog.Calls.MISSED_TYPE))
+                        .or(ConditionGroup.clause().and(CallLogModelDBFlow_Table.callType.eq(CallLog.Calls.INCOMING_TYPE))
+                            .and(CallLogModelDBFlow_Table.duration.eq("0"))))
+                    .queryList();
+            } else {
+                mCallLogModelDBFlowList = SQLite.select().from(CallLogModelDBFlow.class)
+                    .where(CallLogModelDBFlow_Table.contactsName.eq(name))
+                    .and(CallLogModelDBFlow_Table.callType.eq(CallLog.Calls.OUTGOING_TYPE))
+                    .queryList();
+            }
         }
 
         for (CallLogModelDBFlow model : mCallLogModelDBFlowList) {
