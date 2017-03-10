@@ -2,12 +2,9 @@ package com.call.log.infinity.activity;
 
 import android.Manifest;
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -27,7 +24,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageView;
 import android.widget.Toast;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -370,49 +366,26 @@ public class MainActivity extends AppCompatActivity
      */
     private void setThemeListener() {
         ThemeDialog dialog = new ThemeDialog();
-        dialog.setCallBack(new ThemeDialog.CallBack() {
-            @Override
-            public void getTheme(int[] colors) {
-                setTheme(colors);
-            }
-        });
         dialog.show(getSupportFragmentManager(), getString(R.string.themeDialog));
     }
 
     /**
-     * 设置主题颜色。
-     * @param colors：分别对应primary, primaryDark, accent
+     * 程序初始化时，设置主题颜色。
      */
-    private void setTheme(int[] colors) {
-        mToolbar.setBackgroundColor(colors[ThemeDialog.PRIMARY_COLOR_INDEX]);
-        mTabLayout.setBackgroundColor(colors[ThemeDialog.PRIMARY_COLOR_INDEX]);
-        mFloatFB.setBackgroundTintList(ColorStateList.valueOf(colors[ThemeDialog.ACCENT_COLOR_INDEX]));
+    private void setThemeAtStart() {
+        mToolbar.setBackgroundColor(MyApplication.getThemeColorPrimary());
+        mTabLayout.setBackgroundColor(MyApplication.getThemeColorPrimary());
+        mFloatFB.setBackgroundTintList(ColorStateList.valueOf(MyApplication.getThemeColorAccent()));
 
         View navHeaderLayout = (View) mNavigationView.findViewById(R.id.nav_header_layout);
         if (navHeaderLayout == null) {
             LogUtil.d(TAG, "navHeaderLayout == null");
         } else {
-            navHeaderLayout.setBackground(new ColorDrawable(colors[ThemeDialog.PRIMARY_DARK_COLOR_INDEX]));
+            navHeaderLayout.setBackground(new ColorDrawable(MyApplication.getThemeColorPrimaryDark()));
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(colors[ThemeDialog.PRIMARY_DARK_COLOR_INDEX]);
+            getWindow().setStatusBarColor(MyApplication.getThemeColorPrimaryDark());
         }
-    }
-
-    /**
-     * 程序初始化时，设置主题
-     */
-    private void setThemeAtStart() {
-        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.theme), Context.MODE_PRIVATE);
-
-        int primary = sharedPreferences.getInt(getString(R.string.themePrimaryColor),
-            ContextCompat.getColor(MainActivity.this, R.color.blue_primary));
-        int primaryDark = sharedPreferences.getInt(getString(R.string.themePrimaryDarkColor),
-            ContextCompat.getColor(MainActivity.this, R.color.blue_primary_dark));
-        int accent = sharedPreferences.getInt(getString(R.string.themeAccentColor),
-            ContextCompat.getColor(MainActivity.this, R.color.blue_accent));
-
-        setTheme(new int[]{primary, primaryDark, accent});
     }
 }

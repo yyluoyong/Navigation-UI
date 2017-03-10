@@ -4,6 +4,7 @@ package com.call.log.infinity.adapter;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.provider.CallLog;
@@ -133,6 +134,8 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             return;
         }
 
+
+
         //除去空白项
         int mPosition = position - COUNT_BLACK_ITEM;
 
@@ -189,6 +192,11 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
         //设置通话时间
         ((CallLogItemViewHolder) holder).callDateTV.setText(callLogItem.getDateFormat());
+
+        //符合主题颜色
+        ImageView moreInfoImageView = (ImageView) ((CallLogItemViewHolder) holder)
+            .callLogItemView.findViewById(R.id.more_info);
+        moreInfoImageView.setColorFilter(MyApplication.getThemeColorPrimaryLight());
     }
 
     /**
