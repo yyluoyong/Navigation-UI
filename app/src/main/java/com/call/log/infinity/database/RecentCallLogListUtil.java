@@ -7,7 +7,7 @@ import android.text.TextUtils;
 import com.call.log.infinity.MyApplication;
 import com.call.log.infinity.R;
 import com.call.log.infinity.model.CallLogItemModel;
-import com.call.log.infinity.utils.CallerAreaAndOperatorQueryUtil;
+import com.call.log.infinity.utils.CallerLocationAndOperatorQueryUtil;
 import com.call.log.infinity.utils.LogUtil;
 import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.structure.database.AndroidDatabase;
@@ -200,13 +200,13 @@ public class RecentCallLogListUtil {
         callType = cursor.getInt(cursor.getColumnIndex(TYPE_COLUMN_NAME));
         callCounts = cursor.getInt(cursor.getColumnIndex(CALL_COUNTS_COLUMN_NAME));
 
-        String[] areaAndOperator = CallerAreaAndOperatorQueryUtil.callerLocQuery(phoneNumber);
+        String[] areaAndOperator = CallerLocationAndOperatorQueryUtil.callerLocationAndOperatorQuery(phoneNumber);
         callerLoc = areaAndOperator[0];
         operator = areaAndOperator[1];
 
         if (TextUtils.isEmpty(callerLoc)) {
-            callerLoc = CallerAreaAndOperatorQueryUtil.UNKOWN_AREA;
-            operator = CallerAreaAndOperatorQueryUtil.UNKOWN_OPERATOR;
+            callerLoc = CallerLocationAndOperatorQueryUtil.UNKOWN_AREA;
+            operator = CallerLocationAndOperatorQueryUtil.UNKOWN_OPERATOR;
         }
     }
 

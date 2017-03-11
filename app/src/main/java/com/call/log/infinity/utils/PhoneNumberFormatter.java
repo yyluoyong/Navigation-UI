@@ -13,6 +13,21 @@ public class PhoneNumberFormatter {
     //默认分隔符是空格
     public static final String DELIMITER = " ";
 
+    //号码长度少于最小长度将不处理
+    private static final int MINIMUN_LENGTH = 6;
+    //座机号码长度
+    private static final int TELPHONE_LENGTH = 7;
+    //标准电话号码长度
+    private static final int NORMAL_LENGTH = 11;
+
+    //手机号码以1开头
+    private static final String CELLPHONE_NUMBER_START = "1";
+
+    //将号码格式化用到的截取位数
+    private static final int THREE = 3;
+    private static final int FOUR = 4;
+    private static final int SEVEN = 7;
+
     /**
      * 默认分隔符是空格
      * @param number
@@ -30,43 +45,43 @@ public class PhoneNumberFormatter {
      */
     private static String format(String phoneNum, String delimiter) {
 
-        if (phoneNum.length() < 6) { //长度小于6位的号码直接返回
+        if (phoneNum.length() < MINIMUN_LENGTH) { //长度小于6位的号码直接返回
             return phoneNum;
         }
 
         StringBuilder sb = new StringBuilder();
 
-        if (phoneNum.length() <= 7) { //座机号码，或者区域短号
-            sb.append(phoneNum.substring(0,3))
+        if (phoneNum.length() <= TELPHONE_LENGTH) { //座机号码，或者区域短号
+            sb.append(phoneNum.substring(0,THREE))
                     .append(delimiter)
-                    .append(phoneNum.substring(3,phoneNum.length()));
+                    .append(phoneNum.substring(THREE, phoneNum.length()));
         }
-        else if (phoneNum.length() == 11) { //标准手机号码，或者带区号的座机号码
-            if (phoneNum.startsWith("1")) { //手机号码，格式化成：3 4 4
-                sb.append(phoneNum.substring(0,3)).append(delimiter)
-                        .append(phoneNum.substring(3,7)).append(delimiter)
-                        .append(phoneNum.substring(7,phoneNum.length()));
+        else if (phoneNum.length() == NORMAL_LENGTH) { //标准手机号码，或者带区号的座机号码
+            if (phoneNum.startsWith(CELLPHONE_NUMBER_START)) { //手机号码，格式化成：3 4 4
+                sb.append(phoneNum.substring(0, THREE)).append(delimiter)
+                        .append(phoneNum.substring(THREE, SEVEN)).append(delimiter)
+                        .append(phoneNum.substring(SEVEN, phoneNum.length()));
             }
             else { //带区号的座机号码，格式化成：4 3 3
-                sb.append(phoneNum.substring(0,4)).append(delimiter)
-                        .append(phoneNum.substring(4,7)).append(delimiter)
-                        .append(phoneNum.substring(7,phoneNum.length()));
+                sb.append(phoneNum.substring(0, FOUR)).append(delimiter)
+                        .append(phoneNum.substring(FOUR, SEVEN)).append(delimiter)
+                        .append(phoneNum.substring(SEVEN, phoneNum.length()));
             }
         }
-        else { //其余长度的号码
-            int counts = phoneNum.length() / 4;
+        else { //其余长度的号码，格式为：4 4 4 ...
+            int counts = phoneNum.length() / FOUR;
 
             int i;
             for (i = 0; i < counts - 1; i++) {
-                sb.append(phoneNum.substring(4*i, 4*(i+1))).append(delimiter);
+                sb.append(phoneNum.substring(FOUR*i, FOUR*(i+1))).append(delimiter);
             }
 
-            if (4*(i+1) == phoneNum.length()) {
-                sb.append(phoneNum.substring(4*i, 4*(i+1)));
+            if (FOUR*(i+1) == phoneNum.length()) {
+                sb.append(phoneNum.substring(FOUR*i, FOUR*(i+1)));
             }
             else {
-                sb.append(phoneNum.substring(4*i, 4*(i+1))).append(delimiter);
-                sb.append(phoneNum.substring(4*(i+1), phoneNum.length()));
+                sb.append(phoneNum.substring(FOUR*i, FOUR*(i+1))).append(delimiter);
+                sb.append(phoneNum.substring(FOUR*(i+1), phoneNum.length()));
             }
         }
 

@@ -3,6 +3,7 @@ package com.call.log.infinity.utils;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.call.log.infinity.MyApplication;
@@ -20,11 +21,10 @@ import java.io.OutputStream;
 /**
  * 用于查询电话号码的归属地。
  */
-public class CallerAreaAndOperatorQueryUtil {
+public class CallerLocationAndOperatorQueryUtil {
     static final String TAG = "CallerLocQuery";
 
-    public static final String UNKOWN_AREA = MyApplication.getContext()
-        .getString(R.string.UnkownArea);
+    public static final String UNKOWN_AREA = MyApplication.getContext().getString(R.string.UnkownArea);
     public static final String UNKOWN_OPERATOR = MyApplication.getContext()
         .getString(R.string.UnkownOperator);
 
@@ -58,22 +58,22 @@ public class CallerAreaAndOperatorQueryUtil {
     private static final SQLiteDatabase CELLPHONE_AREA_DB = getDataBase();
 
     /**
-     * 查询指定号码的归属地。
+     * 查询指定号码的归属地和运营商。
      * @param phoneNumber: int
      * @return
      */
-    public static String[] callerLocQuery(int phoneNumber) {
-        return callerLocQuery(String.valueOf(phoneNumber));
+    public static String[] callerLocationAndOperatorQuery(int phoneNumber) {
+        return callerLocationAndOperatorQuery(String.valueOf(phoneNumber));
     }
 
     /**
-     * 查询指定号码的归属地。
+     * 查询指定号码的归属地和运营商。
      * @param phoneNumber: String
      * @return
      */
-    public static String[] callerLocQuery(String phoneNumber) {
+    public static String[] callerLocationAndOperatorQuery(@NonNull String phoneNumber) {
         if (TextUtils.isEmpty(phoneNumber)) {
-            return null;
+            return new String[]{null, null};
         }
 
         //手机号码

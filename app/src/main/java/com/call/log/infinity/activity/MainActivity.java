@@ -20,7 +20,6 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,7 +32,7 @@ import com.call.log.infinity.adapter.MainViewPagerAdapter;
 import com.call.log.infinity.database.CallLogDatabase;
 import com.call.log.infinity.database.CallLogModelDBFlow;
 import com.call.log.infinity.database.CopyDatabaseToSDCardUtil;
-import com.call.log.infinity.database.GetContactsNameUtil;
+import com.call.log.infinity.utils.QueryContactsUtil;
 import com.call.log.infinity.database.WriteCallLogToDatabaseUtil;
 import com.call.log.infinity.pager.UpdateFragmentObservable;
 import com.call.log.infinity.utils.LogUtil;
@@ -41,7 +40,7 @@ import com.call.log.infinity.utils.PermissionUtil;
 import com.call.log.infinity.view.ThemeDialog;
 import com.raizlabs.android.dbflow.sql.language.Delete;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -184,6 +183,18 @@ public class MainActivity extends BaseActivity
         if (id == R.id.nav_table) {
             Toast.makeText(MainActivity.this, "点击'数据库可视化'按钮，功能待完善",
                 Toast.LENGTH_SHORT).show();
+            QueryContactsUtil.queryPhoneNumberAndContactsNameMap(MainActivity.this,
+                new QueryContactsUtil.OnQueryPhoneNumberAndContactsNameMapListener() {
+                @Override
+                public void onQuerySuccess(HashMap<String, String> phoneNumberAndContactsName) {
+
+                }
+
+                @Override
+                public void onQueryFailed() {
+
+                }
+            });
         } else if (id == R.id.nav_refresh) {
             Toast.makeText(MainActivity.this, "点击'刷新DB联系人'按钮，功能待完善",
                 Toast.LENGTH_SHORT).show();

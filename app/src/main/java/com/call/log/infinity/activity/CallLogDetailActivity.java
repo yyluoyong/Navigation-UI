@@ -18,8 +18,8 @@ import com.call.log.infinity.adapter.CallLogDetailRecyclerViewAdapter.PhoneNumbe
 import com.call.log.infinity.constant.ViewPagerPosition;
 import com.call.log.infinity.database.CallLogModelDBFlow;
 import com.call.log.infinity.database.CallLogModelDBFlow_Table;
-import com.call.log.infinity.database.GetContactsNameUtil;
-import com.call.log.infinity.utils.CallerAreaAndOperatorQueryUtil;
+import com.call.log.infinity.utils.QueryContactsUtil;
+import com.call.log.infinity.utils.CallerLocationAndOperatorQueryUtil;
 import com.call.log.infinity.utils.LogUtil;
 import com.call.log.infinity.utils.PhoneNumberFormatter;
 import com.raizlabs.android.dbflow.sql.language.ConditionGroup;
@@ -144,7 +144,7 @@ public class CallLogDetailActivity extends BaseActivity {
      */
     private void initPhoneNumberItemList(String contactsName, String phoneNumber) {
         if (contactsName.equals(phoneNumber)) {
-            String[] areaAndOperator = CallerAreaAndOperatorQueryUtil.callerLocQuery(phoneNumber);
+            String[] areaAndOperator = CallerLocationAndOperatorQueryUtil.callerLocationAndOperatorQuery(phoneNumber);
             String callerLoc = areaAndOperator[0];
             String operator = areaAndOperator[1];
 
@@ -154,18 +154,18 @@ public class CallLogDetailActivity extends BaseActivity {
             mRecyclerViewAdapter.setPhoneNumberList(mPhoneNumberItemList);
             mRecyclerViewAdapter.notifyDataSetChanged();
         } else {
-            GetContactsNameUtil.queryContactsPhoneNumber(CallLogDetailActivity.this, contactsName,
-                new GetContactsNameUtil.OnQueryContactsPhoneNumberListener() {
+            QueryContactsUtil.queryContactsPhoneNumber(CallLogDetailActivity.this, contactsName,
+                new QueryContactsUtil.OnQueryContactsPhoneNumberListener() {
                     @Override
                     public void onQuerySuccess(ArrayList<String> phoneNumberList) {
                         for (int i = 0; i < phoneNumberList.size(); i++) {
-                            String[] areaAndOperator = CallerAreaAndOperatorQueryUtil.callerLocQuery(phoneNumberList.get(i));
+                            String[] areaAndOperator = CallerLocationAndOperatorQueryUtil.callerLocationAndOperatorQuery(phoneNumberList.get(i));
                             String callerLoc = areaAndOperator[0];
                             String operator = areaAndOperator[1];
 
                             if (TextUtils.isEmpty(callerLoc)) {
-                                callerLoc = CallerAreaAndOperatorQueryUtil.UNKOWN_AREA;
-                                operator = CallerAreaAndOperatorQueryUtil.UNKOWN_OPERATOR;
+                                callerLoc = CallerLocationAndOperatorQueryUtil.UNKOWN_AREA;
+                                operator = CallerLocationAndOperatorQueryUtil.UNKOWN_OPERATOR;
                             }
 
                             PhoneNumberItemModel model = new PhoneNumberItemModel(phoneNumberList.get(i), callerLoc, operator);
