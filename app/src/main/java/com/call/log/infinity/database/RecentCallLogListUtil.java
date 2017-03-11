@@ -7,7 +7,7 @@ import android.text.TextUtils;
 import com.call.log.infinity.MyApplication;
 import com.call.log.infinity.R;
 import com.call.log.infinity.model.CallLogItemModel;
-import com.call.log.infinity.utils.CallerLocQueryUtil;
+import com.call.log.infinity.utils.CallerAreaAndOperatorQueryUtil;
 import com.call.log.infinity.utils.LogUtil;
 import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.structure.database.AndroidDatabase;
@@ -35,11 +35,6 @@ public class RecentCallLogListUtil {
     private String callerLoc;          //归属地
     private int callCounts;            //通话次数
     private String operator;           //运营商
-
-    private static final String UNKOWN_AREA = MyApplication.getContext()
-        .getString(R.string.UnkownArea);
-    private static final String UNKOWN_OPERATOR = MyApplication.getContext()
-        .getString(R.string.UnkownOperator);
 
     /**
      * 注意：以下数据与DBFlow使用的模型类CallLogModelDBFlow一致。
@@ -205,13 +200,13 @@ public class RecentCallLogListUtil {
         callType = cursor.getInt(cursor.getColumnIndex(TYPE_COLUMN_NAME));
         callCounts = cursor.getInt(cursor.getColumnIndex(CALL_COUNTS_COLUMN_NAME));
 
-        String[] areaAndOperator = CallerLocQueryUtil.callerLocQuery(phoneNumber);
+        String[] areaAndOperator = CallerAreaAndOperatorQueryUtil.callerLocQuery(phoneNumber);
         callerLoc = areaAndOperator[0];
         operator = areaAndOperator[1];
 
         if (TextUtils.isEmpty(callerLoc)) {
-            callerLoc = UNKOWN_AREA;
-            operator = UNKOWN_OPERATOR;
+            callerLoc = CallerAreaAndOperatorQueryUtil.UNKOWN_AREA;
+            operator = CallerAreaAndOperatorQueryUtil.UNKOWN_OPERATOR;
         }
     }
 

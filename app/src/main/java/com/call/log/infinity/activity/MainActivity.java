@@ -33,6 +33,7 @@ import com.call.log.infinity.adapter.MainViewPagerAdapter;
 import com.call.log.infinity.database.CallLogDatabase;
 import com.call.log.infinity.database.CallLogModelDBFlow;
 import com.call.log.infinity.database.CopyDatabaseToSDCardUtil;
+import com.call.log.infinity.database.GetContactsNameUtil;
 import com.call.log.infinity.database.WriteCallLogToDatabaseUtil;
 import com.call.log.infinity.pager.UpdateFragmentObservable;
 import com.call.log.infinity.utils.LogUtil;
@@ -40,7 +41,9 @@ import com.call.log.infinity.utils.PermissionUtil;
 import com.call.log.infinity.view.ThemeDialog;
 import com.raizlabs.android.dbflow.sql.language.Delete;
 
-public class MainActivity extends AppCompatActivity
+import java.util.ArrayList;
+
+public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     static final String TAG = "MainActivity";
 
@@ -201,20 +204,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * 权限请求的回调方法。
-     * @param requestCode
-     * @param permissions
-     * @param grantResults
-     */
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-        @NonNull int[] grantResults) {
-        //使用PermissionUtils处理动态权限申请
-        PermissionUtil.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
-    /**
      * 更新通话记录数据库。
      */
     private void updateCallLogDatabase() {
@@ -349,6 +338,9 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                     Delete.tables(CallLogModelDBFlow.class);
+                    Toast.makeText(MainActivity.this, getString(R.string.clearDatabaseTableSuccess),
+                        Toast.LENGTH_LONG).show();
+
                 }
             })
             .onNeutral(new MaterialDialog.SingleButtonCallback() {

@@ -20,8 +20,13 @@ import java.io.OutputStream;
 /**
  * 用于查询电话号码的归属地。
  */
-public class CallerLocQueryUtil {
+public class CallerAreaAndOperatorQueryUtil {
     static final String TAG = "CallerLocQuery";
+
+    public static final String UNKOWN_AREA = MyApplication.getContext()
+        .getString(R.string.UnkownArea);
+    public static final String UNKOWN_OPERATOR = MyApplication.getContext()
+        .getString(R.string.UnkownOperator);
 
     //归属地数据库名字。
     private static final String DB_NAME = MyApplication.getContext()
@@ -49,9 +54,6 @@ public class CallerLocQueryUtil {
 
     //手机号码数据库号码长度
     private static final int DB_CELLPHONE_NUMBER_LEN = 7;
-
-    private static final String UNKOWN_OPERATOR = MyApplication.getContext()
-        .getString(R.string.UnkownOperator);
 
     private static final SQLiteDatabase CELLPHONE_AREA_DB = getDataBase();
 

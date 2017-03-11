@@ -60,6 +60,7 @@
     </string>
     <string name="backupThenClear">备份后清空</string>
     <string name="goOn">继续</string>
+    <string name="clearDatabaseTableSuccess">数据库已清空</string>
     <!--清空数据库对话框-->
 
     <string name="refusePermissionMessage">您拒绝了权限申请，功能无法使用</string>

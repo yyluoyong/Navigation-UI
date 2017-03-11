@@ -134,8 +134,6 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             return;
         }
 
-
-
         //除去空白项
         int mPosition = position - COUNT_BLACK_ITEM;
 

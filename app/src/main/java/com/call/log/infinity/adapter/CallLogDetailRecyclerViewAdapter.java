@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.call.log.infinity.MyApplication;
 import com.call.log.infinity.R;
@@ -124,7 +125,7 @@ public class CallLogDetailRecyclerViewAdapter extends
 
             final PhoneNumberItemViewHolder holder = new PhoneNumberItemViewHolder(view);
 
-            //拨打电话
+            //设置监听
             setPhoneNumberItemListener(view, holder);
 
             return holder;
@@ -184,6 +185,9 @@ public class CallLogDetailRecyclerViewAdapter extends
                 ((PhoneNumberItemViewHolder) holder).callImage
                     .setColorFilter(MyApplication.getThemeColorPrimary());
             }
+
+            ((ImageView) ((PhoneNumberItemViewHolder) holder).callLogItemView.findViewById(R.id.sms_image))
+                .setColorFilter(MyApplication.getThemeColorPrimary());
 
             return;
         }
@@ -309,8 +313,8 @@ public class CallLogDetailRecyclerViewAdapter extends
                              */
                             @Override
                             public void onPermissionDenied() {
-                                Snackbar.make(view, "您拒绝了权限申请，功能无法使用",
-                                    Snackbar.LENGTH_SHORT).show();
+                                Toast.makeText(mContext, mContext.getString(R.string.refusePermissionMessage),
+                                    Toast.LENGTH_SHORT).show();
                             }
                         });
                 }
@@ -340,8 +344,8 @@ public class CallLogDetailRecyclerViewAdapter extends
                              */
                             @Override
                             public void onPermissionDenied() {
-                                Snackbar.make(view, "您拒绝了权限申请，功能无法使用",
-                                    Snackbar.LENGTH_SHORT).show();
+                                Toast.makeText(mContext, mContext.getString(R.string.refusePermissionMessage),
+                                    Toast.LENGTH_SHORT).show();
                             }
                         });
                 }

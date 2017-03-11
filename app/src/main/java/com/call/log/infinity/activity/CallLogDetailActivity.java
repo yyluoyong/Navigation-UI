@@ -1,22 +1,16 @@
 package com.call.log.infinity.activity;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.CallLog;
-import android.support.annotation.NonNull;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
+import android.text.TextUtils;
 import android.widget.ImageView;
-
+import android.widget.Toast;
 import com.call.log.infinity.MyApplication;
 import com.call.log.infinity.R;
 import com.call.log.infinity.adapter.CallLogDetailRecyclerViewAdapter;
@@ -24,8 +18,9 @@ import com.call.log.infinity.adapter.CallLogDetailRecyclerViewAdapter.PhoneNumbe
 import com.call.log.infinity.constant.ViewPagerPosition;
 import com.call.log.infinity.database.CallLogModelDBFlow;
 import com.call.log.infinity.database.CallLogModelDBFlow_Table;
+import com.call.log.infinity.database.GetContactsNameUtil;
+import com.call.log.infinity.utils.CallerAreaAndOperatorQueryUtil;
 import com.call.log.infinity.utils.LogUtil;
-import com.call.log.infinity.utils.PermissionUtil;
 import com.call.log.infinity.utils.PhoneNumberFormatter;
 import com.raizlabs.android.dbflow.sql.language.ConditionGroup;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
@@ -33,7 +28,7 @@ import com.raizlabs.android.dbflow.sql.language.SQLite;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CallLogDetailActivity extends AppCompatActivity {
+public class CallLogDetailActivity extends BaseActivity {
     static final String TAG = "CallLogDetailActivity";
 
     //联系人的姓名
@@ -55,6 +50,8 @@ public class CallLogDetailActivity extends AppCompatActivity {
     private String mPhoneNumber;
     //该页面从ViewPager哪一页触发启动
     private int mPosition;
+    //ViewPager触发页面对应的通话类型
+    private int mCallType;
 
     private CollapsingToolbarLayout mCollapsingToolbar;
     private Toolbar mToolbar;
@@ -71,6 +68,7 @@ public class CallLogDetailActivity extends AppCompatActivity {
         mContactsName = intent.getStringExtra(CONTACTS_NAME);
         mPhoneNumber = intent.getStringExtra(PHONE_NUMBER);
         mPosition = intent.getIntExtra(ViewPagerPosition.POSITION, ViewPagerPosition.POSITION_ALL_TYPE);
+        mCallType = mPosition;
 
         //设置联系人姓名
         mCollapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbarLayout);
@@ -100,29 +98,11 @@ public class CallLogDetailActivity extends AppCompatActivity {
      * 初始化构造View需要的数据
      */
     private void initCallLogs() {
+        //初始化电话列表
+        initPhoneNumberItemList(mContactsName, mPhoneNumber);
 
-        final ProgressDialog pgDialog = createProgressDialog(null,
-            MyApplication.getContext().getString(R.string.readDatabaseIng));
-        pgDialog.show();
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                getCallModelList(mContactsName, mPosition);
-
-                //更新UI页面
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mRecyclerViewAdapter.setPhoneNumberList(mPhoneNumberItemList);
-                        mRecyclerViewAdapter.setCallLogList(mCallLogModelDBFlowList);
-                        mRecyclerViewAdapter.notifyDataSetChanged();
-
-                        pgDialog.dismiss();
-                    }
-                });
-            }
-        }).start();
+        //初始化通话记录列表
+        initCallLogModelDBFlowList(mContactsName, mCallType);
     }
 
     private void getCallModelList(String name, int type) {
@@ -158,31 +138,80 @@ public class CallLogDetailActivity extends AppCompatActivity {
     }
 
     /**
-     * 一个圆圈的进度对话框
-     * @param title
-     * @param msg
-     * @return
+     * 初始化当前联系人的电话模型列表。
+     * @param contactsName：条目上联系人的姓名
+     * @param phoneNumber：条目上的电话号码
      */
-    private ProgressDialog createProgressDialog(String title, String msg) {
+    private void initPhoneNumberItemList(String contactsName, String phoneNumber) {
+        if (contactsName.equals(phoneNumber)) {
+            String[] areaAndOperator = CallerAreaAndOperatorQueryUtil.callerLocQuery(phoneNumber);
+            String callerLoc = areaAndOperator[0];
+            String operator = areaAndOperator[1];
 
-        ProgressDialog pgDialog = new ProgressDialog(CallLogDetailActivity.this);
+            PhoneNumberItemModel model = new PhoneNumberItemModel(phoneNumber, callerLoc, operator);
+            mPhoneNumberItemList.add(model);
 
-        pgDialog.setTitle(title);
-        pgDialog.setMessage(msg);
-        pgDialog.setCancelable(false);
-        pgDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        pgDialog.setIndeterminate(false);
+            mRecyclerViewAdapter.setPhoneNumberList(mPhoneNumberItemList);
+            mRecyclerViewAdapter.notifyDataSetChanged();
+        } else {
+            GetContactsNameUtil.queryContactsPhoneNumber(CallLogDetailActivity.this, contactsName,
+                new GetContactsNameUtil.OnQueryContactsPhoneNumberListener() {
+                    @Override
+                    public void onQuerySuccess(ArrayList<String> phoneNumberList) {
+                        for (int i = 0; i < phoneNumberList.size(); i++) {
+                            String[] areaAndOperator = CallerAreaAndOperatorQueryUtil.callerLocQuery(phoneNumberList.get(i));
+                            String callerLoc = areaAndOperator[0];
+                            String operator = areaAndOperator[1];
 
-        return pgDialog;
+                            if (TextUtils.isEmpty(callerLoc)) {
+                                callerLoc = CallerAreaAndOperatorQueryUtil.UNKOWN_AREA;
+                                operator = CallerAreaAndOperatorQueryUtil.UNKOWN_OPERATOR;
+                            }
+
+                            PhoneNumberItemModel model = new PhoneNumberItemModel(phoneNumberList.get(i), callerLoc, operator);
+                            mPhoneNumberItemList.add(model);
+                        }
+
+                        //更新UI
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mRecyclerViewAdapter.setPhoneNumberList(mPhoneNumberItemList);
+                                mRecyclerViewAdapter.notifyDataSetChanged();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onQueryFailed() {
+                        Toast.makeText(CallLogDetailActivity.this, getString(R.string.refusePermissionMessage),
+                            Toast.LENGTH_SHORT).show();
+                    }
+                });
+        }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        //使用PermissionUtils处理动态权限申请
-        PermissionUtil.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    /**
+     * 初始化通话记录模型列表。
+     * @param contactsName：条目上联系人的姓名
+     * @param type：通话类型
+     */
+    private void initCallLogModelDBFlowList(final String contactsName, final int type) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                getCallModelList(contactsName, type);
 
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+                //更新UI页面
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mRecyclerViewAdapter.setCallLogList(mCallLogModelDBFlowList);
+                        mRecyclerViewAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
+        }).start();
     }
 
     /**
