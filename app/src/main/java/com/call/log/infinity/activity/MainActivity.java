@@ -51,8 +51,11 @@ import com.raizlabs.android.dbflow.structure.database.transaction.Transaction;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -274,7 +277,7 @@ public class MainActivity extends BaseActivity
     }
 
     /**
-     * 更新通话记录数据库。
+     * 读取系统的通话记录，更新DBFlow通话记录数据库。
      */
     private void updateCallLogDatabase() {
 
@@ -355,7 +358,7 @@ public class MainActivity extends BaseActivity
             @Override
             public void run() {
                 //得到DBFlow的通话记录数据库里面涉及的所有号码。
-                final List<String> phoneNumberList = new ArrayList<>();
+                final Set<String> phoneNumberList = new HashSet<>();
                 final List<CallLogModelDBFlow> callLogModelDBFlowList = SQLite.select()
                     .from(CallLogModelDBFlow.class).queryList();
                 if (callLogModelDBFlowList != null) {
@@ -377,8 +380,9 @@ public class MainActivity extends BaseActivity
                                 //异步执行数据库的操作
                                 @Override
                                 public void execute(DatabaseWrapper databaseWrapper) {
-                                    for (int i = 0; i< phoneNumberList.size(); i++) {
-                                        String phoneNumber = phoneNumberList.get(i);
+                                    Iterator<String> iterator = phoneNumberList.iterator();
+                                    while (iterator.hasNext()) {
+                                        String phoneNumber = iterator.next();
                                         String contactsName = phoneNumberAndContactsName.get(phoneNumber);
 
                                         if (contactsName != null) {
