@@ -5,6 +5,12 @@
     <!--菜单栏信息-->
     <string name="menuSettings">设置</string>
     <string name="menuAbount">关于</string>
+    <string name="menuSetTheme">设置主题</string>
+    <string name="menuCopy">复制DB到SD卡</string>
+    <string name="menuExport">导出DB为Excel</string>
+    <string name="menuRefresh">刷新DB联系人</string>
+    <string name="menuClear">清空数据库表格</string>
+    <string name="menuTable">数据库可视化</string>
     <!--菜单栏信息-->
 
     <!--主体颜色-->

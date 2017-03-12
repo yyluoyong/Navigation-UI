@@ -4,27 +4,26 @@
     <item
         android:id="@+id/nav_table"
         android:icon="@drawable/ic_table"
-        android:title="数据库可视化" />
-
-    <item
-        android:id="@+id/nav_refresh"
-        android:icon="@drawable/ic_refresh"
-        android:title="刷新DB联系人" />
+        android:title="@string/menuTable" />
 
     <item android:title="Database Manipulation">
         <menu>
             <item
                 android:id="@+id/nav_copy"
                 android:icon="@drawable/ic_copy"
-                android:title="复制DB到SD卡" />
+                android:title="@string/menuCopy" />
             <item
                 android:id="@+id/nav_export"
                 android:icon="@drawable/ic_export"
-                android:title="导出DB为Excel" />
+                android:title="@string/menuExport" />
+            <item
+                android:id="@+id/nav_refresh"
+                android:icon="@drawable/ic_refresh"
+                android:title="@string/menuRefresh" />
             <item
                 android:id="@+id/nav_delete"
                 android:icon="@drawable/ic_clear"
-                android:title="清空数据库表格" />
+                android:title="@string/menuClear" />
         </menu>
     </item>
 
@@ -33,10 +32,12 @@
             <item
                 android:id="@+id/nav_theme"
                 android:icon="@drawable/ic_theme"
-                android:title="设置主题" />
+                android:title="@string/menuSetTheme" />
+            <item
+                android:id="@+id/nav_about"
+                android:icon="@drawable/ic_about"
+                android:title="@string/menuAbount" />
         </menu>
     </item>
-
-
 
 </menu>
