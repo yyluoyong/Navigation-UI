@@ -15,6 +15,7 @@ import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -40,10 +41,17 @@ import com.call.log.infinity.fragment.UpdateFragmentObservable;
 import com.call.log.infinity.utils.LogUtil;
 import com.call.log.infinity.utils.PermissionUtil;
 import com.call.log.infinity.view.ThemeDialog;
+import com.raizlabs.android.dbflow.config.DatabaseDefinition;
+import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.sql.language.Delete;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
+import com.raizlabs.android.dbflow.structure.database.DatabaseWrapper;
+import com.raizlabs.android.dbflow.structure.database.transaction.ITransaction;
+import com.raizlabs.android.dbflow.structure.database.transaction.Transaction;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends BaseActivity
@@ -187,11 +195,58 @@ public class MainActivity extends BaseActivity
         if (id == R.id.nav_table) {
 //            Toast.makeText(MainActivity.this, "点击'数据库可视化'按钮，功能待完善",
 //                Toast.LENGTH_SHORT).show();
-            QueryContactsUtil.queryPhoneNumberBelongTo(MainActivity.this, "15676399228",
-                new QueryContactsUtil.OnQueryPhoneNumberBelongToListener() {
+
+            final List<String> phoneNumberList = new ArrayList<>();
+//            phoneNumberList.add("15676399228");
+//            phoneNumberList.add("18142559501");
+//            phoneNumberList.add("123456");
+//            phoneNumberList.add("15884621553");
+//            phoneNumberList.add("15181637278");
+
+            final List<CallLogModelDBFlow> callLogModelDBFlowList = SQLite.select().from(CallLogModelDBFlow.class)
+                .queryList();
+
+            if (callLogModelDBFlowList != null) {
+                for (int i = 0; i< callLogModelDBFlowList.size(); i++) {
+                    phoneNumberList.add(callLogModelDBFlowList.get(i).getPhoneNumber());
+                }
+            }
+
+            LogUtil.d(TAG, "电话列表长度：" + phoneNumberList.size());
+
+            QueryContactsUtil.queryPhoneNumbersBelongTo(MainActivity.this, phoneNumberList,
+                new QueryContactsUtil.OnQueryPhoneNumbersBelongToListener() {
                     @Override
-                    public void onQuerySuccess(String contactsName) {
-                        LogUtil.d(TAG, "onQuerySuccess " + contactsName);
+                    public void onQuerySuccess(final List<String> contactsNameList) {
+
+                        LogUtil.d(TAG, "姓名列表长度：" + contactsNameList.size());
+
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                for (int i = 0; i < contactsNameList.size(); i++) {
+                                    LogUtil.d(TAG, phoneNumberList.get(i) + " " + contactsNameList.get(i));
+//                                    CallLogModelDBFlow model = callLogModelDBFlowList.get(i);
+//                                    String contactsName = contactsNameList.get(i);
+//                                    if (TextUtils.isEmpty(contactsName)) {
+//                                        model.setContactsName(model.getPhoneNumber());
+//                                    } else {
+//                                        model.setContactsName(contactsName);
+//                                        model.update();
+//                                    }
+                                }
+
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        UpdateFragmentObservable.getInstance().notifyFragmentUpdate();
+                                    }
+                                });
+                            }
+                        }).start();
+
+
+
                     }
 
                     @Override
@@ -200,66 +255,8 @@ public class MainActivity extends BaseActivity
                     }
             });
 
-            try {
-                Thread.sleep(100);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            QueryContactsUtil.queryPhoneNumberBelongTo(MainActivity.this, "123456",
-                new QueryContactsUtil.OnQueryPhoneNumberBelongToListener() {
-                    @Override
-                    public void onQuerySuccess(String contactsName) {
-                        LogUtil.d(TAG, "onQuerySuccess " + contactsName);
-                    }
-
-                    @Override
-                    public void onQueryFailed() {
-
-                    }
-                });
-
-            try {
-                Thread.sleep(100);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            QueryContactsUtil.queryPhoneNumberBelongTo(MainActivity.this, "18142559501",
-                new QueryContactsUtil.OnQueryPhoneNumberBelongToListener() {
-                    @Override
-                    public void onQuerySuccess(String contactsName) {
-                        LogUtil.d(TAG, "onQuerySuccess " + contactsName);
-                    }
-
-                    @Override
-                    public void onQueryFailed() {
-
-                    }
-                });
         } else if (id == R.id.nav_refresh) {
-            QueryContactsUtil.queryPhoneNumberAndContactsNameMap(MainActivity.this,
-                new QueryContactsUtil.OnQueryPhoneNumberAndContactsNameMapListener() {
-                    @Override
-                    public void onQuerySuccess(HashMap<String, String> phoneNumberAndContactsName) {
-                        UpdateDatabaseContactsUtil.updateDatabaseContacts(phoneNumberAndContactsName,
-                            new UpdateDatabaseContactsUtil.OnUpdateDatabaseContactsListener() {
-                                @Override
-                                public void success() {
-                                    UpdateFragmentObservable.getInstance().notifyFragmentUpdate();
-                                }
-                            });
-                    }
-
-                    @Override
-                    public void onQueryFailed() {
-                    }
-                }
-            );
-
-            SQLite.update(CallLogModelDBFlow.class)
-                .set(CallLogModelDBFlow_Table.contactsName.eq("未知"))
-                .where(CallLogModelDBFlow_Table.phoneNumber.eq("15181637287"));
+            refreshCallLogDatabase();
         } else if (id == R.id.nav_copy) {
             setCopyDatabaseListener();
         } else if (id == R.id.nav_export) {
@@ -345,6 +342,73 @@ public class MainActivity extends BaseActivity
                                 Toast.LENGTH_LONG).show();
                         }
                     });
+            }
+        }).start();
+    }
+
+    /**
+     * 读取系统联系人，刷新通话记录数据库。
+     */
+    private void refreshCallLogDatabase() {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //得到DBFlow的通话记录数据库里面涉及的所有号码。
+                final List<String> phoneNumberList = new ArrayList<>();
+                final List<CallLogModelDBFlow> callLogModelDBFlowList = SQLite.select()
+                    .from(CallLogModelDBFlow.class).queryList();
+                if (callLogModelDBFlowList != null) {
+                    for (int i = 0; i < callLogModelDBFlowList.size(); i++) {
+                        phoneNumberList.add(callLogModelDBFlowList.get(i).getPhoneNumber());
+                    }
+                }
+
+                //在系统通讯录里，查询上述号码对应的联系人名字
+                QueryContactsUtil.queryPhoneNumberAndContactsNameMap(MainActivity.this,
+                    new QueryContactsUtil.OnQueryPhoneNumberAndContactsNameMapListener() {
+
+                        //查询成功
+                        @Override
+                        public void onQuerySuccess(final HashMap<String, String> phoneNumberAndContactsName) {
+
+                            DatabaseDefinition database = FlowManager.getDatabase(CallLogDatabase.class);
+                            Transaction transaction = database.beginTransactionAsync(new ITransaction() {
+                                //异步执行数据库的操作
+                                @Override
+                                public void execute(DatabaseWrapper databaseWrapper) {
+                                    for (int i = 0; i< phoneNumberList.size(); i++) {
+                                        String phoneNumber = phoneNumberList.get(i);
+                                        String contactsName = phoneNumberAndContactsName.get(phoneNumber);
+
+                                        if (contactsName != null) {
+                                            SQLite.update(CallLogModelDBFlow.class)
+                                                .set(CallLogModelDBFlow_Table.contactsName.eq(contactsName))
+                                                .where(CallLogModelDBFlow_Table.phoneNumber.eq(phoneNumber)).execute();
+                                        } else {
+                                            SQLite.update(CallLogModelDBFlow.class)
+                                                .set(CallLogModelDBFlow_Table.contactsName.eq(phoneNumber))
+                                                .where(CallLogModelDBFlow_Table.phoneNumber.eq(phoneNumber)).execute();
+                                        }
+                                    }
+                                }
+                            }).success(new Transaction.Success() {
+                                //UI线程执行的回调
+                                @Override
+                                public void onSuccess(Transaction transaction) {
+                                    UpdateFragmentObservable.getInstance().notifyFragmentUpdate();
+                                }
+                            }).build();
+                            transaction.execute(); // execute
+                        }
+
+                        //查询失败
+                        @Override
+                        public void onQueryFailed() {
+                        }
+                    }
+                );
+
             }
         }).start();
     }

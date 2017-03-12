@@ -25,28 +25,13 @@ public class UpdateDatabaseContactsUtil {
         void success();
     }
 
-
     public static void updateDatabaseContacts(@NonNull final HashMap<String, String> phoneNumberAndContactsName,
         @NonNull final OnUpdateDatabaseContactsListener listener) {
         DatabaseDefinition database = FlowManager.getDatabase(CallLogDatabase.class);
         Transaction transaction = database.beginTransactionAsync(new ITransaction() {
             @Override
             public void execute(DatabaseWrapper databaseWrapper) {
-//                LogUtil.d(TAG, "size: " + phoneNumberAndContactsName.size());
-                int i = 1;
-                for (Map.Entry<String, String> entry : phoneNumberAndContactsName.entrySet() ) {
 
-                    SQLite.update(CallLogModelDBFlow.class)
-                        .set(CallLogModelDBFlow_Table.contactsName.eq(entry.getValue()))
-                        .where(CallLogModelDBFlow_Table.phoneNumber.eq(entry.getKey())).async().execute();
-//                    i++;
-                    LogUtil.d(TAG, "线程ID：" + android.os.Process.myTid() + " i = " + (i++) +  " " + entry.getKey() + " " + entry.getValue());
-                }
-
-                SQLite.update(CallLogModelDBFlow.class)
-                    .set(CallLogModelDBFlow_Table.contactsName.eq("未知"))
-                    .where(CallLogModelDBFlow_Table.phoneNumber.eq("15181637287")).execute();
-                LogUtil.d(TAG, "update");
             }
         }).success(new Transaction.Success() {
             @Override

@@ -10,6 +10,7 @@ import com.call.log.infinity.R;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -48,9 +49,9 @@ public class QueryContactsUtil {
     /**
      * 查询指定号码对应联系人姓名的回调接口。
      */
-    public interface OnQueryPhoneNumberBelongToListener {
+    public interface OnQueryPhoneNumbersBelongToListener {
         //申请权限成功后进行的操作
-        void onQuerySuccess(String contactsName);
+        void onQuerySuccess(List<String> contactsNameList);
         //申请权限失败后进行的操作
         void onQueryFailed();
     }
@@ -58,13 +59,13 @@ public class QueryContactsUtil {
     /**
      * 获得指定号码对应的联系人姓名，并在完成之后执行回调方法。
      * @param mContext
-     * @param phoneNumber
+     * @param phoneNumberList
      * @param listener
      */
-    public static void queryPhoneNumberBelongTo(@NonNull final Context mContext,
-        @NonNull final String phoneNumber, @NonNull final OnQueryPhoneNumberBelongToListener listener) {
+    public static void queryPhoneNumbersBelongTo(@NonNull final Context mContext,
+        @NonNull final List<String> phoneNumberList, @NonNull final OnQueryPhoneNumbersBelongToListener listener) {
 
-        LogUtil.d(TAG, "queryPhoneNumberBelongTo " + phoneNumber);
+        final List<String> contactsNameList = new ArrayList<>();
 
         PermissionUtil.requestPermissions(mContext, PermissionUtil.REQUEST_CODE,
             new String[]{Manifest.permission.READ_CONTACTS},
@@ -74,34 +75,37 @@ public class QueryContactsUtil {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            Cursor cursor = null;
-                            String contactsName = null;
-                            try {
-                                LogUtil.d(TAG, "onPermissionGranted " + phoneNumber);
-                                cursor = mContext.getContentResolver()
-                                    .query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                                        new String[]{ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME},
-                                        ContactsContract.CommonDataKinds.Phone.NUMBER + " = ?",
-                                        new String[]{phoneNumber}, null);
+                            if (phoneNumberList != null) {
+                                for (int i = 0; i < phoneNumberList.size(); i++) {
+                                    Cursor cursor = null;
+                                    String contactsName = null;
+                                    String phoneNumber = phoneNumberList.get(i);
+                                    try {
+                                        cursor = mContext.getContentResolver()
+                                            .query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                                                new String[]{ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME},
+                                                ContactsContract.CommonDataKinds.Phone.NUMBER + " = ?",
+                                                new String[]{phoneNumber}, null);
 
-                                if (cursor != null) {
-                                    if (cursor.moveToFirst()) {
-                                        contactsName = cursor.getString(cursor
-                                            .getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+                                        if (cursor != null && cursor.moveToNext()) {
+                                            contactsName = cursor.getString(cursor
+                                                .getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+                                            contactsNameList.add(contactsName);
+                                        } else {
+                                            contactsNameList.add(null);
+                                        }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    } finally {
+                                        if (cursor != null) {
+                                            cursor.close();
+                                        }
                                     }
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            } finally {
-                                if (cursor != null) {
-                                    cursor.close();
                                 }
                             }
 
-                            LogUtil.d(TAG, contactsName);
-
                             if (listener != null) {
-                                listener.onQuerySuccess(contactsName);
+                                listener.onQuerySuccess(contactsNameList);
                             }
                         }
                     }).start();
