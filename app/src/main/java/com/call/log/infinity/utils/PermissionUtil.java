@@ -7,6 +7,9 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 /**
  * Created by Yong on 2017/2/25.
  */
@@ -25,7 +28,7 @@ public class PermissionUtil {
 
     public final static int REQUEST_CODE = 1;
 
-    private static OnPermissionListener mOnPermissionListener;
+    private static ArrayList<OnPermissionListener> mOnPermissionListenerList = new ArrayList<>();
 
     /**
      * 申请权限后可以执行的回调方法
@@ -53,13 +56,13 @@ public class PermissionUtil {
             throw new RuntimeException("OnPermissionListener must not be null");
         }
 
-        mOnPermissionListener = listener;
-
         //Android 6.0之前无需动态申请权限，直接执行
         if (Build.VERSION.SDK_INT < 23) {
-            mOnPermissionListener.onPermissionGranted();
+            listener.onPermissionGranted();
             return;
         }
+
+        mOnPermissionListenerList.add(listener);
 
         if (context instanceof Activity) {
             ActivityCompat.requestPermissions((Activity) context, permissions, requestCode);
@@ -75,25 +78,33 @@ public class PermissionUtil {
     public synchronized static void onRequestPermissionsResult(int requestCode,
         @NonNull String[] permissions, @NonNull int[] grantResults) {
 
-        if (mOnPermissionListener == null) {
+        if (mOnPermissionListenerList.size() == 0) {
             return;
         }
 
         /**
          * 在“说明一”情形下，失败处理不会被执行。
          */
-        switch (requestCode) {
-            case REQUEST_CODE:
-                if (verifyPermissions(grantResults)) {
-                    //回调申请权限成功的处理办法
-                    mOnPermissionListener.onPermissionGranted();
-                } else {
-                    //回调申请权限失败的处理办法
-                    mOnPermissionListener.onPermissionDenied();
-                }
-                break;
-            default:
+        Iterator<OnPermissionListener> iterator = mOnPermissionListenerList.iterator();
+        while (iterator.hasNext()) {
+            OnPermissionListener listener = iterator.next();
+            switch (requestCode) {
+                case REQUEST_CODE:
+                    if (verifyPermissions(grantResults)) {
+                        //回调申请权限成功的处理办法
+                        listener.onPermissionGranted();
+                    } else {
+                        //回调申请权限失败的处理办法
+                        listener.onPermissionDenied();
+                    }
+                    break;
+                default:
+            }
+//            iterator.remove();
+
+            LogUtil.d(TAG, "onRequestPermissionsResult");
         }
+
     }
 
     /**

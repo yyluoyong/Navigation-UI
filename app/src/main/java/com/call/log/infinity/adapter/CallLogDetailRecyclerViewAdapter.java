@@ -23,6 +23,7 @@ import com.call.log.infinity.utils.CallDurationFormatter;
 import com.call.log.infinity.utils.PermissionUtil;
 import com.call.log.infinity.utils.PhoneNumberFormatter;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**

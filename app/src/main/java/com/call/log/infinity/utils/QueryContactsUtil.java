@@ -98,13 +98,16 @@ public class QueryContactsUtil {
                                 }
                             }
 
-                            LogUtil.d(TAG, contactsName);
+                            LogUtil.d(TAG, "onPermissionGranted " + phoneNumber + " " + contactsName);
 
                             if (listener != null) {
                                 listener.onQuerySuccess(contactsName);
                             }
+
+
                         }
                     }).start();
+
                 }
 
                 /**
@@ -117,7 +120,6 @@ public class QueryContactsUtil {
                 }
             }
         );
-
     }
 
     /**
@@ -180,7 +182,6 @@ public class QueryContactsUtil {
                 }
             }
         );
-
     }
 
     /**

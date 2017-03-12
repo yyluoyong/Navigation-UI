@@ -25,6 +25,7 @@ import com.call.log.infinity.model.CallLogItemModel;
 import com.call.log.infinity.utils.MaterialDesignColor;
 import com.call.log.infinity.utils.PermissionUtil;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
