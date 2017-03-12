@@ -7,7 +7,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import com.call.log.infinity.R;
 import com.call.log.infinity.constant.ViewPagerPosition;
-import com.call.log.infinity.pager.CallLogFragment;
+import com.call.log.infinity.fragment.CallLogFragment;
 
 /**
  * Created by Yong on 2017/2/11.

@@ -1,4 +1,4 @@
-package com.call.log.infinity.pager;
+package com.call.log.infinity.fragment;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;

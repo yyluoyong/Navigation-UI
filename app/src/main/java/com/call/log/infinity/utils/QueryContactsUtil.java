@@ -9,6 +9,8 @@ import android.widget.Toast;
 import com.call.log.infinity.R;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Created by Yong on 2017/3/11.
@@ -18,13 +20,23 @@ import java.util.HashMap;
  * 查询系统中联系人和电话号码的工具。
  */
 public class QueryContactsUtil {
-    static final String TAG = "GetContactsNameUtil";
+    static final String TAG = "QueryContactsUtil";
 
     //电话号码的分隔符，安卓系统中得到的电话号码数字中间会按规律加入空格，以方便阅读。
     private static final String PHONE_NUMBER_DELIMITER = " ";
 
     /**
-     * 处理查询结果的回调
+     * 查询指定联系人姓名对应号码列表的回调接口。
+     */
+    public interface OnQueryContactsPhoneNumberListener {
+        //申请权限成功后进行的操作
+        void onQuerySuccess(ArrayList<String> phoneNumberList);
+        //申请权限失败后进行的操作
+        void onQueryFailed();
+    }
+
+    /**
+     * 查询电话号码和联系人姓名Map的回调接口。
      */
     public interface OnQueryPhoneNumberAndContactsNameMapListener {
         //申请权限成功后进行的操作
@@ -33,11 +45,79 @@ public class QueryContactsUtil {
         void onQueryFailed();
     }
 
-    public interface OnQueryContactsPhoneNumberListener {
+    /**
+     * 查询指定号码对应联系人姓名的回调接口。
+     */
+    public interface OnQueryPhoneNumberBelongToListener {
         //申请权限成功后进行的操作
-        void onQuerySuccess(ArrayList<String> phoneNumberList);
+        void onQuerySuccess(String contactsName);
         //申请权限失败后进行的操作
         void onQueryFailed();
+    }
+
+    /**
+     * 获得指定号码对应的联系人姓名，并在完成之后执行回调方法。
+     * @param mContext
+     * @param phoneNumber
+     * @param listener
+     */
+    public static void queryPhoneNumberBelongTo(@NonNull final Context mContext,
+        @NonNull final String phoneNumber, @NonNull final OnQueryPhoneNumberBelongToListener listener) {
+
+        LogUtil.d(TAG, "queryPhoneNumberBelongTo " + phoneNumber);
+
+        PermissionUtil.requestPermissions(mContext, PermissionUtil.REQUEST_CODE,
+            new String[]{Manifest.permission.READ_CONTACTS},
+            new PermissionUtil.OnPermissionListener() {
+                @Override
+                public void onPermissionGranted() {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Cursor cursor = null;
+                            String contactsName = null;
+                            try {
+                                LogUtil.d(TAG, "onPermissionGranted " + phoneNumber);
+                                cursor = mContext.getContentResolver()
+                                    .query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                                        new String[]{ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME},
+                                        ContactsContract.CommonDataKinds.Phone.NUMBER + " = ?",
+                                        new String[]{phoneNumber}, null);
+
+                                if (cursor != null) {
+                                    if (cursor.moveToFirst()) {
+                                        contactsName = cursor.getString(cursor
+                                            .getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+                                    }
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            } finally {
+                                if (cursor != null) {
+                                    cursor.close();
+                                }
+                            }
+
+                            LogUtil.d(TAG, contactsName);
+
+                            if (listener != null) {
+                                listener.onQuerySuccess(contactsName);
+                            }
+                        }
+                    }).start();
+                }
+
+                /**
+                 * 见PermissionUtils类的“说明一”
+                 */
+                @Override
+                public void onPermissionDenied() {
+                    Toast.makeText(mContext, mContext.getString(R.string.refusePermissionMessage),
+                        Toast.LENGTH_SHORT).show();
+                }
+            }
+        );
+
     }
 
     /**
@@ -133,7 +213,6 @@ public class QueryContactsUtil {
                                         String phoneNumber = cursor.getString(cursor.getColumnIndex(
                                             ContactsContract.CommonDataKinds.Phone.NUMBER));
 
-                                        LogUtil.d(TAG, name + " " + phoneNumber.replace(PHONE_NUMBER_DELIMITER, ""));
                                         phoneNumberAndContactsName.put(phoneNumber.replace(PHONE_NUMBER_DELIMITER, ""),
                                             name);
                                     }

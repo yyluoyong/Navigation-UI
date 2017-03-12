@@ -31,16 +31,20 @@ import com.call.log.infinity.R;
 import com.call.log.infinity.adapter.MainViewPagerAdapter;
 import com.call.log.infinity.database.CallLogDatabase;
 import com.call.log.infinity.database.CallLogModelDBFlow;
+import com.call.log.infinity.database.CallLogModelDBFlow_Table;
 import com.call.log.infinity.database.CopyDatabaseToSDCardUtil;
+import com.call.log.infinity.database.UpdateDatabaseContactsUtil;
 import com.call.log.infinity.utils.QueryContactsUtil;
 import com.call.log.infinity.database.WriteCallLogToDatabaseUtil;
-import com.call.log.infinity.pager.UpdateFragmentObservable;
+import com.call.log.infinity.fragment.UpdateFragmentObservable;
 import com.call.log.infinity.utils.LogUtil;
 import com.call.log.infinity.utils.PermissionUtil;
 import com.call.log.infinity.view.ThemeDialog;
 import com.raizlabs.android.dbflow.sql.language.Delete;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -181,23 +185,81 @@ public class MainActivity extends BaseActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_table) {
-            Toast.makeText(MainActivity.this, "点击'数据库可视化'按钮，功能待完善",
-                Toast.LENGTH_SHORT).show();
+//            Toast.makeText(MainActivity.this, "点击'数据库可视化'按钮，功能待完善",
+//                Toast.LENGTH_SHORT).show();
+            QueryContactsUtil.queryPhoneNumberBelongTo(MainActivity.this, "15676399228",
+                new QueryContactsUtil.OnQueryPhoneNumberBelongToListener() {
+                    @Override
+                    public void onQuerySuccess(String contactsName) {
+                        LogUtil.d(TAG, "onQuerySuccess " + contactsName);
+                    }
+
+                    @Override
+                    public void onQueryFailed() {
+
+                    }
+            });
+
+            try {
+                Thread.sleep(100);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            QueryContactsUtil.queryPhoneNumberBelongTo(MainActivity.this, "123456",
+                new QueryContactsUtil.OnQueryPhoneNumberBelongToListener() {
+                    @Override
+                    public void onQuerySuccess(String contactsName) {
+                        LogUtil.d(TAG, "onQuerySuccess " + contactsName);
+                    }
+
+                    @Override
+                    public void onQueryFailed() {
+
+                    }
+                });
+
+            try {
+                Thread.sleep(100);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            QueryContactsUtil.queryPhoneNumberBelongTo(MainActivity.this, "18142559501",
+                new QueryContactsUtil.OnQueryPhoneNumberBelongToListener() {
+                    @Override
+                    public void onQuerySuccess(String contactsName) {
+                        LogUtil.d(TAG, "onQuerySuccess " + contactsName);
+                    }
+
+                    @Override
+                    public void onQueryFailed() {
+
+                    }
+                });
+        } else if (id == R.id.nav_refresh) {
             QueryContactsUtil.queryPhoneNumberAndContactsNameMap(MainActivity.this,
                 new QueryContactsUtil.OnQueryPhoneNumberAndContactsNameMapListener() {
-                @Override
-                public void onQuerySuccess(HashMap<String, String> phoneNumberAndContactsName) {
+                    @Override
+                    public void onQuerySuccess(HashMap<String, String> phoneNumberAndContactsName) {
+                        UpdateDatabaseContactsUtil.updateDatabaseContacts(phoneNumberAndContactsName,
+                            new UpdateDatabaseContactsUtil.OnUpdateDatabaseContactsListener() {
+                                @Override
+                                public void success() {
+                                    UpdateFragmentObservable.getInstance().notifyFragmentUpdate();
+                                }
+                            });
+                    }
 
+                    @Override
+                    public void onQueryFailed() {
+                    }
                 }
+            );
 
-                @Override
-                public void onQueryFailed() {
-
-                }
-            });
-        } else if (id == R.id.nav_refresh) {
-            Toast.makeText(MainActivity.this, "点击'刷新DB联系人'按钮，功能待完善",
-                Toast.LENGTH_SHORT).show();
+            SQLite.update(CallLogModelDBFlow.class)
+                .set(CallLogModelDBFlow_Table.contactsName.eq("未知"))
+                .where(CallLogModelDBFlow_Table.phoneNumber.eq("15181637287"));
         } else if (id == R.id.nav_copy) {
             setCopyDatabaseListener();
         } else if (id == R.id.nav_export) {
@@ -381,9 +443,7 @@ public class MainActivity extends BaseActivity
         mFloatFB.setBackgroundTintList(ColorStateList.valueOf(MyApplication.getThemeColorAccent()));
 
         View navHeaderLayout = (View) mNavigationView.findViewById(R.id.nav_header_layout);
-        if (navHeaderLayout == null) {
-            LogUtil.d(TAG, "navHeaderLayout == null");
-        } else {
+        if (navHeaderLayout != null) {
             navHeaderLayout.setBackground(new ColorDrawable(MyApplication.getThemeColorPrimaryDark()));
         }
 

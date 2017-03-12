@@ -12,7 +12,7 @@ import android.support.v4.app.ActivityCompat;
  */
 
 /**
- * 动态权限申请工具类
+ * 动态权限申请工具类。注意：该类不是线程安全的。
  */
 public class PermissionUtil {
 
@@ -45,7 +45,7 @@ public class PermissionUtil {
      * @param permissions
      * @param listener
      */
-    public static void requestPermissions(@NonNull Context context, int requestCode,
+    public synchronized static void requestPermissions(@NonNull Context context, int requestCode,
         @NonNull String[] permissions, @NonNull OnPermissionListener listener) {
 
         //listener 不能为空，否则会出现不同的权限处理回调同一个listener的问题
@@ -72,7 +72,7 @@ public class PermissionUtil {
      * 在目标Activity中onRequestPermissionsResult()方法中调用该静态方法，
      * 实现对请求结果的回调处理。
      */
-    public static void onRequestPermissionsResult(int requestCode,
+    public synchronized static void onRequestPermissionsResult(int requestCode,
         @NonNull String[] permissions, @NonNull int[] grantResults) {
 
         if (mOnPermissionListener == null) {
