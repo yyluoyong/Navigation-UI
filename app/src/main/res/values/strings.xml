@@ -73,6 +73,7 @@
     <!--数据操作的提示信息-->
     <string name="updateDatabaseIng">正在更新数据库，请稍后...</string>
     <string name="readDatabaseIng">正在读取，请稍后...</string>
+    <string name="readSystemContactsFailed">读取系统联系人信息失败</string>
     <!--数据操作的提示信息-->
 
     <!--日期格式-->

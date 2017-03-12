@@ -12,7 +12,9 @@ import android.support.v4.app.ActivityCompat;
  */
 
 /**
- * 动态权限申请工具类。注意：该类不是线程安全的。
+ * 动态权限申请工具类。
+ * 注意：该类不是线程安全的，当多个请求同时进行时，由于静态的OnPermissionListener被多个线程共享，
+ *  会导致错误。
  */
 public class PermissionUtil {
 

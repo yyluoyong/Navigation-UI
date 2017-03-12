@@ -15,7 +15,6 @@ import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
-import android.text.TextUtils;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -34,11 +33,9 @@ import com.call.log.infinity.database.CallLogDatabase;
 import com.call.log.infinity.database.CallLogModelDBFlow;
 import com.call.log.infinity.database.CallLogModelDBFlow_Table;
 import com.call.log.infinity.database.CopyDatabaseToSDCardUtil;
-import com.call.log.infinity.database.UpdateDatabaseContactsUtil;
 import com.call.log.infinity.utils.QueryContactsUtil;
 import com.call.log.infinity.database.WriteCallLogToDatabaseUtil;
 import com.call.log.infinity.fragment.UpdateFragmentObservable;
-import com.call.log.infinity.utils.LogUtil;
 import com.call.log.infinity.utils.PermissionUtil;
 import com.call.log.infinity.view.ThemeDialog;
 import com.raizlabs.android.dbflow.config.DatabaseDefinition;
@@ -49,12 +46,10 @@ import com.raizlabs.android.dbflow.structure.database.DatabaseWrapper;
 import com.raizlabs.android.dbflow.structure.database.transaction.ITransaction;
 import com.raizlabs.android.dbflow.structure.database.transaction.Transaction;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 public class MainActivity extends BaseActivity
@@ -196,78 +191,20 @@ public class MainActivity extends BaseActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_table) {
-//            Toast.makeText(MainActivity.this, "点击'数据库可视化'按钮，功能待完善",
-//                Toast.LENGTH_SHORT).show();
-
-            final List<String> phoneNumberList = new ArrayList<>();
-//            phoneNumberList.add("15676399228");
-//            phoneNumberList.add("18142559501");
-//            phoneNumberList.add("123456");
-//            phoneNumberList.add("15884621553");
-//            phoneNumberList.add("15181637278");
-
-            final List<CallLogModelDBFlow> callLogModelDBFlowList = SQLite.select().from(CallLogModelDBFlow.class)
-                .queryList();
-
-            if (callLogModelDBFlowList != null) {
-                for (int i = 0; i< callLogModelDBFlowList.size(); i++) {
-                    phoneNumberList.add(callLogModelDBFlowList.get(i).getPhoneNumber());
-                }
-            }
-
-            LogUtil.d(TAG, "电话列表长度：" + phoneNumberList.size());
-
-            QueryContactsUtil.queryPhoneNumbersBelongTo(MainActivity.this, phoneNumberList,
-                new QueryContactsUtil.OnQueryPhoneNumbersBelongToListener() {
-                    @Override
-                    public void onQuerySuccess(final List<String> contactsNameList) {
-
-                        LogUtil.d(TAG, "姓名列表长度：" + contactsNameList.size());
-
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                for (int i = 0; i < contactsNameList.size(); i++) {
-                                    LogUtil.d(TAG, phoneNumberList.get(i) + " " + contactsNameList.get(i));
-//                                    CallLogModelDBFlow model = callLogModelDBFlowList.get(i);
-//                                    String contactsName = contactsNameList.get(i);
-//                                    if (TextUtils.isEmpty(contactsName)) {
-//                                        model.setContactsName(model.getPhoneNumber());
-//                                    } else {
-//                                        model.setContactsName(contactsName);
-//                                        model.update();
-//                                    }
-                                }
-
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        UpdateFragmentObservable.getInstance().notifyFragmentUpdate();
-                                    }
-                                });
-                            }
-                        }).start();
-
-
-
-                    }
-
-                    @Override
-                    public void onQueryFailed() {
-
-                    }
-            });
-
+            Toast.makeText(MainActivity.this, "点击'数据库可视化'按钮，功能待完善", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_refresh) {
-            refreshCallLogDatabase();
+            //读取系统联系人，刷新DBFlow通话记录数据库
+            refreshCallLogDatabaseListener();
         } else if (id == R.id.nav_copy) {
+            //复制DBFlow数据库到SDCard
             setCopyDatabaseListener();
         } else if (id == R.id.nav_export) {
-            Toast.makeText(MainActivity.this, "点击'导出DB'按钮，功能待完善",
-                Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "点击'导出DB'按钮，功能待完善", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_delete) {
+            //清空DBFlow数据库表格
             setClearDababaseTableListener();
         } else if (id == R.id.nav_theme) {
+            //设置主题
             setThemeListener();
         }
 
@@ -352,7 +289,7 @@ public class MainActivity extends BaseActivity
     /**
      * 读取系统联系人，刷新通话记录数据库。
      */
-    private void refreshCallLogDatabase() {
+    private void refreshCallLogDatabaseListener() {
 
         new Thread(new Runnable() {
             @Override
@@ -409,6 +346,13 @@ public class MainActivity extends BaseActivity
                         //查询失败
                         @Override
                         public void onQueryFailed() {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(MainActivity.this, getString(R.string.readSystemContactsFailed),
+                                        Toast.LENGTH_SHORT).show();
+                                }
+                            });
                         }
                     }
                 );

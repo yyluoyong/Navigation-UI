@@ -9,9 +9,6 @@ import android.widget.Toast;
 import com.call.log.infinity.R;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Yong on 2017/3/11.
@@ -44,84 +41,6 @@ public class QueryContactsUtil {
         void onQuerySuccess(HashMap<String, String> phoneNumberAndContactsName);
         //申请权限失败后进行的操作
         void onQueryFailed();
-    }
-
-    /**
-     * 查询指定号码对应联系人姓名的回调接口。
-     */
-    public interface OnQueryPhoneNumbersBelongToListener {
-        //申请权限成功后进行的操作
-        void onQuerySuccess(List<String> contactsNameList);
-        //申请权限失败后进行的操作
-        void onQueryFailed();
-    }
-
-    /**
-     * 获得指定号码对应的联系人姓名，并在完成之后执行回调方法。
-     * @param mContext
-     * @param phoneNumberList
-     * @param listener
-     */
-    public static void queryPhoneNumbersBelongTo(@NonNull final Context mContext,
-        @NonNull final List<String> phoneNumberList, @NonNull final OnQueryPhoneNumbersBelongToListener listener) {
-
-        final List<String> contactsNameList = new ArrayList<>();
-
-        PermissionUtil.requestPermissions(mContext, PermissionUtil.REQUEST_CODE,
-            new String[]{Manifest.permission.READ_CONTACTS},
-            new PermissionUtil.OnPermissionListener() {
-                @Override
-                public void onPermissionGranted() {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (phoneNumberList != null) {
-                                for (int i = 0; i < phoneNumberList.size(); i++) {
-                                    Cursor cursor = null;
-                                    String contactsName = null;
-                                    String phoneNumber = phoneNumberList.get(i);
-                                    try {
-                                        cursor = mContext.getContentResolver()
-                                            .query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                                                new String[]{ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME},
-                                                ContactsContract.CommonDataKinds.Phone.NUMBER + " = ?",
-                                                new String[]{phoneNumber}, null);
-
-                                        if (cursor != null && cursor.moveToNext()) {
-                                            contactsName = cursor.getString(cursor
-                                                .getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-                                            contactsNameList.add(contactsName);
-                                        } else {
-                                            contactsNameList.add(null);
-                                        }
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    } finally {
-                                        if (cursor != null) {
-                                            cursor.close();
-                                        }
-                                    }
-                                }
-                            }
-
-                            if (listener != null) {
-                                listener.onQuerySuccess(contactsNameList);
-                            }
-                        }
-                    }).start();
-                }
-
-                /**
-                 * 见PermissionUtils类的“说明一”
-                 */
-                @Override
-                public void onPermissionDenied() {
-                    Toast.makeText(mContext, mContext.getString(R.string.refusePermissionMessage),
-                        Toast.LENGTH_SHORT).show();
-                }
-            }
-        );
-
     }
 
     /**
