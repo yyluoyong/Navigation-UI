@@ -22,4 +22,10 @@
     <dimen name="material_design_text_margin">4dp</dimen>
 
     <dimen name="theme_dialog_margin">4dp</dimen>
+
+    <dimen name="customTitle">14sp</dimen>
+    <dimen name="customEntry">18sp</dimen>
+
+    <dimen name="searchActivityItem">18sp</dimen>
+    <dimen name="searchActivityItemHeight">48dp</dimen>
 </resources>

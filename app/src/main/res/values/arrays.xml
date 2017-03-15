@@ -15,4 +15,20 @@
         <item>去电</item>
         <item>未接</item>
     </string-array>
+
+    <string-array name="search_call_type">
+        <item>所有</item>
+        <item>来电</item>
+        <item>去电</item>
+        <item>未接</item>
+    </string-array>
+
+    <!--标签意义的位置和通话类型的对应关系-->
+    <integer-array name="search_call_type_to_position">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </integer-array>
+    <!--标签意义的位置和通话类型的对应关系-->
 </resources>

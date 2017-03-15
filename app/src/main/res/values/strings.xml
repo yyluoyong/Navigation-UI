@@ -44,7 +44,7 @@
     <string name="UnkownArea">未知归属地</string>
     <!--手机号码归属地数据库信息-->
 
-    <string name="dialog_ok">确认</string>
+    <string name="dialog_ok">确定</string>
     <string name="dialog_cancel">取消</string>
     <string name="search">搜索</string>
 
@@ -56,7 +56,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_call_log_detail_info">CallLogDetailInfoActivity</string>
-    
+
     <!--清空数据库对话框-->
     <string name="clearDatabaseTableTitle">清空数据库？</string>
     <string name="clearDatabaseTablePrompt">
@@ -106,4 +106,39 @@
 
     <string name="copyDatabaseSuccess">复制成功，见“%1$s/日期_%2$s”</string>
     <string name="copyDatabaseFailed">抱歉，复制失败！</string>
+
+    <!--搜索对话框-->
+    <string name="searchTitle">搜索通话记录</string>
+    <string name="searchName">姓名</string>
+    <string name="searchPhoneNumber">电话号码</string>
+    <string name="searchDuration">通话时长</string>
+    <string name="searchDurationMinimum">时长下限</string>
+    <string name="searchDurationMaximum">时长上限</string>
+    <string name="searchDate">通话日期</string>
+    <string name="searchDateStart">起始日期</string>
+    <string name="searchDateEnd">截止日期</string>
+    <string name="searchCallType">通话类型</string>
+    <string name="searchDefault">默认 ></string>
+    <string name="searchSetFinish">已设置 ></string>
+    <string name="searchSetDefaultBtn">恢复默认</string>
+    <string name="searchDateFormat">%1$d年%2$d月%3$d日</string>
+
+    <string name="searchNameContent"></string>
+    <string name="searchDurationMinimumTitle">通话时长下限</string>
+    <string name="searchDurationMaximumTitle">通话时长上限</string>
+    <string name="searchDurationContentTips">输入单位为秒.\n提示：1分钟=60秒，一小时=3600秒.</string>
+
+    <string name="searchErrorDialogTitle">输入信息不合规</string>
+    <string name="searchInputError">
+         <![CDATA[
+        请检查：\n(1) 搜索条件为<strong>空</strong>？\n(2) 起始日期<strong>大于</strong>截止日期？\n(3) 时长下限<strong>大于</strong>时长上限？
+        ]]>
+    </string>
+
+    <string name="searchCallTypeAll">所有</string>
+    <string name="searchCallTypeIn">来电</string>
+    <string name="searchCallTypeOut">去电</string>
+    <string name="searchCallTypeMiss">未接</string>
+    <string name="title_activity_search">搜索</string>
+    <!--搜索对话框-->
 </resources>

@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_search"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.call.log.infinity.activity.SearchActivity"
+    tools:showIn="@layout/activity_search">
+
+    <!--姓名-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/searchActivityItemHeight"
+        android:orientation="horizontal"
+        android:layout_marginLeft="@dimen/material_design_item_image_left_margin"
+        android:layout_marginRight="@dimen/material_design_item_image_right_margin"
+        android:gravity="center"
+        android:id="@+id/name_layout">
+
+        <TextView
+            android:text="@string/searchName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/searchActivityItem"
+            android:textColor="@color/grey"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <TextView
+            android:text="@string/searchDefault"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/name_tv"/>
+    </LinearLayout>
+
+    <!--水平分隔线-->
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1px"
+        android:background="?android:attr/listDivider"/>
+
+    <!--电话号码-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/searchActivityItemHeight"
+        android:orientation="horizontal"
+        android:layout_marginLeft="@dimen/material_design_item_image_left_margin"
+        android:layout_marginRight="@dimen/material_design_item_image_right_margin"
+        android:gravity="center"
+        android:id="@+id/phone_number_layout">
+
+        <TextView
+            android:text="@string/searchPhoneNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/searchActivityItem"
+            android:textColor="@color/grey"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <TextView
+            android:text="@string/searchDefault"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/phone_number_tv"/>
+    </LinearLayout>
+
+    <!--水平分隔线-->
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1px"
+        android:background="?android:attr/listDivider"/>
+
+    <!--起始日期-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/searchActivityItemHeight"
+        android:orientation="horizontal"
+        android:layout_marginLeft="@dimen/material_design_item_image_left_margin"
+        android:layout_marginRight="@dimen/material_design_item_image_right_margin"
+        android:gravity="center"
+        android:id="@+id/date_min_layout">
+
+        <TextView
+            android:text="@string/searchDateStart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/searchActivityItem"
+            android:textColor="@color/grey"
+            android:id="@+id/textView3"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <TextView
+            android:text="@string/searchDefault"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/date_min_tv"/>
+    </LinearLayout>
+
+    <!--水平分隔线-->
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1px"
+        android:background="?android:attr/listDivider"/>
+
+    <!--截止日期-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/searchActivityItemHeight"
+        android:orientation="horizontal"
+        android:layout_marginLeft="@dimen/material_design_item_image_left_margin"
+        android:layout_marginRight="@dimen/material_design_item_image_right_margin"
+        android:gravity="center"
+        android:id="@+id/date_max_layout">
+
+        <TextView
+            android:text="@string/searchDateEnd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/searchActivityItem"
+            android:textColor="@color/grey"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <TextView
+            android:text="@string/searchDefault"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/date_max_tv"/>
+    </LinearLayout>
+
+    <!--水平分隔线-->
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1px"
+        android:background="?android:attr/listDivider"/>
+
+    <!--通话时长下限-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/searchActivityItemHeight"
+        android:orientation="horizontal"
+        android:layout_marginLeft="@dimen/material_design_item_image_left_margin"
+        android:layout_marginRight="@dimen/material_design_item_image_right_margin"
+        android:gravity="center"
+        android:id="@+id/duration_min_layout">
+
+        <TextView
+            android:text="@string/searchDurationMinimum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/searchActivityItem"
+            android:textColor="@color/grey"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <TextView
+            android:text="@string/searchDefault"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/duration_min_tv"/>
+    </LinearLayout>
+
+    <!--水平分隔线-->
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1px"
+        android:background="?android:attr/listDivider"/>
+
+    <!--通话时长上限-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/searchActivityItemHeight"
+        android:orientation="horizontal"
+        android:layout_marginLeft="@dimen/material_design_item_image_left_margin"
+        android:layout_marginRight="@dimen/material_design_item_image_right_margin"
+        android:gravity="center"
+        android:id="@+id/duration_max_layout">
+
+        <TextView
+            android:text="@string/searchDurationMaximum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/searchActivityItem"
+            android:textColor="@color/grey"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <TextView
+            android:text="@string/searchDefault"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/duration_max_tv"/>
+    </LinearLayout>
+
+    <!--水平分隔线-->
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1px"
+        android:background="?android:attr/listDivider"/>
+
+    <!--通话类型-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/searchActivityItemHeight"
+        android:orientation="horizontal"
+        android:layout_marginLeft="@dimen/material_design_item_image_left_margin"
+        android:layout_marginRight="@dimen/material_design_item_image_right_margin"
+        android:gravity="center"
+        android:id="@+id/call_type_layout">
+
+        <TextView
+            android:text="@string/searchCallType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/searchActivityItem"
+            android:textColor="@color/grey"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <TextView
+            android:text="@string/searchDefault"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/call_type_tv"/>
+    </LinearLayout>
+
+    <!--水平分隔线-->
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1px"
+        android:background="?android:attr/listDivider"/>
+
+</LinearLayout>

@@ -2,6 +2,7 @@ package com.call.log.infinity.activity;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
@@ -11,7 +12,6 @@ import android.os.Bundle;
 import android.provider.CallLog;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
@@ -177,7 +177,11 @@ public class MainActivity extends BaseActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_search) {
-            Snackbar.make(mToolbar, "搜索功能待完善", Snackbar.LENGTH_SHORT).show();
+//            setSearchListener();
+
+            Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+            startActivity(intent);
+
             return true;
         }
 
@@ -462,5 +466,26 @@ public class MainActivity extends BaseActivity
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(MyApplication.getThemeColorPrimaryDark());
         }
+    }
+
+    /**
+     * 搜索按钮监听事件。
+     */
+    private void setSearchListener() {
+        MaterialDialog dialog = new MaterialDialog.Builder(this)
+            .title(getString(R.string.search))
+            .customView(R.layout.dialog_name_custom, true)
+            .positiveText(getString(R.string.dialog_ok))
+            .negativeText(android.R.string.cancel)
+            .onPositive(
+                new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+
+                    }
+                }
+            ).build();
+
+        dialog.show();
     }
 }

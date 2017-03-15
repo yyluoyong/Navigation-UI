@@ -17,17 +17,17 @@ import java.util.Date;
 public class CallDateFormatter {
 
     //一天包含的毫秒数
-    private static final long A_DAY_IN_MILLISECOND = 86400000L;
+    public static final long A_DAY_IN_MILLISECOND = 86400000L;
     //一个小时包含的毫秒数
-    private static final long A_HOUR_IN_MILLISECOND = 3600000L;
+    public static final long A_HOUR_IN_MILLISECOND = 3600000L;
     //一分钟包含的毫秒数
-    private static final long A_MINUTE_IN_MILLISECOND = 60000L;
+    public static final long A_MINUTE_IN_MILLISECOND = 60000L;
     //一秒钟包含的毫秒数
-    private static final long A_SECOND_IN_MILLISECOND = 1000L;
+    public static final long A_SECOND_IN_MILLISECOND = 1000L;
 
-    private static final String YEAR_MONTH_DAY = MyApplication.getContext().getString(R.string.yearMonthDay);
-    private static final String MONTH_DAY_HOUR_MINUTE = MyApplication.getContext().getString(R.string.monthDayHourMinute);
-    private static final String HOUR_MINUTE = MyApplication.getContext().getString(R.string.hourMinute);
+    public static final String YEAR_MONTH_DAY = MyApplication.getContext().getString(R.string.yearMonthDay);
+    public static final String MONTH_DAY_HOUR_MINUTE = MyApplication.getContext().getString(R.string.monthDayHourMinute);
+    public static final String HOUR_MINUTE = MyApplication.getContext().getString(R.string.hourMinute);
 
     public static String format(String dateInMillis) {
         return format(Long.parseLong(dateInMillis));
