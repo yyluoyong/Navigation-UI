@@ -99,14 +99,18 @@ public class MainActivity extends BaseActivity
         setThemeAtStart();
     }
 
-    //初始化工具栏
+    /**
+     * 初始化工具栏。
+     */
     private void createToolbar() {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mToolbar.setTitle(getString(R.string.toolbar_title));
         setSupportActionBar(mToolbar);
     }
 
-    //初始化悬浮按钮
+    /**
+     * 初始化悬浮按钮。
+     */
     private void createFloatingActionButton() {
         mFloatFB = (FloatingActionButton) findViewById(R.id.fab);
         mFloatFB.setOnClickListener(new View.OnClickListener() {
@@ -118,7 +122,9 @@ public class MainActivity extends BaseActivity
         });
     }
 
-    //初始化主界面布局
+    /**
+     * 初始化主界面布局。
+     */
     private void createDrawerLayout() {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -127,14 +133,18 @@ public class MainActivity extends BaseActivity
         toggle.syncState();
     }
 
-    //初始化左边弹出菜单
+    /**
+     * 初始化左边弹出菜单。
+     */
     private void createNavigation() {
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
         mNavigationView.setNavigationItemSelectedListener(this);
         mNavigationView.setItemIconTintList(null);
     }
 
-    //初始化ViewPager
+    /**
+     * 初始化ViewPager。
+     */
     private void createViewPager() {
 
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
@@ -145,7 +155,9 @@ public class MainActivity extends BaseActivity
         mViewPager.setOffscreenPageLimit(getResources().getInteger(R.integer.TAB_COUNTS));
     }
 
-    //初始化TabLayout
+    /**
+     * 初始化TabLayout。
+     */
     private void createTab() {
         mTabLayout = (TabLayout) findViewById(R.id.tablayout);
         mTabLayout.setupWithViewPager(mViewPager);

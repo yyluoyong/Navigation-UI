@@ -43,8 +43,8 @@ public class SearchActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(mToolbar);
+
+        createToolbar();
 
         createFloatingActionButton();
 
@@ -54,7 +54,24 @@ public class SearchActivity extends AppCompatActivity {
         setClickListener();
     }
 
-    //初始化悬浮按钮
+    /**
+     * 初始化Toolbar。
+     */
+    private void createToolbar() {
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+    }
+
+    /**
+     * 初始化悬浮按钮。
+     */
     private void createFloatingActionButton() {
         mFloatFB = (FloatingActionButton) findViewById(R.id.fab);
         mFloatFB.setOnClickListener(new View.OnClickListener() {
