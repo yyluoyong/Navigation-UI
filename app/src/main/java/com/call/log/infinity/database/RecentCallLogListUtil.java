@@ -27,14 +27,14 @@ public class RecentCallLogListUtil {
     //查询所有类型的通话
     public static final int TYPE_ALL = 10;
 
-    private String dateInMilliseconds; //通话发生时间
-    private String contactsName;       //联系人名字
-    private String phoneNumber;        //电话号码
-    private String duration;           //通话时长
-    private int callType;              //类型
-    private String callerLoc;          //归属地
-    private int callCounts;            //通话次数
-    private String operator;           //运营商
+    private long dateInMilliseconds; //通话发生时间
+    private String contactsName;     //联系人名字
+    private String phoneNumber;      //电话号码
+    private int duration;            //通话时长
+    private int callType;            //类型
+    private String callerLoc;        //归属地
+    private int callCounts;          //通话次数
+    private String operator;         //运营商
 
     /**
      * 注意：以下数据与DBFlow使用的模型类CallLogModelDBFlow一致。
@@ -193,10 +193,10 @@ public class RecentCallLogListUtil {
          * LitePal：注意getColumnIndex传入字符串使用小写，否则会找不到列名。
          * DBFlow： 注意getColumnIndex与表定义一样，区分大小写。
          */
-        dateInMilliseconds = cursor.getString(cursor.getColumnIndex(TIME_COLUMN_NAME));
+        dateInMilliseconds = cursor.getLong(cursor.getColumnIndex(TIME_COLUMN_NAME));
         contactsName = cursor.getString(cursor.getColumnIndex(CONTACTS_NAME_COLUMN_NAME));
         phoneNumber = cursor.getString(cursor.getColumnIndex(PHONE_NUMBER_COLUMN_NAME));
-        duration = cursor.getString(cursor.getColumnIndex(DURATION_COLUMN_NAME));
+        duration = cursor.getInt(cursor.getColumnIndex(DURATION_COLUMN_NAME));
         callType = cursor.getInt(cursor.getColumnIndex(TYPE_COLUMN_NAME));
         callCounts = cursor.getInt(cursor.getColumnIndex(CALL_COUNTS_COLUMN_NAME));
 

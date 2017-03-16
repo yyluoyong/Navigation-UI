@@ -23,7 +23,7 @@ public class CallLogModelDBFlow extends BaseModel {
      */
     @PrimaryKey
     @Unique
-    private String dateInMilliseconds;
+    private long dateInMilliseconds;
 
     /**
      * 联系人姓名
@@ -41,7 +41,7 @@ public class CallLogModelDBFlow extends BaseModel {
      * 通话时间，单位：秒
      */
     @Column
-    private String duration;
+    private int duration;
 
     /**
      * 通话类型：CallLog.Calls.INCOMING_TYPE，CallLog.Calls.OUTGOING_TYPE，
@@ -62,11 +62,11 @@ public class CallLogModelDBFlow extends BaseModel {
      */
     private String operator;
 
-    public String getDateInMilliseconds() {
+    public long getDateInMilliseconds() {
         return dateInMilliseconds;
     }
 
-    public void setDateInMilliseconds(String dateInMilliseconds) {
+    public void setDateInMilliseconds(long dateInMilliseconds) {
         this.dateInMilliseconds = dateInMilliseconds;
     }
 
@@ -86,11 +86,11 @@ public class CallLogModelDBFlow extends BaseModel {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getDuration() {
+    public int getDuration() {
         return duration;
     }
 
-    public void setDuration(String duration) {
+    public void setDuration(int duration) {
         this.duration = duration;
     }
 
@@ -120,9 +120,11 @@ public class CallLogModelDBFlow extends BaseModel {
 
     @Override
     public String toString() {
-        return  contactsName + " " + phoneNumber + " " + dateInMilliseconds
-            + " " + duration + " " + callType + " " + callerLoc
-            + " " + operator;
+        String format = "date=%1$d, name=%2$s, number=%3$s, duration=%4$d, " +
+            "callType=%5$d, callerLoc=%6$s, operator=%7$s";
+
+        return String.format(format, dateInMilliseconds, contactsName,
+            phoneNumber, duration, callType, callerLoc, operator);
     }
 }
 

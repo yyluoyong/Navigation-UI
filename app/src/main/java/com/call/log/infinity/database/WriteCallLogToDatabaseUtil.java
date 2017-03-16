@@ -25,11 +25,11 @@ import java.util.List;
 public class WriteCallLogToDatabaseUtil {
     static final String TAG = "WriteCallLogToDatabaseTool";
 
-    private String dateInMilliseconds; //通话发生时间
-    private String contactsName;       //联系人名字
-    private String phoneNumber;        //电话号码
-    private int callType;              //类型
-    private String duration;           //通话时长
+    private long dateInMilliseconds; //通话发生时间
+    private String contactsName;     //联系人名字
+    private String phoneNumber;      //电话号码
+    private int callType;            //类型
+    private int duration;            //通话时长
 
     private List<CallLogModelDBFlow> callLogModelDBFlowList = new ArrayList<>();
 
@@ -100,8 +100,7 @@ public class WriteCallLogToDatabaseUtil {
      */
     private boolean getRecordAndExistence(Cursor cursor) {
 
-        dateInMilliseconds = cursor.getString(cursor
-                .getColumnIndex(CallLog.Calls.DATE));
+        dateInMilliseconds = cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DATE));
 
         if (isRecordExistInDatabase(dateInMilliseconds)) {
             //记录已存在
@@ -110,7 +109,7 @@ public class WriteCallLogToDatabaseUtil {
 
         contactsName = cursor.getString(cursor.getColumnIndex(CallLog.Calls.CACHED_NAME));
         phoneNumber = cursor.getString(cursor.getColumnIndex(CallLog.Calls.NUMBER));
-        duration = cursor.getString(cursor.getColumnIndex(CallLog.Calls.DURATION));
+        duration = cursor.getInt(cursor.getColumnIndex(CallLog.Calls.DURATION));
         callType = cursor.getInt(cursor.getColumnIndex(CallLog.Calls.TYPE));
 
         //记录不存在
@@ -146,7 +145,7 @@ public class WriteCallLogToDatabaseUtil {
      * @param dateInMilliseconds
      * @return
      */
-    private boolean isRecordExistInDatabase(String dateInMilliseconds) {
+    private boolean isRecordExistInDatabase(long dateInMilliseconds) {
 
         CallLogModelDBFlow callLogModelDBFlow = SQLite.select().from(CallLogModelDBFlow.class)
                 .where(CallLogModelDBFlow_Table.dateInMilliseconds.eq(dateInMilliseconds))

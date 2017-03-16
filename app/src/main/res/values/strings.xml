@@ -131,7 +131,7 @@
     <string name="searchErrorDialogTitle">输入信息不合规</string>
     <string name="searchInputError">
          <![CDATA[
-        请检查：\n(1) 搜索条件为<strong>空</strong>？\n(2) 起始日期<strong>大于</strong>截止日期？\n(3) 时长下限<strong>大于</strong>时长上限？
+        请检查：\n(1) 搜索条件为<strong>空</strong>？\n(2) 起始日期 <strong>大于</strong> 截止日期？\n(3) 时长上限 <strong>小于</strong> 时长下限？
         ]]>
     </string>
 

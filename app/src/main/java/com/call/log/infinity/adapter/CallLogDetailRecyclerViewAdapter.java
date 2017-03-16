@@ -216,14 +216,14 @@ public class CallLogDetailRecyclerViewAdapter extends
 
         String durationString;
         boolean isMissed = (callLogItem.getCallType() == CallLog.Calls.MISSED_TYPE) ||
-            ("0".equals(callLogItem.getDuration()) && callLogItem.getCallType() == CallLog.Calls.INCOMING_TYPE);
+            ((callLogItem.getDuration() == 0) && callLogItem.getCallType() == CallLog.Calls.INCOMING_TYPE);
         if (isMissed) {
             //未接电话
             ((DetailItemViewHolder) holder).callTypeImage.setImageResource(R.drawable.ic_call_missed);
             ((DetailItemViewHolder) holder).callDurationTV.setText(CALL_MISSED_STRING);
         } else if (callLogItem.getCallType() == CallLog.Calls.OUTGOING_TYPE) {
             //拨出电话
-            if ("0".equals(callLogItem.getDuration())) {
+            if (callLogItem.getDuration() == 0) {
                 ((DetailItemViewHolder) holder).callTypeImage.setImageResource(R.drawable.ic_call_failed);
                 ((DetailItemViewHolder) holder).callDurationTV.setText(CALL_MADE_FAILED_STRING);
             } else {

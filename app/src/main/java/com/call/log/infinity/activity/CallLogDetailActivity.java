@@ -109,6 +109,7 @@ public class CallLogDetailActivity extends BaseActivity {
         if (type == ViewPagerPosition.POSITION_ALL_TYPE) {
             mCallLogModelDBFlowList = SQLite.select().from(CallLogModelDBFlow.class)
                 .where(CallLogModelDBFlow_Table.contactsName.eq(name))
+                .orderBy(CallLogModelDBFlow_Table.dateInMilliseconds, false)
                 .queryList();
         } else {
             if (type == ViewPagerPosition.POSITION_INCOMING_TYPE) {
@@ -122,7 +123,7 @@ public class CallLogDetailActivity extends BaseActivity {
                     .where(CallLogModelDBFlow_Table.contactsName.eq(name))
                     .and(ConditionGroup.clause().and(CallLogModelDBFlow_Table.callType.eq(CallLog.Calls.MISSED_TYPE))
                         .or(ConditionGroup.clause().and(CallLogModelDBFlow_Table.callType.eq(CallLog.Calls.INCOMING_TYPE))
-                            .and(CallLogModelDBFlow_Table.duration.eq("0"))))
+                            .and(CallLogModelDBFlow_Table.duration.eq(0))))
                     .queryList();
             } else {
                 mCallLogModelDBFlowList = SQLite.select().from(CallLogModelDBFlow.class)

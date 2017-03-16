@@ -28,7 +28,7 @@ public class CallLogItemModel {
     private String phoneNumberFormat;
 
     //日期
-    private String dateInMilliseconds;
+    private long dateInMilliseconds;
 
     //日期格式化
     private String dateFormat;
@@ -37,7 +37,7 @@ public class CallLogItemModel {
     private int callCounts;
 
     //通话时间，秒
-    private String duration;
+    private int duration;
 
     //通话时间格式化
     private String durationFormat;
@@ -76,7 +76,7 @@ public class CallLogItemModel {
         this.phoneNumberFormat = phoneNumberFormat;
     }
 
-    public void setDateInMilliseconds(String dateInMilliseconds) {
+    public void setDateInMilliseconds(long dateInMilliseconds) {
         setDateFormat(CallDateFormatter.format(dateInMilliseconds));
         this.dateInMilliseconds = dateInMilliseconds;
     }
@@ -97,11 +97,11 @@ public class CallLogItemModel {
         this.callCounts = callCounts;
     }
 
-    public String getDuration() {
+    public int getDuration() {
         return duration;
     }
 
-    public void setDuration(String duration) {
+    public void setDuration(int duration) {
         setDurationFormat(CallDurationFormatter.format(duration));
         this.duration = duration;
     }
@@ -140,8 +140,10 @@ public class CallLogItemModel {
 
     @Override
     public String toString() {
-        return  contactsName + " " + phoneNumber + " " + dateInMilliseconds
-            + " " + duration + " " + callType + " " + callCounts + " " + callerLoc + " "
-            + operator;
+        String format = "date=%1$d, name=%2$s, number=%3$s, duration=%4$d, " +
+            "callType=%5$d, callCounts=%6$d, callerLoc=%7$s, operator=%8$s";
+
+        return String.format(format, dateInMilliseconds, contactsName,
+            phoneNumber, duration, callType, callCounts, callerLoc, operator);
     }
 }

@@ -25,6 +25,7 @@ import com.call.log.infinity.R;
 import com.call.log.infinity.database.CallLogModelDBFlow;
 import com.call.log.infinity.database.CallLogModelDBFlow_Table;
 import com.call.log.infinity.utils.CallDateFormatter;
+import com.call.log.infinity.utils.CallerLocationAndOperatorQueryUtil;
 import com.call.log.infinity.utils.LogUtil;
 import com.call.log.infinity.utils.PhoneNumberFormatter;
 import com.raizlabs.android.dbflow.sql.language.ConditionGroup;
@@ -81,6 +82,19 @@ public class SearchActivity extends AppCompatActivity {
             .queryList();
 
         for (CallLogModelDBFlow model : mCallLogModelDBFlowList) {
+            String[] areaAndOperator = CallerLocationAndOperatorQueryUtil
+                .callerLocationAndOperatorQuery(model.getPhoneNumber());
+            String callerLoc = areaAndOperator[0];
+            String operator = areaAndOperator[1];
+
+            if (TextUtils.isEmpty(callerLoc)) {
+                callerLoc = CallerLocationAndOperatorQueryUtil.UNKOWN_AREA;
+                operator = CallerLocationAndOperatorQueryUtil.UNKOWN_OPERATOR;
+            }
+
+            model.setCallerLoc(callerLoc);
+            model.setOperator(operator);
+
             LogUtil.d(TAG, model.toString());
         }
     }
@@ -153,24 +167,24 @@ public class SearchActivity extends AppCompatActivity {
             sqlCondition = sqlCondition.and(CallLogModelDBFlow_Table.phoneNumber.eq(mSearchBean.phoneNumber));
         }
 
-        if (!TextUtils.isEmpty(mSearchBean.dateStart)) {
+        if (mSearchBean.dateStart > 0) {
             sqlCondition = sqlCondition.and(CallLogModelDBFlow_Table.dateInMilliseconds
                 .greaterThanOrEq(mSearchBean.dateStart));
         }
 
-        if (!TextUtils.isEmpty(mSearchBean.dateEnd)) {
+        if (mSearchBean.dateEnd > 0) {
             sqlCondition = sqlCondition.and(CallLogModelDBFlow_Table.dateInMilliseconds
-                .lessThan(mSearchBean.dateEnd));
+                .lessThanOrEq(mSearchBean.dateEnd));
         }
 
-        if (!TextUtils.isEmpty(mSearchBean.durationMin)) {
+        if (mSearchBean.durationMin >= 0) {
             sqlCondition = sqlCondition.and(CallLogModelDBFlow_Table.duration
                 .greaterThanOrEq(mSearchBean.durationMin));
         }
 
-        if (!TextUtils.isEmpty(mSearchBean.durationMax)) {
+        if (mSearchBean.durationMax >= 0) {
             sqlCondition = sqlCondition.and(CallLogModelDBFlow_Table.duration
-                .lessThan(mSearchBean.durationMax));
+                .lessThanOrEq(mSearchBean.durationMax));
         }
 
         if (mSearchBean.callType == CallLog.Calls.OUTGOING_TYPE) {
@@ -181,7 +195,7 @@ public class SearchActivity extends AppCompatActivity {
         } else if (mSearchBean.callType == CallLog.Calls.MISSED_TYPE) {
             sqlCondition = sqlCondition.and(CallLogModelDBFlow_Table.callType.eq(CallLog.Calls.MISSED_TYPE))
                 .or(ConditionGroup.clause().and(CallLogModelDBFlow_Table.callType.eq(CallLog.Calls.INCOMING_TYPE))
-                    .and(CallLogModelDBFlow_Table.duration.eq("0")));
+                    .and(CallLogModelDBFlow_Table.duration.eq(0)));
         }
 
         return sqlCondition;
@@ -329,7 +343,7 @@ public class SearchActivity extends AppCompatActivity {
                 try {
                     //起始日期包含这一天本身
                     long millis = dateFormatter.parse(dateStr).getTime();
-                    mSearchBean.dateStart = String.valueOf(millis);
+                    mSearchBean.dateStart = millis;
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -339,7 +353,7 @@ public class SearchActivity extends AppCompatActivity {
         dialog.getBuilder().onNeutral(new MaterialDialog.SingleButtonCallback() {
             @Override
             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                mSearchBean.dateStart = null;
+                mSearchBean.dateStart = -1;
                 ((TextView) findViewById(R.id.date_min_tv)).setText(getString(R.string.searchDefault));
             }
         });
@@ -382,7 +396,7 @@ public class SearchActivity extends AppCompatActivity {
                 try {
                     //截止日期包含这一天本身，需加上当天的毫秒数
                     long millis = dateFormatter.parse(dateStr).getTime() + CallDateFormatter.A_DAY_IN_MILLISECOND;
-                    mSearchBean.dateEnd = String.valueOf(millis);
+                    mSearchBean.dateEnd = millis;
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -392,7 +406,7 @@ public class SearchActivity extends AppCompatActivity {
         dialog.getBuilder().onNeutral(new MaterialDialog.SingleButtonCallback() {
             @Override
             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                mSearchBean.dateEnd = null;
+                mSearchBean.dateEnd = -1;
                 ((TextView) findViewById(R.id.date_max_tv)).setText(getString(R.string.searchDefault));
             }
         });
@@ -424,10 +438,10 @@ public class SearchActivity extends AppCompatActivity {
                 String duration = editText.getText().toString();
 
                 if (TextUtils.isEmpty(duration) == false) {
-                    mSearchBean.durationMin = duration;
+                    mSearchBean.durationMin = Integer.parseInt(duration);
                     ((TextView) findViewById(R.id.duration_min_tv)).setText(duration + getString(R.string.secondName));
                 } else {
-                    mSearchBean.durationMin = null;
+                    mSearchBean.durationMin = -1;
                     ((TextView) findViewById(R.id.duration_min_tv)).setText(getString(R.string.searchDefault));
                 }
             }
@@ -436,7 +450,7 @@ public class SearchActivity extends AppCompatActivity {
         dialog.getBuilder().onNeutral(new MaterialDialog.SingleButtonCallback() {
             @Override
             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                mSearchBean.durationMin = null;
+                mSearchBean.durationMin = -1;
                 ((TextView) findViewById(R.id.duration_min_tv)).setText(getString(R.string.searchDefault));
             }
         });
@@ -468,10 +482,10 @@ public class SearchActivity extends AppCompatActivity {
                 String duration = editText.getText().toString();
 
                 if (TextUtils.isEmpty(duration) == false) {
-                    mSearchBean.durationMax = duration;
+                    mSearchBean.durationMax = Integer.parseInt(duration);
                     ((TextView) findViewById(R.id.duration_max_tv)).setText(duration + getString(R.string.secondName));
                 } else {
-                    mSearchBean.durationMax = null;
+                    mSearchBean.durationMax = -1;
                     ((TextView) findViewById(R.id.duration_max_tv)).setText(getString(R.string.searchDefault));
                 }
             }
@@ -480,7 +494,7 @@ public class SearchActivity extends AppCompatActivity {
         dialog.getBuilder().onNeutral(new MaterialDialog.SingleButtonCallback() {
             @Override
             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                mSearchBean.durationMax = null;
+                mSearchBean.durationMax = -1;
                 ((TextView) findViewById(R.id.duration_max_tv)).setText(getString(R.string.searchDefault));
             }
         });
@@ -547,21 +561,21 @@ public class SearchActivity extends AppCompatActivity {
      * @return
      */
     private boolean checkSearchBeanDate() {
-        if ((!TextUtils.isEmpty(mSearchBean.dateStart)) && (!TextUtils.isEmpty(mSearchBean.dateEnd))) {
-            if (Long.parseLong(mSearchBean.dateStart) >= Long.parseLong(mSearchBean.dateEnd)) {
+        if (( mSearchBean.dateStart > 0) && (mSearchBean.dateEnd > 0)) {
+            if (mSearchBean.dateStart > mSearchBean.dateEnd) {
                 return false;
             }
         }
 
-        if ((!TextUtils.isEmpty(mSearchBean.durationMin)) && (!TextUtils.isEmpty(mSearchBean.durationMax))) {
-            if (Integer.parseInt(mSearchBean.durationMin) >= Integer.parseInt(mSearchBean.durationMax)) {
+        if ((mSearchBean.durationMin >= 0) && (mSearchBean.durationMax >= 0)) {
+            if (mSearchBean.durationMin > mSearchBean.durationMax) {
                 return false;
             }
         }
 
         if (TextUtils.isEmpty(mSearchBean.contactsName) && TextUtils.isEmpty(mSearchBean.phoneNumber)
-            && TextUtils.isEmpty(mSearchBean.dateStart) && TextUtils.isEmpty(mSearchBean.dateEnd)
-            && TextUtils.isEmpty(mSearchBean.durationMin) && TextUtils.isEmpty(mSearchBean.durationMax)) {
+            && (mSearchBean.dateStart <= 0) && (mSearchBean.dateEnd <= 0)
+            && (mSearchBean.durationMin < 0) && (mSearchBean.durationMax < 0)) {
             return false;
         }
 
@@ -572,19 +586,19 @@ public class SearchActivity extends AppCompatActivity {
      * 搜索信息模型。
      */
     public class SearchBean {
-        String contactsName;
-        String phoneNumber;
-        String dateStart;
-        String dateEnd;
-        String durationMin;
-        String durationMax;
-        int callType;
+        String contactsName = null;
+        String phoneNumber = null;
+        long dateStart = -1L;
+        long dateEnd = -1L;
+        int durationMin = -1;
+        int durationMax = -1;
+        int callType = 0;
 
         @Override
         public String toString() {
-            String format = "name:%1$s, phone:%2$s, date:%3$s--%4$s, duration:%5$s--%6$s, type:%7$d";
-            return String.format(format, contactsName, phoneNumber, dateStart, dateEnd, durationMin,
-                durationMax, callType);
+            String format = "name:%1$s, phone:%2$s, date:%3$d --> %4$d, duration:%5$d --> %6$d, type:%7$d";
+            return String.format(format, contactsName, phoneNumber, dateStart, dateEnd,
+                durationMin, durationMax, callType);
         }
     }
 }
