@@ -1,5 +1,6 @@
 package com.call.log.infinity.activity;
 
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -81,8 +82,11 @@ public class SearchActivity extends AppCompatActivity {
                     Toast.makeText(SearchActivity.this, mSearchBean.toString(), Toast.LENGTH_LONG).show();
                     getCallLogModelList();
 
+                    Intent intent = new Intent(SearchActivity.this, SearchResultActivity.class);
+                    startActivity(intent);
                 } else {
                     new MaterialDialog.Builder(SearchActivity.this)
+                        .iconRes(R.drawable.ic_error)
                         .title(R.string.searchErrorDialogTitle)
                         .content(R.string.searchInputError, true)
                         .positiveText(R.string.dialog_ok)
