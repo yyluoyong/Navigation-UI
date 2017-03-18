@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--主界面RecyclerView的通话记录单项布局-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_height="@dimen/material_design_item_height"
+    android:layout_width="match_parent">
+
+    <!--水平方向布局-->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/material_design_text_margin"
+        android:layout_marginBottom="@dimen/material_design_item_margin"
+        android:id="@+id/calllog_detail_linearlayout">
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+
+            <!--水平方向第一个部分，联系人头像-->
+            <ImageView
+                android:layout_width="@dimen/material_design_item_image_width"
+                android:layout_height="@dimen/material_design_item_image_height"
+                android:layout_marginLeft="@dimen/material_design_item_image_left_margin"
+                android:layout_marginRight="@dimen/material_design_item_image_right_margin"
+                android:layout_gravity="center"
+                android:id="@+id/contacts_image"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_gravity="center"
+                android:textColor="@color/white"
+                android:textSize="16.5dp"
+                android:id="@+id/contacts_image_text"/>
+        </FrameLayout>
+
+
+
+        <!--水平方向第二个部分，通话详情-->
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <!--联系人姓名-->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/contacts_name"
+                android:textColor="@color/black"
+                android:textSize="16sp"/>
+
+            <!--(通话次数)电话号码  归属地-->
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/counts_number_area_operator"
+                    android:textSize="12sp"/>
+            </LinearLayout>
+
+            <!--通话类型：来电、去电、未接  通话发生时间-->
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center">
+
+
+                <ImageView
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:layout_marginRight="@dimen/material_design_text_margin"
+                    app:srcCompat="@drawable/ic_call_made"
+                    android:id="@+id/call_type_image"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/call_date"
+                    android:textSize="12sp"/>
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <!--将按钮撑到居右-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <!--水平方向第三个部分，信息按钮-->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/more_info_layout">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_action_textsms"
+                android:layout_gravity="center"
+                android:layout_marginRight="@dimen/material_design_item_margin"
+                android:id="@+id/sms"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!--水平分隔线-->
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1px"
+        android:background="?android:attr/listDivider"
+        />
+</LinearLayout>
