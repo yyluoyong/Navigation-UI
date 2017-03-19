@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--主界面RecyclerView的通话记录单项布局-->
+<!--搜索结果RecyclerView的通话记录单项布局-->
+<!--和main_calllog_item.xml基本一样-->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -90,6 +91,13 @@
                     android:id="@+id/call_date"
                     android:textSize="12sp"/>
 
+                <!--水平方向第三个部分，通话时长-->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/material_design_item_margin"
+                    android:id="@+id/call_duration"
+                    android:textSize="12sp"/>
             </LinearLayout>
         </LinearLayout>
 

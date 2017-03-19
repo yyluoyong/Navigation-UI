@@ -245,7 +245,6 @@ public class CallLogDetailRecyclerViewAdapter extends
         ImageView callImageView = (ImageView) ((DetailItemViewHolder) holder).callLogItemView
             .findViewById(R.id.callImageView);
         callImageView.setColorFilter(MyApplication.getThemeColorPrimary());
-
     }
 
     /**

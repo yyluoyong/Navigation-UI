@@ -5,7 +5,6 @@ package com.call.log.infinity.utils;
  */
 
 import android.text.TextUtils;
-
 import java.util.HashMap;
 
 /**
@@ -16,9 +15,8 @@ public class TelephoneAreaCodeUtil {
 
     public static final HashMap<String, String> TELEPHONE_AREA_CODE = new HashMap<>();
 
-    //带区号的电话号码是10位或者11位
+    //带区号的电话号码最少是10位
     private static final int TELEPHONE_NUMBER_LENGTH_MIN = 10;
-    private static final int TELEPHONE_NUMBER_LENGTH_MAX = 11;
 
     //区号是3位或者4位
     private static final int MIN_CODE_LENGTH = 3;
@@ -391,10 +389,14 @@ public class TelephoneAreaCodeUtil {
             return null;
         }
 
-        if (phoneNumber.length() == TELEPHONE_NUMBER_LENGTH_MIN) {
-            return getTelephoneAreaByCode(phoneNumber.substring(0, MIN_CODE_LENGTH));
-        } else if (phoneNumber.length() == TELEPHONE_NUMBER_LENGTH_MAX) {
-            return getTelephoneAreaByCode(phoneNumber.substring(0, MAX_CODE_LENGTH));
+        if (phoneNumber.length() >= TELEPHONE_NUMBER_LENGTH_MIN) {
+            String result = getTelephoneAreaByCode(phoneNumber.substring(0, MIN_CODE_LENGTH));
+
+            if (TextUtils.isEmpty(result)) {
+                result = getTelephoneAreaByCode(phoneNumber.substring(0, MAX_CODE_LENGTH));
+            }
+
+            return result;
         }
 
         return null;

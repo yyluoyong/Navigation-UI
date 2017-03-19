@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.provider.CallLog;
-import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,14 +14,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import android.widget.Toast;
 import com.call.log.infinity.MyApplication;
 import com.call.log.infinity.R;
-import com.call.log.infinity.activity.CallLogDetailActivity;
-import com.call.log.infinity.constant.ViewPagerPosition;
 import com.call.log.infinity.database.CallLogModelDBFlow;
-import com.call.log.infinity.model.CallLogItemModel;
 import com.call.log.infinity.utils.CallDateFormatter;
+import com.call.log.infinity.utils.CallDurationFormatter;
 import com.call.log.infinity.utils.MaterialDesignColor;
 import com.call.log.infinity.utils.PermissionUtil;
 import com.call.log.infinity.utils.PhoneNumberFormatter;
@@ -49,6 +46,10 @@ public class SearchResultRecyclerViewAdapter extends RecyclerView.Adapter<Recycl
     //空白item数目
     private static final int COUNT_BLACK_ITEM = 1;
 
+    private static final String CALL_MADE_IN = MyApplication.getContext().getString(R.string.callInStringName);
+    private static final String CALL_MADE_OUT = MyApplication.getContext().getString(R.string.callOutStringName);
+    private static final String CALL_MISSED_STRING = MyApplication.getContext().getString(R.string.callMissed);
+    private static final String CALL_MADE_FAILED_STRING = MyApplication.getContext().getString(R.string.callOutFailed);
 
     public SearchResultRecyclerViewAdapter(Context context, List<CallLogModelDBFlow> callLogList) {
         mContext = context;
@@ -73,11 +74,32 @@ public class SearchResultRecyclerViewAdapter extends RecyclerView.Adapter<Recycl
 
         final CallLogItemViewHolder holder = new CallLogItemViewHolder(view);
 
-        //展示通话详情界面
+        //发送短信。
         holder.callLogItemView.findViewById(R.id.sms).setOnClickListener(
             new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    PermissionUtil.requestPermissions(mContext,
+                        PermissionUtil.REQUEST_CODE, new String[]{Manifest.permission.CALL_PHONE},
+                        new PermissionUtil.OnPermissionListener() {
+                            @Override
+                            public void onPermissionGranted() {
+
+                                Intent intent = new Intent();
+                                intent.setAction(Intent.ACTION_SENDTO);
+                                intent.setData(Uri.parse("smsto:" + holder.phoneNumber));
+                                mContext.startActivity(intent);
+                            }
+
+                            /**
+                             * 见PermissionUtils类的“说明一”
+                             */
+                            @Override
+                            public void onPermissionDenied() {
+                                Toast.makeText(mContext, mContext.getString(R.string.refusePermissionMessage),
+                                    Toast.LENGTH_SHORT).show();
+                            }
+                        });
                 }
             }
         );
@@ -162,21 +184,29 @@ public class SearchResultRecyclerViewAdapter extends RecyclerView.Adapter<Recycl
 
         //设置箭头标志
         boolean isMissed = (callLogItem.getCallType() == CallLog.Calls.MISSED_TYPE) ||
-            ("0".equals(callLogItem.getDuration()) && callLogItem.getCallType() == CallLog.Calls.INCOMING_TYPE);
+            (callLogItem.getDuration() == 0 && callLogItem.getCallType() == CallLog.Calls.INCOMING_TYPE);
         if (isMissed) {
             //未接电话
             ((CallLogItemViewHolder) holder).callTypeImage.setImageResource(R.drawable.ic_call_missed);
+            ((CallLogItemViewHolder) holder).callDurationTV.setText(CALL_MISSED_STRING);
         } else if (callLogItem.getCallType() == CallLog.Calls.OUTGOING_TYPE) {
             //拨出电话
-            if ("0".equals(callLogItem.getDuration())) {
+            if (callLogItem.getDuration() == 0) {
                 ((CallLogItemViewHolder) holder).callTypeImage.setImageResource(R.drawable.ic_call_failed);
+                ((CallLogItemViewHolder) holder).callDurationTV.setText(CALL_MADE_FAILED_STRING);
             } else {
                 ((CallLogItemViewHolder) holder).callTypeImage.setImageResource(R.drawable.ic_call_made);
+                String durationString = String.format(MyApplication.getContext().getString(R.string.callDuration),
+                    CALL_MADE_OUT, CallDurationFormatter.format(callLogItem.getDuration()));
+                ((CallLogItemViewHolder) holder).callDurationTV.setText(durationString);
             }
         } else {
             //接入电话
             ((CallLogItemViewHolder) holder).callTypeImage
                 .setImageResource(R.drawable.ic_call_received);
+            String durationString = String.format(MyApplication.getContext().getString(R.string.callDuration),
+                CALL_MADE_IN, CallDurationFormatter.format(callLogItem.getDuration()));
+            ((CallLogItemViewHolder) holder).callDurationTV.setText(durationString);
         }
 
         //设置通话时间
@@ -268,7 +298,7 @@ public class SearchResultRecyclerViewAdapter extends RecyclerView.Adapter<Recycl
     }
 
     /**
-     * 内部类，对应布局文件 main_calllog_item.xml，即通话列表每个单项
+     * 内部类，对应布局文件 search_result_item.xml，即通话列表每个单项
      */
     private static class CallLogItemViewHolder extends RecyclerView.ViewHolder {
         View callLogItemView;
@@ -279,6 +309,7 @@ public class SearchResultRecyclerViewAdapter extends RecyclerView.Adapter<Recycl
         TextView countsNumberAreaOperator; //通话次数、电话号码等信息
         TextView callDateTV;         //通话发生时间
         ImageView callTypeImage;     //通话类型对应的图片
+        TextView callDurationTV;        //通话次数
 
         String contactsName;
         String phoneNumber;
@@ -293,6 +324,7 @@ public class SearchResultRecyclerViewAdapter extends RecyclerView.Adapter<Recycl
             countsNumberAreaOperator = (TextView) view.findViewById(R.id.counts_number_area_operator);
             callDateTV     = (TextView) view.findViewById(R.id.call_date);
             callTypeImage  = (ImageView) view.findViewById(R.id.call_type_image);
+            callDurationTV = (TextView) view.findViewById(R.id.call_duration);
         }
 
         public void setContactsName(String name) {

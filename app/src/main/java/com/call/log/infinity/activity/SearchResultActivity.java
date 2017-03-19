@@ -2,7 +2,6 @@ package com.call.log.infinity.activity;
 
 import android.os.Build;
 import android.provider.CallLog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,7 +20,7 @@ import com.raizlabs.android.dbflow.sql.language.SQLite;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchResultActivity extends AppCompatActivity {
+public class SearchResultActivity extends BaseActivity {
     static final String TAG = "SearchResultActivity";
 
     private RecyclerView mRecyclerView;
