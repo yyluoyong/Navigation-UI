@@ -76,6 +76,10 @@ public class CallLogItemModel {
         this.phoneNumberFormat = phoneNumberFormat;
     }
 
+    public long getDateInMilliseconds() {
+        return dateInMilliseconds;
+    }
+
     public void setDateInMilliseconds(long dateInMilliseconds) {
         setDateFormat(CallDateFormatter.format(dateInMilliseconds));
         this.dateInMilliseconds = dateInMilliseconds;

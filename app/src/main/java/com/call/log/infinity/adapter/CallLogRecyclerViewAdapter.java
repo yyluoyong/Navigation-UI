@@ -22,6 +22,7 @@ import com.call.log.infinity.R;
 import com.call.log.infinity.activity.CallLogDetailActivity;
 import com.call.log.infinity.constant.ViewPagerPosition;
 import com.call.log.infinity.model.CallLogItemModel;
+import com.call.log.infinity.utils.LogUtil;
 import com.call.log.infinity.utils.MaterialDesignColor;
 import com.call.log.infinity.utils.PermissionUtil;
 
@@ -171,13 +172,13 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
         //设置箭头标志
         boolean isMissed = (callLogItem.getCallType() == CallLog.Calls.MISSED_TYPE) ||
-            ("0".equals(callLogItem.getDuration()) && callLogItem.getCallType() == CallLog.Calls.INCOMING_TYPE);
+            (callLogItem.getDuration() == 0 && callLogItem.getCallType() == CallLog.Calls.INCOMING_TYPE);
         if (isMissed) {
             //未接电话
             ((CallLogItemViewHolder) holder).callTypeImage.setImageResource(R.drawable.ic_call_missed);
         } else if (callLogItem.getCallType() == CallLog.Calls.OUTGOING_TYPE) {
             //拨出电话
-            if ("0".equals(callLogItem.getDuration())) {
+            if (callLogItem.getDuration() == 0) {
                 ((CallLogItemViewHolder) holder).callTypeImage.setImageResource(R.drawable.ic_call_failed);
             } else {
                 ((CallLogItemViewHolder) holder).callTypeImage.setImageResource(R.drawable.ic_call_made);
@@ -204,28 +205,24 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
      */
     private void setContactsImage(CallLogItemViewHolder holder, CallLogItemModel callLogItemModel) {
 
-        String name = callLogItemModel.getContactsName();
-
-        char firstChar = name.charAt(0);
-
-        //数字不显示字符，其余显示第一个字符
-        if (firstChar >= '0' && firstChar <= '9') {
+        if ((callLogItemModel.getPhoneNumber().equals(callLogItemModel.getContactsName()))) {
             holder.contactsImage.setImageResource(R.mipmap.ic_person);
             //这个置空必须有，否则会因为缓存导致混乱？
             holder.contactsImageText.setText("");
         } else {
+            String name = callLogItemModel.getContactsName();
+            char firstChar = name.charAt(0);
+
             holder.contactsImageText.setText(String.valueOf(firstChar));
 
-            String phoneNumberStr = callLogItemModel.getPhoneNumber();
-
-            //截取电话号码后两位，通过计算余数来设定头像
+            String dateInMilliseconds = String.valueOf(callLogItemModel.getDateInMilliseconds());
+            //后两位，通过计算余数来设定头像
             int cutLength = 2;
             int headImageIndex;
 
-            if (phoneNumberStr != null &&  phoneNumberStr.length() >= cutLength) {
-                int phoneNumberLastTwo = Integer.parseInt(phoneNumberStr
-                    .substring(phoneNumberStr.length() - cutLength));
-                headImageIndex = phoneNumberLastTwo % MaterialDesignColor.MDColorsDeep.length;
+            if (dateInMilliseconds != null &&  dateInMilliseconds.length() >= cutLength) {
+                int lastTwo = Integer.parseInt(dateInMilliseconds.substring(dateInMilliseconds.length() - cutLength));
+                headImageIndex = lastTwo % MaterialDesignColor.MDColorsDeep.length;
             } else {
                 Random random = new Random();
                 headImageIndex = random.nextInt(MaterialDesignColor.MDColorsDeep.length);

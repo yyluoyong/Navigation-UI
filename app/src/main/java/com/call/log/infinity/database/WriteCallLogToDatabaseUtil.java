@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.provider.CallLog;
 import android.text.TextUtils;
 
+import com.raizlabs.android.dbflow.annotation.Database;
 import com.raizlabs.android.dbflow.config.DatabaseDefinition;
 import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
@@ -12,6 +13,8 @@ import com.raizlabs.android.dbflow.structure.database.transaction.ITransaction;
 import com.raizlabs.android.dbflow.structure.database.transaction.Transaction;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -125,9 +128,15 @@ public class WriteCallLogToDatabaseUtil {
 
         callLogModelDBFlow.setDateInMilliseconds(dateInMilliseconds);
 
-        Boolean isContactsNameEmpty = ( TextUtils.isEmpty(contactsName) ||
-                contactsName.equals("null"));
+
+
+        Boolean isContactsNameEmpty = ( TextUtils.isEmpty(contactsName) || contactsName.equals("null"));
         if (isContactsNameEmpty) {
+            //有些号码不能显示
+            if (isPhoneNumber(phoneNumber) == false) {
+                phoneNumber = DatabaseConstant.UNKOWN_PHONE_NUMBER;
+            }
+
             //当联系人为空时，将联系人设为电话号码本身存储
             contactsName = phoneNumber;
         }
@@ -152,5 +161,24 @@ public class WriteCallLogToDatabaseUtil {
                 .querySingle();
 
         return !(callLogModelDBFlow == null);
+    }
+
+    /**
+     * 判断号码是否为电话号码
+     * @param phoneNumber
+     * @return
+     */
+    public static boolean isPhoneNumber(String phoneNumber) {
+        boolean flag = false;
+        try {
+            Pattern pattern = Pattern.compile("[0-9]+");
+            Matcher matcher = pattern.matcher(phoneNumber);
+            flag = matcher.matches();
+        } catch (Exception e) {
+            flag = false;
+            e.printStackTrace();
+        }
+
+        return flag;
     }
 }
