@@ -12,7 +12,7 @@
     tools:showIn="@layout/activity_search">
 
     <!--姓名-->
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/searchActivityItemHeight"
         android:orientation="horizontal"
@@ -21,24 +21,41 @@
         android:gravity="center"
         android:id="@+id/name_layout">
 
-        <TextView
-            android:text="@string/searchName"
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/searchActivityItem"
-            android:textColor="@color/grey"/>
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:layout_alignParentLeft="true">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            <TextView
+                android:text="@string/searchName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/searchActivityItem"
+                android:textColor="@color/grey"/>
+        </LinearLayout>
 
-        <TextView
-            android:text="@string/searchDefault"
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/name_tv"/>
-    </LinearLayout>
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_alignParentRight="true">
+
+            <TextView
+                android:text="@string/searchDefault"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:gravity="center"
+                android:id="@+id/name_tv"/>
+        </LinearLayout>
+
+
+    </RelativeLayout>
 
     <!--水平分隔线-->
     <View

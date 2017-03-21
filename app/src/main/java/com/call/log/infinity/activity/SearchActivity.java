@@ -155,8 +155,6 @@ public class SearchActivity extends AppCompatActivity {
      * 设置待搜索的联系人姓名。
      */
     private void setNameListener() {
-        //条目最多显示出多少位字符
-        final int maxShowLength = 10;
 
         MaterialDialog dialog = new MaterialDialog.Builder(this)
             .title(R.string.searchName)
@@ -178,11 +176,7 @@ public class SearchActivity extends AppCompatActivity {
 
                 if (TextUtils.isEmpty(name) == false) {
                     mSearchModel.setContactsName(name);
-                    if (name.length() > maxShowLength) {
-                        ((TextView) findViewById(R.id.name_tv)).setText(name.substring(0, maxShowLength) + "..." );
-                    } else {
-                        ((TextView) findViewById(R.id.name_tv)).setText(name);
-                    }
+                    ((TextView) findViewById(R.id.name_tv)).setText(name);
                 } else {
                     mSearchModel.setContactsName(null);
                     ((TextView) findViewById(R.id.name_tv)).setText(getString(R.string.searchDefault));

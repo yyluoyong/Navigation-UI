@@ -44,75 +44,80 @@
 
         <!--水平方向第二个部分，通话详情-->
         <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <!--联系人姓名-->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/contacts_name"
-                android:textColor="@color/black"
-                android:textSize="16sp"/>
-
-            <!--(通话次数)电话号码  归属地-->
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/counts_number_area_operator"
-                    android:textSize="12sp"/>
-            </LinearLayout>
-
-            <!--通话类型：来电、去电、未接  通话发生时间-->
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center">
-
-
-                <ImageView
-                    android:layout_width="12dp"
-                    android:layout_height="12dp"
-                    android:layout_marginRight="@dimen/material_design_text_margin"
-                    app:srcCompat="@drawable/ic_call_made"
-                    android:id="@+id/call_type_image"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/call_date"
-                    android:textSize="12sp"/>
-
-            </LinearLayout>
-        </LinearLayout>
-
-        <!--将按钮撑到居右-->
-        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:orientation="horizontal"
+            android:layout_weight="1">
 
-        <!--水平方向第三个部分，信息按钮-->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:id="@+id/more_info_layout">
-
-            <ImageView
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_info"
-                android:layout_gravity="center"
-                android:layout_marginRight="@dimen/material_design_item_margin"
-                android:id="@+id/more_info"/>
+                android:layout_weight="1">
+
+                <!--联系人姓名-->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/contacts_name"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:ellipsize="end"
+                    android:maxLines="1"/>
+
+                <!--(通话次数)电话号码  归属地-->
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/counts_number_area_operator"
+                        android:textSize="12sp"/>
+                </LinearLayout>
+
+                <!--通话类型：来电、去电、未接  通话发生时间-->
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:layout_marginRight="@dimen/material_design_text_margin"
+                        app:srcCompat="@drawable/ic_call_made"
+                        android:id="@+id/call_type_image"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/call_date"
+                        android:textSize="12sp"/>
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <!--水平方向第三个部分，信息按钮-->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/more_info_layout">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_info"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="@dimen/material_design_item_margin"
+                    android:id="@+id/more_info"/>
+            </LinearLayout>
+
         </LinearLayout>
+
     </LinearLayout>
 
     <!--水平分隔线-->

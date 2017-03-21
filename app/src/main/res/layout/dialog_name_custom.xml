@@ -11,7 +11,7 @@
         android:layout_marginTop="4dp"
         android:textColor="@color/grey"
         android:textSize="@dimen/customEntry"
-        android:maxLength="20"
+        android:maxLength="30"
         android:inputType="textPersonName"/>
 
 </LinearLayout>
