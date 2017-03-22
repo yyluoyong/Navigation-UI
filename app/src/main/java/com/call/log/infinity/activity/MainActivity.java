@@ -187,13 +187,9 @@ public class MainActivity extends BaseActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_search) {
-//            setSearchListener();
-
             Intent intent = new Intent(MainActivity.this, SearchActivity.class);
             startActivity(intent);
-
             return true;
         }
 
@@ -210,7 +206,18 @@ public class MainActivity extends BaseActivity
             Toast.makeText(MainActivity.this, "点击'数据库可视化'按钮，功能待完善", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_refresh) {
             //读取系统联系人，刷新DBFlow通话记录数据库
-            refreshCallLogDatabaseListener();
+            new MaterialDialog.Builder(this)
+                .title(R.string.refreshDatabaseMode)
+                .items(R.array.refreshDatabaseModeItems)
+                .itemsCallbackSingleChoice(1, new MaterialDialog.ListCallbackSingleChoice() {
+                    @Override
+                    public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
+                        refreshCallLogDatabaseListener(which);
+                        return true;
+                    }
+                })
+                .positiveText(R.string.dialog_ok)
+                .show();
         } else if (id == R.id.nav_copy) {
             //复制DBFlow数据库到SDCard
             setCopyDatabaseListener();
@@ -304,8 +311,10 @@ public class MainActivity extends BaseActivity
 
     /**
      * 读取系统联系人，刷新通话记录数据库。
+     * @param mode：0 表示完全以系统通讯录为准，当数据库条目的电话号码在系统通讯录中不存在时，
+     *            该条目的联系人列存储为电话号码。
      */
-    private void refreshCallLogDatabaseListener() {
+    private void refreshCallLogDatabaseListener(final int mode) {
 
         new Thread(new Runnable() {
             @Override
@@ -338,15 +347,24 @@ public class MainActivity extends BaseActivity
                                         String phoneNumber = iterator.next();
                                         String contactsName = phoneNumberAndContactsName.get(phoneNumber);
 
-                                        if (contactsName != null) {
-                                            SQLite.update(CallLogModelDBFlow.class)
-                                                .set(CallLogModelDBFlow_Table.contactsName.eq(contactsName))
-                                                .where(CallLogModelDBFlow_Table.phoneNumber.eq(phoneNumber)).execute();
+                                        if (mode == 0) {
+                                            if (contactsName != null) {
+                                                SQLite.update(CallLogModelDBFlow.class)
+                                                    .set(CallLogModelDBFlow_Table.contactsName.eq(contactsName))
+                                                    .where(CallLogModelDBFlow_Table.phoneNumber.eq(phoneNumber)).execute();
+                                            } else {
+                                                SQLite.update(CallLogModelDBFlow.class)
+                                                    .set(CallLogModelDBFlow_Table.contactsName.eq(phoneNumber))
+                                                    .where(CallLogModelDBFlow_Table.phoneNumber.eq(phoneNumber)).execute();
+                                            }
                                         } else {
-                                            SQLite.update(CallLogModelDBFlow.class)
-                                                .set(CallLogModelDBFlow_Table.contactsName.eq(phoneNumber))
-                                                .where(CallLogModelDBFlow_Table.phoneNumber.eq(phoneNumber)).execute();
+                                            if (contactsName != null) {
+                                                SQLite.update(CallLogModelDBFlow.class)
+                                                    .set(CallLogModelDBFlow_Table.contactsName.eq(contactsName))
+                                                    .where(CallLogModelDBFlow_Table.phoneNumber.eq(phoneNumber)).execute();
+                                            }
                                         }
+
                                     }
                                 }
                             }).success(new Transaction.Success() {
@@ -478,26 +496,5 @@ public class MainActivity extends BaseActivity
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(MyApplication.getThemeColorPrimaryDark());
         }
-    }
-
-    /**
-     * 搜索按钮监听事件。
-     */
-    private void setSearchListener() {
-        MaterialDialog dialog = new MaterialDialog.Builder(this)
-            .title(getString(R.string.search))
-            .customView(R.layout.dialog_name_custom, true)
-            .positiveText(getString(R.string.dialog_ok))
-            .negativeText(android.R.string.cancel)
-            .onPositive(
-                new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-
-                    }
-                }
-            ).build();
-
-        dialog.show();
     }
 }

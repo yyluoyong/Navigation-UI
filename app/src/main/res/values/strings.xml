@@ -13,6 +13,13 @@
     <string name="menuTable">数据库可视化</string>
     <!--菜单栏信息-->
 
+    <string name="refreshDatabaseMode">刷新模式</string>
+
+    <string-array name="refreshDatabaseModeItems">
+        <item>完全刷新：以系统通讯录为准覆盖数据库.</item>
+        <item>增量刷新：只更新存在于系统通讯录中的电话号码，其余不作处理.</item>
+    </string-array>
+
     <!--主体颜色-->
     <string name="themeDialog">themeDialog</string>
     <string name="theme">theme</string>
