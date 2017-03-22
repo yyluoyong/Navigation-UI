@@ -137,6 +137,8 @@
         ]]>
     </string>
 
+    <string name="searchResultCount">搜到 %1$d 条数据</string>
+
     <string name="searchCallTypeAll">所有</string>
     <string name="searchCallTypeIn">来电</string>
     <string name="searchCallTypeOut">去电</string>

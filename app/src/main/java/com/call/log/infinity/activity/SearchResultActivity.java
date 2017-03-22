@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.widget.Toast;
+
 import com.call.log.infinity.MyApplication;
 import com.call.log.infinity.R;
 import com.call.log.infinity.adapter.SearchResultRecyclerViewAdapter;
@@ -60,6 +62,9 @@ public class SearchResultActivity extends BaseActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        Toast.makeText(SearchResultActivity.this, String.format(getString(R.string.searchResultCount),
+                            callLogModelList.size()), Toast.LENGTH_LONG).show();
+
                         mRecyclerViewAdapter.setCallLogList(callLogModelList);
                         mRecyclerViewAdapter.notifyDataSetChanged();
                     }
