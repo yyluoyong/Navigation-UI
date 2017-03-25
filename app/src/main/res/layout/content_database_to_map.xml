@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <!--表1  累计通话次数-->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/material_design_item_margin">
+
+            <com.github.mikephil.charting.charts.PieChart
+                android:id="@+id/count_chart"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/pieChartHeight"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/count_chart"
+                android:gravity="center"
+                android:text="@string/countPieChartTitle"
+                android:textSize="16dp"
+                android:textColor="@color/black"/>
+        </RelativeLayout>
+
+        <!--表2  通话次数排名前10位的联系人-->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/material_design_item_margin"
+            android:layout_marginBottom="@dimen/material_design_item_margin">
+
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/count_bar_chart"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/barChartHeight"/>
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/material_design_item_margin"
+                android:layout_marginLeft="@dimen/bar_legend_left_margin"
+                android:layout_marginRight="@dimen/material_design_item_image_right_margin"
+                android:layout_below="@+id/count_bar_chart"
+                android:stretchColumns="0,1,2"
+                android:id="@+id/count_tab_layout">
+
+                <TableRow>
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="1:张三"
+                        android:id="@+id/count_name_tv1"/>
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="2:李四"
+                        android:id="@+id/count_name_tv2"/>
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="3:王老五"
+                        android:id="@+id/count_name_tv3"/>
+                </TableRow>
+
+                <TableRow>
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="4:张三"
+                        android:id="@+id/count_name_tv4"/>
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="5:李四"
+                        android:id="@+id/count_name_tv5"/>
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="6:王老五"
+                        android:id="@+id/count_name_tv6"/>
+                </TableRow>
+
+                <TableRow>
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="7:张三"
+                        android:id="@+id/count_name_tv7"/>
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="8:李xx四"
+                        android:id="@+id/count_name_tv8"/>
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="9:王老五"
+                        android:id="@+id/count_name_tv9"/>
+                </TableRow>
+            </TableLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/count_tab_layout"
+                android:layout_marginTop="@dimen/material_design_item_margin"
+                android:gravity="center"
+                android:text="@string/countBarChartTitle"
+                android:textSize="16dp"
+                android:textColor="@color/black"/>
+        </RelativeLayout>
+
+        <!--表3  累计通话时长-->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/material_design_item_margin"
+            android:layout_marginBottom="@dimen/material_design_item_margin">
+
+            <com.github.mikephil.charting.charts.PieChart
+                android:id="@+id/duration_chart"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/pieChartHeight"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/duration_chart"
+                android:gravity="center"
+                android:text="@string/durationPieChartTitle"
+                android:textSize="16dp"
+                android:textColor="@color/black"/>
+        </RelativeLayout>
+
+        <!--表4  通话时长排名前10位的联系人-->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/material_design_item_margin"
+            android:layout_marginBottom="@dimen/material_design_item_margin">
+
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/duration_bar_chart"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/barChartHeight"/>
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/material_design_item_margin"
+                android:layout_marginLeft="@dimen/bar_legend_left_margin"
+                android:layout_marginRight="@dimen/material_design_item_image_right_margin"
+                android:layout_below="@+id/duration_bar_chart"
+                android:stretchColumns="0,1,2"
+                android:id="@+id/duration_tab_layout">
+
+                <TableRow>
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="1:张三"
+                        android:id="@+id/duration_name_tv1"/>
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="2:李四"
+                        android:id="@+id/duration_name_tv2"/>
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="3:王老五"
+                        android:id="@+id/duration_name_tv3"/>
+                </TableRow>
+
+                <TableRow>
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="4:张三"
+                        android:id="@+id/duration_name_tv4"/>
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="5:李四"
+                        android:id="@+id/duration_name_tv5"/>
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="6:王老五"
+                        android:id="@+id/duration_name_tv6"/>
+                </TableRow>
+
+                <TableRow>
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="7:张三"
+                        android:id="@+id/duration_name_tv7"/>
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="8:李xx四"
+                        android:id="@+id/duration_name_tv8"/>
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="9:王老五"
+                        android:id="@+id/duration_name_tv9"/>
+                </TableRow>
+            </TableLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/duration_tab_layout"
+                android:layout_marginTop="@dimen/material_design_item_margin"
+                android:gravity="center"
+                android:text="@string/durationBarChartTitle"
+                android:textSize="16dp"
+                android:textColor="@color/black"/>
+        </RelativeLayout>
+    </LinearLayout>
+
+</ScrollView>

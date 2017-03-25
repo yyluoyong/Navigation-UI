@@ -151,5 +151,12 @@
     <string name="searchCallTypeOut">去电</string>
     <string name="searchCallTypeMiss">未接</string>
     <string name="title_activity_search">搜索</string>
+    <string name="title_activity_database_to_map">DatabaseToMapActivity</string>
     <!--搜索对话框-->
+
+    <!--数据库可视化-->
+    <string name="countPieChartTitle">表1  累计通话次数</string>
+    <string name="countBarChartTitle">表2  通话次数排名前 9 位的联系人</string>
+    <string name="durationPieChartTitle">表3  累计通话时长</string>
+    <string name="durationBarChartTitle">表4  通话时长排名前 9 位的联系人</string>
 </resources>

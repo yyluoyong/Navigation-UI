@@ -203,7 +203,8 @@ public class MainActivity extends BaseActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_table) {
-            Toast.makeText(MainActivity.this, "点击'数据库可视化'按钮，功能待完善", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(MainActivity.this, DatabaseToMapActivity.class);
+            startActivity(intent);
         } else if (id == R.id.nav_refresh) {
             //读取系统联系人，刷新DBFlow通话记录数据库
             new MaterialDialog.Builder(this)
