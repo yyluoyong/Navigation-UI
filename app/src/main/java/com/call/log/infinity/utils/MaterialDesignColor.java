@@ -71,4 +71,8 @@ public class MaterialDesignColor {
     public final static int[] MDColorsDeep = {MDRed, MDPurple,
         MDIndigo, MDBlue, MDLightBlue, MDCyan, MDTeal, MDGreen, MDAmber, MDOrange,
         MDDeepOrange, MDBrown, MDGrey, MDBlueGrey};
+
+    public static final int[] MDColorsDeepToLight = {
+        MDRed, MDGreen, MDBlue, MDAmber, MDIndigo, MDPurple
+    };
 }

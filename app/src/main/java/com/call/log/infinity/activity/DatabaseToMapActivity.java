@@ -1,5 +1,6 @@
 package com.call.log.infinity.activity;
 
+import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
@@ -67,17 +68,83 @@ public class DatabaseToMapActivity extends AppCompatActivity {
         //初始化主题颜色
         setThemeAtStart();
 
-        initCountPieChart();
-        initDurationPieChart();
+        initChart();
+    }
 
-        initCountBarChart();
-        initDurationBarChart();
+    /**
+     * 初始化图表。
+     */
+    private void initChart() {
+        final ArrayList<Integer> pieChartColors = new ArrayList<>();
+        pieChartColors.add(ContextCompat.getColor(MyApplication.getContext(), R.color.MDGreen));
+        pieChartColors.add(ContextCompat.getColor(MyApplication.getContext(), R.color.MDBlue));
+
+        //设置柱状图采用的颜色
+        final ArrayList<Integer> barChartColors = new ArrayList<>();
+        for (int c : MaterialDesignColor.MDColorsDeepToLight)
+            barChartColors.add(c);
+        for (int c : ColorTemplate.VORDIPLOM_COLORS)
+            barChartColors.add(c);
+
+        final ProgressDialog pgDialog = createProgressDialog(null, getString(R.string.updateDatabaseIng));
+        pgDialog.show();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ArrayList<PieEntry> entries = new ArrayList<>();
+                entries.add(new PieEntry(1000, "去电时长"));
+                entries.add(new PieEntry(300, "来电时长"));
+
+                //饼图的数据
+                final PieData countPieData = initCountPieChartData(entries, pieChartColors);
+                final PieData durationPieData = initDurationPieChartData(entries, pieChartColors);
+
+                final String countPieDesciptionLabel = "总计：386次";
+                final String durationPieDesciptionLabel = "总计：500分钟";
+
+                //柱状图的数据
+                final BarData countBarData = initCountBarData(barChartColors);
+                final BarData durationBarData = initDurationBarData(barChartColors);
+
+                final ArrayList<String> labels = new ArrayList<>();
+                labels.add("张三");
+                labels.add("李四");
+                labels.add("王五");
+                labels.add("张三");
+                labels.add("李四");
+                labels.add("王五");
+                labels.add("张三");
+                labels.add("李四");
+                labels.add("王五");
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                //更新UI
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        pgDialog.dismiss();
+
+                        initCountPieChart(countPieData, countPieDesciptionLabel);
+                        initDurationPieChart(durationPieData, durationPieDesciptionLabel);
+
+                        initCountBarChart(countBarData, labels, barChartColors);
+                        initDurationBarChart(durationBarData, labels, barChartColors);
+                    }
+                });
+            }
+        }).start();
     }
 
     /**
      * 按通话次数统计的饼图。
      */
-    private void initCountPieChart() {
+    private void initCountPieChart(PieData data, String descriptionLabel) {
         PieChart countChart = (PieChart) findViewById(R.id.count_chart);
         countChart.setUsePercentValues(true);
 
@@ -92,28 +159,26 @@ public class DatabaseToMapActivity extends AppCompatActivity {
         countChart.animateY(1000, Easing.EasingOption.EaseInOutQuad);
 
         countChart.setDrawHoleEnabled(false);
-        countChart.getDescription().setEnabled(false);
+        Description description = countChart.getDescription();
+        description.setText(descriptionLabel);
+        description.setTextAlign(Paint.Align.LEFT);
+
+        //legend在右侧垂直居中
         Legend legend = countChart.getLegend();
         legend.setEnabled(true);
         legend.setVerticalAlignment(Legend.LegendVerticalAlignment.CENTER);
         legend.setOrientation(Legend.LegendOrientation.VERTICAL);
         legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
 
-        ArrayList<PieEntry> entries = new ArrayList<>();
-        entries.add(new PieEntry(40, "去电次数"));
-        entries.add(new PieEntry(50, "来电次数"));
-
-        ArrayList<Integer> colors = new ArrayList<>();
-        colors.add(ContextCompat.getColor(MyApplication.getContext(), R.color.MDGreen));
-        colors.add(ContextCompat.getColor(MyApplication.getContext(), R.color.MDBlue));
-
-        setPieChartData(countChart, entries, colors);
+        countChart.setData(data);
+        countChart.highlightValues(null);
+        countChart.invalidate();
     }
 
     /**
      * 按通话时长统计的饼图。
      */
-    private void initDurationPieChart() {
+    private void initDurationPieChart(PieData data, String descriptionLabel) {
         PieChart durationChart = (PieChart) findViewById(R.id.duration_chart);
         durationChart.setUsePercentValues(true);
 
@@ -128,35 +193,37 @@ public class DatabaseToMapActivity extends AppCompatActivity {
         durationChart.animateY(1000, Easing.EasingOption.EaseInOutQuad);
 
         durationChart.setDrawHoleEnabled(false);
-        durationChart.getDescription().setEnabled(false);
+        Description description = durationChart.getDescription();
+        description.setText(descriptionLabel);
+        description.setTextAlign(Paint.Align.LEFT);
+
+        //legend在右侧垂直居中
         Legend legend = durationChart.getLegend();
         legend.setEnabled(true);
         legend.setVerticalAlignment(Legend.LegendVerticalAlignment.CENTER);
         legend.setOrientation(Legend.LegendOrientation.VERTICAL);
         legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
 
-        ArrayList<PieEntry> entries = new ArrayList<>();
-        entries.add(new PieEntry(1000, "去电时长"));
-        entries.add(new PieEntry(300, "来电时长"));
-
-        ArrayList<Integer> colors = new ArrayList<>();
-        colors.add(ContextCompat.getColor(MyApplication.getContext(), R.color.MDGreen));
-        colors.add(ContextCompat.getColor(MyApplication.getContext(), R.color.MDBlue));
-
-        setPieChartData(durationChart, entries, colors);
+        durationChart.setData(data);
+        durationChart.highlightValues(null);
+        durationChart.invalidate();
     }
 
     /**
      * 按通话次数统计的条形图。
+     * @param data
+     * @param labels
+     * @param colors
      */
-    private void initCountBarChart() {
+    private void initCountBarChart(BarData data, ArrayList<String> labels, ArrayList<Integer> colors) {
         BarChart countBarChart = (BarChart) findViewById(R.id.count_bar_chart);
 
         countBarChart.setExtraOffsets(BAR_CHART_LEFT, 0, BAR_CHART_RIGHT, 0);
         countBarChart.setDrawBarShadow(false);
         countBarChart.setDrawValueAboveBar(true);
-        countBarChart.getDescription().setEnabled(false);
         countBarChart.animateY(1000);
+        Description description = countBarChart.getDescription();
+        description.setText(getString(R.string.countDescription));
 
         // if more than 60 entries are displayed in the chart, no values will be drawn
         countBarChart.setMaxVisibleValueCount(60);
@@ -170,61 +237,47 @@ public class DatabaseToMapActivity extends AppCompatActivity {
         xAxis.setGranularity(1f); // only intervals of 1 day
         xAxis.setLabelCount(7);
 
+        //左侧坐标轴
         YAxis leftAxis = countBarChart.getAxisLeft();
         leftAxis.setLabelCount(8, false);
         leftAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
         leftAxis.setSpaceTop(15f);
         leftAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
+        leftAxis.setValueFormatter(new MyAxisValueFormatter());
 
-        YAxis rightAxis = countBarChart.getAxisRight();
-        rightAxis.setDrawGridLines(false);
-        rightAxis.setLabelCount(8, false);
-        rightAxis.setSpaceTop(15f);
-        rightAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
+        //右侧坐标轴不显示
+        countBarChart.getAxisRight().setEnabled(false);
 
-        ArrayList<Integer> colors = new ArrayList<>();
-
-        for (int c : ColorTemplate.MATERIAL_COLORS)
-            colors.add(c);
-
-        for (int c : ColorTemplate.VORDIPLOM_COLORS)
-            colors.add(c);
-
+        //legend放在图正下方居中，允许折行
         Legend legend = countBarChart.getLegend();
         legend.setEnabled(true);
         legend.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
         legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
         legend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
         legend.setWordWrapEnabled(true);
-
-        ArrayList<String> labels = new ArrayList<>();
-        labels.add("张三");
-        labels.add("李四");
-        labels.add("王五");
-        labels.add("张三");
-        labels.add("李四");
-        labels.add("王五");
-        labels.add("张三");
-        labels.add("李四");
-        labels.add("王五");
+        //默认为0.95f，在使用异步线程获取并UI更新的时候，会超出屏幕，十分奇怪
+        legend.setMaxSizePercent(0.8f);
         setBarChartLegendData(legend, labels, colors);
 
-        setBarChartData(countBarChart, colors, CONTACTS_LIMIT-1, 50);
+        countBarChart.setData(data);
+        countBarChart.invalidate();
     }
 
     /**
      * 按通话时长统计的条形图。
+     * @param data
+     * @param labels
+     * @param colors
      */
-    private void initDurationBarChart() {
+    private void initDurationBarChart(BarData data, ArrayList<String> labels, ArrayList<Integer> colors) {
         BarChart durationBarChart = (BarChart) findViewById(R.id.duration_bar_chart);
 
         durationBarChart.setExtraOffsets(BAR_CHART_LEFT, 0, BAR_CHART_RIGHT, 0);
         durationBarChart.setDrawBarShadow(false);
-        durationBarChart.getDescription().setEnabled(false);
         durationBarChart.animateY(1000);
+        Description description = durationBarChart.getDescription();
+        description.setText(getString(R.string.durationDescription));
 
-        // if more than 60 entries are displayed in the chart, no values will be drawn
-//        durationBarChart.setMaxVisibleValueCount(60);
         // scaling can now only be done on x- and y-axis separately
         durationBarChart.setPinchZoom(false);
         durationBarChart.setDrawGridBackground(true);
@@ -235,6 +288,7 @@ public class DatabaseToMapActivity extends AppCompatActivity {
         xAxis.setGranularity(1f); // only intervals of 1 day
         xAxis.setLabelCount(7);
 
+        //左侧坐标轴
         YAxis leftAxis = durationBarChart.getAxisLeft();
         leftAxis.setLabelCount(8, false);
         leftAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
@@ -242,49 +296,30 @@ public class DatabaseToMapActivity extends AppCompatActivity {
         leftAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
         leftAxis.setValueFormatter(new MyAxisValueFormatter());
 
-        YAxis rightAxis = durationBarChart.getAxisRight();
-        rightAxis.setEnabled(false);
-        rightAxis.setDrawGridLines(false);
-        rightAxis.setLabelCount(8, false);
-        rightAxis.setSpaceTop(15f);
-        rightAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
-        rightAxis.setValueFormatter(new MyAxisValueFormatter());
+        //右侧坐标轴不显示
+        durationBarChart.getAxisRight().setEnabled(false);
 
-        ArrayList<Integer> colors = new ArrayList<>();
-        for (int c : ColorTemplate.MATERIAL_COLORS)
-            colors.add(c);
-        for (int c : ColorTemplate.VORDIPLOM_COLORS)
-            colors.add(c);
-
+        //legend放在图正下方居中，允许折行
         Legend legend = durationBarChart.getLegend();
         legend.setEnabled(true);
         legend.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
         legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
         legend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
         legend.setWordWrapEnabled(true);
-
-        ArrayList<String> labels = new ArrayList<>();
-        labels.add("张三");
-        labels.add("李四");
-        labels.add("王五");
-        labels.add("张三");
-        labels.add("李四");
-        labels.add("王五");
-        labels.add("张三");
-        labels.add("李四");
-        labels.add("王五");
+        //默认为0.95f，在使用异步线程获取并UI更新的时候，会超出屏幕，十分奇怪
+        legend.setMaxSizePercent(0.8f);
         setBarChartLegendData(legend, labels, colors);
 
-        setBarChartData(durationBarChart, colors, 9, 10000);
+        durationBarChart.setData(data);
+        durationBarChart.invalidate();
     }
 
     /**
-     * 给饼图设置数据。
-     * @param pieChart
+     * 初始化countPieChart的数据。
      * @param entries
      * @param colors
      */
-    private void setPieChartData(PieChart pieChart, ArrayList<PieEntry> entries, ArrayList<Integer> colors) {
+    private PieData initCountPieChartData(ArrayList<PieEntry> entries, ArrayList<Integer> colors) {
         PieDataSet dataSet = new PieDataSet(entries, "");
 
         dataSet.setDrawIcons(false);
@@ -299,24 +334,44 @@ public class DatabaseToMapActivity extends AppCompatActivity {
         data.setValueFormatter(new PercentFormatter());
         data.setValueTextSize(12f);
         data.setValueTextColor(Color.WHITE);
-        pieChart.setData(data);
 
-        // undo all highlights
-        pieChart.highlightValues(null);
-
-        pieChart.invalidate();
+        return data;
     }
 
     /**
-     * 给条形图设置数据。
-     * @param barChart
+     * 初始化durationPieChart的数据。
+     * @param entries
      * @param colors
-     * @param count
-     * @param range
      */
-    private void setBarChartData(BarChart barChart, ArrayList<Integer> colors, int count, float range) {
+    private PieData initDurationPieChartData(ArrayList<PieEntry> entries, ArrayList<Integer> colors) {
+        PieDataSet dataSet = new PieDataSet(entries, "");
+
+        dataSet.setDrawIcons(false);
+
+        dataSet.setSliceSpace(1f);
+        dataSet.setIconsOffset(new MPPointF(0, 40));
+        dataSet.setSelectionShift(5f);
+
+        dataSet.setColors(colors);
+
+        PieData data = new PieData(dataSet);
+        data.setValueFormatter(new PercentFormatter());
+        data.setValueTextSize(12f);
+        data.setValueTextColor(Color.WHITE);
+
+        return data;
+    }
+
+    /**
+     * 生成countBar的数据。
+     * @param colors
+     * @return
+     */
+    private BarData initCountBarData(ArrayList<Integer> colors) {
 
         float start = 1f;
+        int count = 9;
+        float range = 200;
 
         ArrayList<BarEntry> yVals1 = new ArrayList<>();
 
@@ -346,7 +401,49 @@ public class DatabaseToMapActivity extends AppCompatActivity {
         data.setBarWidth(0.9f);
         data.setValueFormatter(new MyValueFormatter());
 
-        barChart.setData(data);
+        return data;
+    }
+
+    /**
+     * 生成durationBar的数据。
+     * @param colors
+     * @return
+     */
+    private BarData initDurationBarData(ArrayList<Integer> colors) {
+
+        float start = 1f;
+        int count = 9;
+        float range = 200;
+
+        ArrayList<BarEntry> yVals1 = new ArrayList<>();
+
+        for (int i = (int) start; i < start + count + 1; i++) {
+            float mult = (range + 1);
+            float val = (float) (Math.random() * mult);
+
+            if (Math.random() * 100 < 25) {
+                yVals1.add(new BarEntry(i, (float) Math.floor(val)));
+            } else {
+                yVals1.add(new BarEntry(i, (float) Math.floor(val)));
+            }
+        }
+
+        BarDataSet set1;
+
+        set1 = new BarDataSet(yVals1, "");
+
+        set1.setDrawIcons(false);
+        set1.setColors(colors);
+
+        ArrayList<IBarDataSet> dataSets = new ArrayList<>();
+        dataSets.add(set1);
+
+        BarData data = new BarData(dataSets);
+        data.setValueTextSize(10f);
+        data.setBarWidth(0.9f);
+        data.setValueFormatter(new MyValueFormatter());
+
+        return data;
     }
 
     /**
@@ -358,10 +455,10 @@ public class DatabaseToMapActivity extends AppCompatActivity {
     public void setBarChartLegendData(Legend legend, ArrayList<String> labels, ArrayList<Integer> colors) {
         ArrayList<LegendEntry> legendEntries = new ArrayList<>();
 
-        for (int i = 0; i < CONTACTS_LIMIT; i++ ) {
+        for (int i = 0; i < labels.size(); i++ ) {
             LegendEntry entry = new LegendEntry();
             entry.label = labels.get(i);
-            entry.formColor = colors.get(i);
+            entry.formColor = colors.get(i % colors.size());
             legendEntries.add(entry);
         }
         legend.setCustom(legendEntries);
@@ -386,7 +483,6 @@ public class DatabaseToMapActivity extends AppCompatActivity {
         }
     }
 
-
     /**
      * 格式化坐标轴标签。
      */
@@ -395,5 +491,24 @@ public class DatabaseToMapActivity extends AppCompatActivity {
         public String getFormattedValue(float value, AxisBase axis) {
             return BigNumberFormatter.format(value);
         }
+    }
+
+    /**
+     * 一个圆圈的进度对话框
+     * @param title
+     * @param msg
+     * @return
+     */
+    private ProgressDialog createProgressDialog(String title, String msg) {
+
+        ProgressDialog pgDialog = new ProgressDialog(DatabaseToMapActivity.this);
+
+        pgDialog.setTitle(title);
+        pgDialog.setMessage(msg);
+        pgDialog.setCancelable(false);
+        pgDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        pgDialog.setIndeterminate(false);
+
+        return pgDialog;
     }
 }

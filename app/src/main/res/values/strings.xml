@@ -156,7 +156,9 @@
 
     <!--数据库可视化-->
     <string name="countPieChartTitle">表1  累计通话次数</string>
-    <string name="countBarChartTitle">表2  通话次数排名前 9 位的联系人</string>
+    <string name="countBarChartTitle">表2  通话次数排名前几位的联系人</string>
     <string name="durationPieChartTitle">表3  累计通话时长</string>
-    <string name="durationBarChartTitle">表4  通话时长排名前 9 位的联系人</string>
+    <string name="durationBarChartTitle">表4  通话时长排名前几位的联系人</string>
+    <string name="durationDescription">单位：秒</string>
+    <string name="countDescription">单位：次</string>
 </resources>

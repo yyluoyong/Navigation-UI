@@ -1,8 +1,6 @@
 package com.call.log.infinity.utils;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.StringDef;
-
 import java.text.DecimalFormat;
 
 /**
@@ -56,6 +54,6 @@ public class BigNumberFormatter {
             return mFormat.format(number / A_KILO) + KILO + MORE_CHAR;
         }
 
-        return String.valueOf(number);
+        return String.valueOf(Math.round(number));
     }
 }
