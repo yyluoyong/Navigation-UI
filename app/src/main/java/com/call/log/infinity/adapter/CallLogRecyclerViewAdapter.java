@@ -215,14 +215,21 @@ public class CallLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
             holder.contactsImageText.setText(String.valueOf(firstChar));
 
-            String dateInMilliseconds = String.valueOf(callLogItemModel.getDateInMilliseconds());
-            //后两位，通过计算余数来设定头像
+            String phoneNumberStr = callLogItemModel.getPhoneNumber();
+
+            //截取电话号码后两位，通过计算余数来设定头像
             int cutLength = 2;
             int headImageIndex;
 
-            if (dateInMilliseconds != null &&  dateInMilliseconds.length() >= cutLength) {
-                int lastTwo = Integer.parseInt(dateInMilliseconds.substring(dateInMilliseconds.length() - cutLength));
-                headImageIndex = lastTwo % MaterialDesignColor.MDColorsDeep.length;
+            if (phoneNumberStr != null &&  phoneNumberStr.length() >= cutLength) {
+                int phoneNumberLastTwo = Integer.parseInt(phoneNumberStr
+                    .substring(phoneNumberStr.length() - cutLength));
+                headImageIndex = phoneNumberLastTwo % MaterialDesignColor.MDColorsDeep.length;
+
+                if (!(headImageIndex > 0)) {
+                    Random random = new Random();
+                    headImageIndex = random.nextInt(MaterialDesignColor.MDColorsDeep.length);
+                }
             } else {
                 Random random = new Random();
                 headImageIndex = random.nextInt(MaterialDesignColor.MDColorsDeep.length);

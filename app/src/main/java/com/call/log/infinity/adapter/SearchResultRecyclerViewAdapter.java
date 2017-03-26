@@ -248,6 +248,11 @@ public class SearchResultRecyclerViewAdapter extends RecyclerView.Adapter<Recycl
                 int phoneNumberLastTwo = Integer.parseInt(phoneNumberStr
                     .substring(phoneNumberStr.length() - cutLength));
                 headImageIndex = phoneNumberLastTwo % MaterialDesignColor.MDColorsDeep.length;
+
+                if (!(headImageIndex >= 0)) {
+                    Random random = new Random();
+                    headImageIndex = random.nextInt(MaterialDesignColor.MDColorsDeep.length);
+                }
             } else {
                 Random random = new Random();
                 headImageIndex = random.nextInt(MaterialDesignColor.MDColorsDeep.length);
