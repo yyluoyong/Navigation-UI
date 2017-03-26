@@ -18,10 +18,12 @@ import android.view.View;
 
 import com.call.log.infinity.MyApplication;
 import com.call.log.infinity.R;
+import com.call.log.infinity.utils.BigNumberFormatter;
 import com.call.log.infinity.utils.MaterialDesignColor;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.LegendEntry;
@@ -42,6 +44,7 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.MPPointF;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class DatabaseToMapActivity extends AppCompatActivity {
@@ -150,49 +153,34 @@ public class DatabaseToMapActivity extends AppCompatActivity {
         BarChart countBarChart = (BarChart) findViewById(R.id.count_bar_chart);
 
         countBarChart.setExtraOffsets(BAR_CHART_LEFT, 0, BAR_CHART_RIGHT, 0);
-
         countBarChart.setDrawBarShadow(false);
         countBarChart.setDrawValueAboveBar(true);
-
         countBarChart.getDescription().setEnabled(false);
+        countBarChart.animateY(1000);
 
-        // if more than 60 entries are displayed in the chart, no values will be
-        // drawn
+        // if more than 60 entries are displayed in the chart, no values will be drawn
         countBarChart.setMaxVisibleValueCount(60);
-
         // scaling can now only be done on x- and y-axis separately
         countBarChart.setPinchZoom(false);
-
-        countBarChart.setDrawGridBackground(false);
-        // mChart.setDrawYLabels(false);
-
-//        IAxisValueFormatter xAxisFormatter = new DayAxisValueFormatter(mChart);
+        countBarChart.setDrawGridBackground(true);
 
         XAxis xAxis = countBarChart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setDrawGridLines(false);
         xAxis.setGranularity(1f); // only intervals of 1 day
         xAxis.setLabelCount(7);
-//        xAxis.setValueFormatter(xAxisFormatter);
 
-//        IAxisValueFormatter custom = new MyAxisValueFormatter();
         YAxis leftAxis = countBarChart.getAxisLeft();
-//        leftAxis.setTypeface(mTfLight);
         leftAxis.setLabelCount(8, false);
-//        leftAxis.setValueFormatter(custom);
         leftAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
         leftAxis.setSpaceTop(15f);
         leftAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
 
         YAxis rightAxis = countBarChart.getAxisRight();
         rightAxis.setDrawGridLines(false);
-//        rightAxis.setTypeface(mTfLight);
         rightAxis.setLabelCount(8, false);
-//        rightAxis.setValueFormatter(custom);
         rightAxis.setSpaceTop(15f);
         rightAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
-
-        countBarChart.getLegend().setEnabled(false);
 
         ArrayList<Integer> colors = new ArrayList<>();
 
@@ -201,67 +189,6 @@ public class DatabaseToMapActivity extends AppCompatActivity {
 
         for (int c : ColorTemplate.VORDIPLOM_COLORS)
             colors.add(c);
-
-        setBarChartData(countBarChart, colors, CONTACTS_LIMIT-1, 50);
-    }
-
-    /**
-     * 按通话时长统计的条形图。
-     */
-    private void initDurationBarChart() {
-        BarChart countBarChart = (BarChart) findViewById(R.id.duration_bar_chart);
-
-        countBarChart.setExtraOffsets(BAR_CHART_LEFT, 0, BAR_CHART_RIGHT, 0);
-
-        countBarChart.setDrawBarShadow(false);
-        countBarChart.setDrawValueAboveBar(true);
-
-        countBarChart.getDescription().setEnabled(false);
-
-        // if more than 60 entries are displayed in the chart, no values will be
-        // drawn
-        countBarChart.setMaxVisibleValueCount(60);
-
-        // scaling can now only be done on x- and y-axis separately
-        countBarChart.setPinchZoom(false);
-
-        countBarChart.setDrawGridBackground(false);
-        // mChart.setDrawYLabels(false);
-
-        //        IAxisValueFormatter xAxisFormatter = new DayAxisValueFormatter(mChart);
-
-        XAxis xAxis = countBarChart.getXAxis();
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setDrawGridLines(false);
-        xAxis.setGranularity(1f); // only intervals of 1 day
-        xAxis.setLabelCount(7);
-        //        xAxis.setValueFormatter(xAxisFormatter);
-
-        //        IAxisValueFormatter custom = new MyAxisValueFormatter();
-        YAxis leftAxis = countBarChart.getAxisLeft();
-        //        leftAxis.setTypeface(mTfLight);
-        leftAxis.setLabelCount(8, false);
-        //        leftAxis.setValueFormatter(custom);
-        leftAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
-        leftAxis.setSpaceTop(15f);
-        leftAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
-
-        YAxis rightAxis = countBarChart.getAxisRight();
-        rightAxis.setDrawGridLines(false);
-        //        rightAxis.setTypeface(mTfLight);
-        rightAxis.setLabelCount(8, false);
-        //        rightAxis.setValueFormatter(custom);
-        rightAxis.setSpaceTop(15f);
-        rightAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
-
-
-
-        ArrayList<Integer> colors = new ArrayList<>();
-        for (int c : ColorTemplate.MATERIAL_COLORS)
-            colors.add(c);
-        for (int c : ColorTemplate.VORDIPLOM_COLORS)
-            colors.add(c);
-
 
         Legend legend = countBarChart.getLegend();
         legend.setEnabled(true);
@@ -270,16 +197,85 @@ public class DatabaseToMapActivity extends AppCompatActivity {
         legend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
         legend.setWordWrapEnabled(true);
 
-        ArrayList<LegendEntry> legendEntries = new ArrayList<>();
-        for (int i = 0; i < CONTACTS_LIMIT; i++ ) {
-            LegendEntry entry = new LegendEntry();
-            entry.label = "张三xxxxxxx";
-            entry.formColor = colors.get(i);
-            legendEntries.add(entry);
-        }
-        legend.setCustom(legendEntries);
+        ArrayList<String> labels = new ArrayList<>();
+        labels.add("张三");
+        labels.add("李四");
+        labels.add("王五");
+        labels.add("张三");
+        labels.add("李四");
+        labels.add("王五");
+        labels.add("张三");
+        labels.add("李四");
+        labels.add("王五");
+        setBarChartLegendData(legend, labels, colors);
 
         setBarChartData(countBarChart, colors, CONTACTS_LIMIT-1, 50);
+    }
+
+    /**
+     * 按通话时长统计的条形图。
+     */
+    private void initDurationBarChart() {
+        BarChart durationBarChart = (BarChart) findViewById(R.id.duration_bar_chart);
+
+        durationBarChart.setExtraOffsets(BAR_CHART_LEFT, 0, BAR_CHART_RIGHT, 0);
+        durationBarChart.setDrawBarShadow(false);
+        durationBarChart.getDescription().setEnabled(false);
+        durationBarChart.animateY(1000);
+
+        // if more than 60 entries are displayed in the chart, no values will be drawn
+//        durationBarChart.setMaxVisibleValueCount(60);
+        // scaling can now only be done on x- and y-axis separately
+        durationBarChart.setPinchZoom(false);
+        durationBarChart.setDrawGridBackground(true);
+
+        XAxis xAxis = durationBarChart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setDrawGridLines(false);
+        xAxis.setGranularity(1f); // only intervals of 1 day
+        xAxis.setLabelCount(7);
+
+        YAxis leftAxis = durationBarChart.getAxisLeft();
+        leftAxis.setLabelCount(8, false);
+        leftAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
+        leftAxis.setSpaceTop(15f);
+        leftAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
+        leftAxis.setValueFormatter(new MyAxisValueFormatter());
+
+        YAxis rightAxis = durationBarChart.getAxisRight();
+        rightAxis.setEnabled(false);
+        rightAxis.setDrawGridLines(false);
+        rightAxis.setLabelCount(8, false);
+        rightAxis.setSpaceTop(15f);
+        rightAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
+        rightAxis.setValueFormatter(new MyAxisValueFormatter());
+
+        ArrayList<Integer> colors = new ArrayList<>();
+        for (int c : ColorTemplate.MATERIAL_COLORS)
+            colors.add(c);
+        for (int c : ColorTemplate.VORDIPLOM_COLORS)
+            colors.add(c);
+
+        Legend legend = durationBarChart.getLegend();
+        legend.setEnabled(true);
+        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
+        legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
+        legend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
+        legend.setWordWrapEnabled(true);
+
+        ArrayList<String> labels = new ArrayList<>();
+        labels.add("张三");
+        labels.add("李四");
+        labels.add("王五");
+        labels.add("张三");
+        labels.add("李四");
+        labels.add("王五");
+        labels.add("张三");
+        labels.add("李四");
+        labels.add("王五");
+        setBarChartLegendData(legend, labels, colors);
+
+        setBarChartData(durationBarChart, colors, 9, 10000);
     }
 
     /**
@@ -311,50 +307,64 @@ public class DatabaseToMapActivity extends AppCompatActivity {
         pieChart.invalidate();
     }
 
+    /**
+     * 给条形图设置数据。
+     * @param barChart
+     * @param colors
+     * @param count
+     * @param range
+     */
     private void setBarChartData(BarChart barChart, ArrayList<Integer> colors, int count, float range) {
 
         float start = 1f;
 
-        ArrayList<BarEntry> yVals1 = new ArrayList<BarEntry>();
+        ArrayList<BarEntry> yVals1 = new ArrayList<>();
 
         for (int i = (int) start; i < start + count + 1; i++) {
             float mult = (range + 1);
             float val = (float) (Math.random() * mult);
 
             if (Math.random() * 100 < 25) {
-                yVals1.add(new BarEntry(i, val));
+                yVals1.add(new BarEntry(i, (float) Math.floor(val)));
             } else {
-                yVals1.add(new BarEntry(i, val));
+                yVals1.add(new BarEntry(i, (float) Math.floor(val)));
             }
         }
 
         BarDataSet set1;
 
-        if (barChart.getData() != null &&
-            barChart.getData().getDataSetCount() > 0) {
-            set1 = (BarDataSet) barChart.getData().getDataSetByIndex(0);
-            set1.setValues(yVals1);
-            barChart.getData().notifyDataChanged();
-            barChart.notifyDataSetChanged();
-        } else {
-            set1 = new BarDataSet(yVals1, "");
+        set1 = new BarDataSet(yVals1, "");
 
-            set1.setDrawIcons(false);
+        set1.setDrawIcons(false);
+        set1.setColors(colors);
 
-//            set1.setColors(ColorTemplate.MATERIAL_COLORS);
-            set1.setColors(colors);
-//            set1.setColors(MaterialDesignColor.MDColorsDeep);
+        ArrayList<IBarDataSet> dataSets = new ArrayList<>();
+        dataSets.add(set1);
 
-            ArrayList<IBarDataSet> dataSets = new ArrayList<IBarDataSet>();
-            dataSets.add(set1);
+        BarData data = new BarData(dataSets);
+        data.setValueTextSize(10f);
+        data.setBarWidth(0.9f);
+        data.setValueFormatter(new MyValueFormatter());
 
-            BarData data = new BarData(dataSets);
-            data.setValueTextSize(10f);
-//            data.setValueTypeface(mTfLight);
-            data.setBarWidth(0.9f);
+        barChart.setData(data);
+    }
 
-            barChart.setData(data);
+    /**
+     * 设置条形图的Legend。
+     * @param legend
+     * @param labels
+     * @param colors
+     */
+    public void setBarChartLegendData(Legend legend, ArrayList<String> labels, ArrayList<Integer> colors) {
+        ArrayList<LegendEntry> legendEntries = new ArrayList<>();
+
+        for (int i = 0; i < CONTACTS_LIMIT; i++ ) {
+            LegendEntry entry = new LegendEntry();
+            entry.label = labels.get(i);
+            entry.formColor = colors.get(i);
+            legendEntries.add(entry);
         }
+        legend.setCustom(legendEntries);
     }
 
     /**
@@ -363,6 +373,27 @@ public class DatabaseToMapActivity extends AppCompatActivity {
     private void setThemeAtStart() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(MyApplication.getThemeColorPrimaryDark());
+        }
+    }
+
+    /**
+     * 格式化DataSet数字。
+     */
+    private class MyValueFormatter implements IValueFormatter {
+        @Override
+        public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
+            return BigNumberFormatter.format(value);
+        }
+    }
+
+
+    /**
+     * 格式化坐标轴标签。
+     */
+    private class MyAxisValueFormatter implements IAxisValueFormatter {
+        @Override
+        public String getFormattedValue(float value, AxisBase axis) {
+            return BigNumberFormatter.format(value);
         }
     }
 }

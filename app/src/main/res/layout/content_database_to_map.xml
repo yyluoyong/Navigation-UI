@@ -41,75 +41,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/barChartHeight"/>
 
-            <TableLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/material_design_item_margin"
-                android:layout_marginLeft="@dimen/bar_legend_left_margin"
-                android:layout_marginRight="@dimen/material_design_item_image_right_margin"
-                android:layout_below="@+id/count_bar_chart"
-                android:stretchColumns="0,1,2"
-                android:id="@+id/count_tab_layout">
-
-                <TableRow>
-                    <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:text="1:张三"
-                        android:id="@+id/count_name_tv1"/>
-                    <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:text="2:李四"
-                        android:id="@+id/count_name_tv2"/>
-                    <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:text="3:王老五"
-                        android:id="@+id/count_name_tv3"/>
-                </TableRow>
-
-                <TableRow>
-                    <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:text="4:张三"
-                        android:id="@+id/count_name_tv4"/>
-                    <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:text="5:李四"
-                        android:id="@+id/count_name_tv5"/>
-                    <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:text="6:王老五"
-                        android:id="@+id/count_name_tv6"/>
-                </TableRow>
-
-                <TableRow>
-                    <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:text="7:张三"
-                        android:id="@+id/count_name_tv7"/>
-                    <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:text="8:李xx四"
-                        android:id="@+id/count_name_tv8"/>
-                    <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:text="9:王老五"
-                        android:id="@+id/count_name_tv9"/>
-                </TableRow>
-            </TableLayout>
-
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/count_tab_layout"
+                android:layout_below="@+id/count_bar_chart"
                 android:layout_marginTop="@dimen/material_design_item_margin"
                 android:gravity="center"
                 android:text="@string/countBarChartTitle"
@@ -151,75 +86,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/barChartHeight"/>
 
-            <TableLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/material_design_item_margin"
-                android:layout_marginLeft="@dimen/bar_legend_left_margin"
-                android:layout_marginRight="@dimen/material_design_item_image_right_margin"
-                android:layout_below="@+id/duration_bar_chart"
-                android:stretchColumns="0,1,2"
-                android:id="@+id/duration_tab_layout">
-
-                <TableRow>
-                    <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:text="1:张三"
-                        android:id="@+id/duration_name_tv1"/>
-                    <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:text="2:李四"
-                        android:id="@+id/duration_name_tv2"/>
-                    <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:text="3:王老五"
-                        android:id="@+id/duration_name_tv3"/>
-                </TableRow>
-
-                <TableRow>
-                    <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:text="4:张三"
-                        android:id="@+id/duration_name_tv4"/>
-                    <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:text="5:李四"
-                        android:id="@+id/duration_name_tv5"/>
-                    <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:text="6:王老五"
-                        android:id="@+id/duration_name_tv6"/>
-                </TableRow>
-
-                <TableRow>
-                    <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:text="7:张三"
-                        android:id="@+id/duration_name_tv7"/>
-                    <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:text="8:李xx四"
-                        android:id="@+id/duration_name_tv8"/>
-                    <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:text="9:王老五"
-                        android:id="@+id/duration_name_tv9"/>
-                </TableRow>
-            </TableLayout>
-
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/duration_tab_layout"
+                android:layout_below="@+id/duration_bar_chart"
                 android:layout_marginTop="@dimen/material_design_item_margin"
                 android:gravity="center"
                 android:text="@string/durationBarChartTitle"
