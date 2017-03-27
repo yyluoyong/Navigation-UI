@@ -3,23 +3,24 @@ package com.call.log.infinity.activity;
 import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
-import android.text.style.RelativeSizeSpan;
-import android.text.style.StyleSpan;
-import android.view.View;
 
 import com.call.log.infinity.MyApplication;
 import com.call.log.infinity.R;
+import com.call.log.infinity.database.CallCountsQueryModel;
+import com.call.log.infinity.database.CallCountsQueryModel_QueryTable;
+import com.call.log.infinity.database.CallLogDatabase;
+import com.call.log.infinity.database.CallLogModelDBFlow;
+import com.call.log.infinity.database.CallLogModelDBFlow_Table;
+import com.call.log.infinity.database.TotalDurationQueryModel;
+import com.call.log.infinity.database.TotalDurationQueryModel_QueryTable;
 import com.call.log.infinity.utils.BigNumberFormatter;
+import com.call.log.infinity.utils.LogUtil;
 import com.call.log.infinity.utils.MaterialDesignColor;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.BarChart;
@@ -44,11 +45,19 @@ import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.MPPointF;
 import com.github.mikephil.charting.utils.ViewPortHandler;
+import com.raizlabs.android.dbflow.annotation.Column;
+import com.raizlabs.android.dbflow.annotation.QueryModel;
+import com.raizlabs.android.dbflow.sql.language.CursorResult;
+import com.raizlabs.android.dbflow.sql.language.Method;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
+import com.raizlabs.android.dbflow.structure.BaseQueryModel;
+import com.raizlabs.android.dbflow.structure.database.transaction.QueryTransaction;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseToMapActivity extends AppCompatActivity {
+    static final String TAG = "DatabaseToMapActivity";
 
     private static final float PIE_CHART_LEFT = 20;
     private static final float PIE_CHART_RIGHT = 20;
@@ -56,7 +65,7 @@ public class DatabaseToMapActivity extends AppCompatActivity {
     private static final float BAR_CHART_LEFT = 10;
     private static final float BAR_CHART_RIGHT = 10;
 
-    private static final int CONTACTS_LIMIT = 9;
+    private static final int CONTACTS_LIMIT = 10;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +84,9 @@ public class DatabaseToMapActivity extends AppCompatActivity {
      * 初始化图表。
      */
     private void initChart() {
+        queryMaxTotalDurationList();
+        queryMaxCallCountsList();
+
         final ArrayList<Integer> pieChartColors = new ArrayList<>();
         pieChartColors.add(ContextCompat.getColor(MyApplication.getContext(), R.color.MDGreen));
         pieChartColors.add(ContextCompat.getColor(MyApplication.getContext(), R.color.MDBlue));
@@ -85,9 +97,6 @@ public class DatabaseToMapActivity extends AppCompatActivity {
             barChartColors.add(c);
         for (int c : ColorTemplate.VORDIPLOM_COLORS)
             barChartColors.add(c);
-
-        final ProgressDialog pgDialog = createProgressDialog(null, getString(R.string.updateDatabaseIng));
-        pgDialog.show();
 
         new Thread(new Runnable() {
             @Override
@@ -103,38 +112,32 @@ public class DatabaseToMapActivity extends AppCompatActivity {
                 final String countPieDesciptionLabel = "总计：386次";
                 final String durationPieDesciptionLabel = "总计：500分钟";
 
-                //柱状图的数据
-                final BarData countBarData = initCountBarData(barChartColors);
-                final BarData durationBarData = initDurationBarData(barChartColors);
+                List<CallCountsQueryModel> callCountsQueryModels = queryMaxCallCountsList();
+                List<TotalDurationQueryModel> totalDurationQueryModels = queryMaxTotalDurationList();
 
-                final ArrayList<String> labels = new ArrayList<>();
-                labels.add("张三");
-                labels.add("李四");
-                labels.add("王五");
-                labels.add("张三");
-                labels.add("李四");
-                labels.add("王五");
-                labels.add("张三");
-                labels.add("李四");
-                labels.add("王五");
-
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                final ArrayList<String> countBarLabels = new ArrayList<>();
+                for (int i = 0; i < callCountsQueryModels.size(); i++) {
+                    countBarLabels.add(callCountsQueryModels.get(i).contactsName);
                 }
+
+                final ArrayList<String> durationBarLabels = new ArrayList<>();
+                for (int i = 0; i < callCountsQueryModels.size(); i++) {
+                    durationBarLabels.add(totalDurationQueryModels.get(i).contactsName);
+                }
+
+                //柱状图的数据
+                final BarData countBarData = initCountBarData(callCountsQueryModels, barChartColors);
+                final BarData durationBarData = initDurationBarData(totalDurationQueryModels, barChartColors);
 
                 //更新UI
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        pgDialog.dismiss();
-
                         initCountPieChart(countPieData, countPieDesciptionLabel);
                         initDurationPieChart(durationPieData, durationPieDesciptionLabel);
 
-                        initCountBarChart(countBarData, labels, barChartColors);
-                        initDurationBarChart(durationBarData, labels, barChartColors);
+                        initCountBarChart(countBarData, countBarLabels, barChartColors);
+                        initDurationBarChart(durationBarData, durationBarLabels, barChartColors);
                     }
                 });
             }
@@ -220,6 +223,7 @@ public class DatabaseToMapActivity extends AppCompatActivity {
 
         countBarChart.setExtraOffsets(BAR_CHART_LEFT, 0, BAR_CHART_RIGHT, 0);
         countBarChart.setDrawBarShadow(false);
+        countBarChart.setTouchEnabled(false);
         countBarChart.setDrawValueAboveBar(true);
         countBarChart.animateY(1000);
         Description description = countBarChart.getDescription();
@@ -234,7 +238,7 @@ public class DatabaseToMapActivity extends AppCompatActivity {
         XAxis xAxis = countBarChart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setDrawGridLines(false);
-        xAxis.setGranularity(1f); // only intervals of 1 day
+        xAxis.setGranularity(1f);
         xAxis.setLabelCount(7);
 
         //左侧坐标轴
@@ -274,6 +278,7 @@ public class DatabaseToMapActivity extends AppCompatActivity {
 
         durationBarChart.setExtraOffsets(BAR_CHART_LEFT, 0, BAR_CHART_RIGHT, 0);
         durationBarChart.setDrawBarShadow(false);
+        durationBarChart.setTouchEnabled(false);
         durationBarChart.animateY(1000);
         Description description = durationBarChart.getDescription();
         description.setText(getString(R.string.durationDescription));
@@ -285,7 +290,7 @@ public class DatabaseToMapActivity extends AppCompatActivity {
         XAxis xAxis = durationBarChart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setDrawGridLines(false);
-        xAxis.setGranularity(1f); // only intervals of 1 day
+        xAxis.setGranularity(1f);
         xAxis.setLabelCount(7);
 
         //左侧坐标轴
@@ -364,31 +369,20 @@ public class DatabaseToMapActivity extends AppCompatActivity {
 
     /**
      * 生成countBar的数据。
+     * @param models
      * @param colors
      * @return
      */
-    private BarData initCountBarData(ArrayList<Integer> colors) {
-
-        float start = 1f;
-        int count = 9;
-        float range = 200;
-
-        ArrayList<BarEntry> yVals1 = new ArrayList<>();
-
-        for (int i = (int) start; i < start + count + 1; i++) {
-            float mult = (range + 1);
-            float val = (float) (Math.random() * mult);
-
-            if (Math.random() * 100 < 25) {
-                yVals1.add(new BarEntry(i, (float) Math.floor(val)));
-            } else {
-                yVals1.add(new BarEntry(i, (float) Math.floor(val)));
-            }
-        }
-
+    private BarData initCountBarData(List<CallCountsQueryModel> models, ArrayList<Integer> colors) {
         BarDataSet set1;
 
-        set1 = new BarDataSet(yVals1, "");
+        ArrayList<BarEntry> yValues = new ArrayList<>();
+
+        for (int i = 0; i < models.size(); i++) {
+            yValues.add(new BarEntry(i, (float) models.get(i).counts));
+        }
+
+        set1 = new BarDataSet(yValues, "");
 
         set1.setDrawIcons(false);
         set1.setColors(colors);
@@ -406,31 +400,21 @@ public class DatabaseToMapActivity extends AppCompatActivity {
 
     /**
      * 生成durationBar的数据。
+     * @param models
      * @param colors
      * @return
      */
-    private BarData initDurationBarData(ArrayList<Integer> colors) {
+    private BarData initDurationBarData(List<TotalDurationQueryModel> models, ArrayList<Integer> colors) {
 
-        float start = 1f;
-        int count = 9;
-        float range = 200;
+        ArrayList<BarEntry> yValues = new ArrayList<>();
 
-        ArrayList<BarEntry> yVals1 = new ArrayList<>();
-
-        for (int i = (int) start; i < start + count + 1; i++) {
-            float mult = (range + 1);
-            float val = (float) (Math.random() * mult);
-
-            if (Math.random() * 100 < 25) {
-                yVals1.add(new BarEntry(i, (float) Math.floor(val)));
-            } else {
-                yVals1.add(new BarEntry(i, (float) Math.floor(val)));
-            }
+        for (int i = 0; i < models.size(); i++) {
+            yValues.add(new BarEntry(i, (float) models.get(i).totalDuration));
         }
 
         BarDataSet set1;
 
-        set1 = new BarDataSet(yVals1, "");
+        set1 = new BarDataSet(yValues, "");
 
         set1.setDrawIcons(false);
         set1.setColors(colors);
@@ -494,21 +478,37 @@ public class DatabaseToMapActivity extends AppCompatActivity {
     }
 
     /**
-     * 一个圆圈的进度对话框
-     * @param title
-     * @param msg
+     * 查询通话时长总计最长的几个联系人。
      * @return
      */
-    private ProgressDialog createProgressDialog(String title, String msg) {
+    private List<TotalDurationQueryModel> queryMaxTotalDurationList() {
 
-        ProgressDialog pgDialog = new ProgressDialog(DatabaseToMapActivity.this);
+        List<TotalDurationQueryModel> lists = SQLite.select(CallLogModelDBFlow_Table.contactsName,
+                Method.sum(CallLogModelDBFlow_Table.duration).as("totalDuration"))
+            .from(CallLogModelDBFlow.class)
+            .groupBy(CallLogModelDBFlow_Table.contactsName)
+            .orderBy(TotalDurationQueryModel_QueryTable.totalDuration, false)
+            .limit(CONTACTS_LIMIT)
+            .queryCustomList(TotalDurationQueryModel.class);
 
-        pgDialog.setTitle(title);
-        pgDialog.setMessage(msg);
-        pgDialog.setCancelable(false);
-        pgDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        pgDialog.setIndeterminate(false);
-
-        return pgDialog;
+        return lists;
     }
+
+    /**
+     * 查询通话次数最多的几个联系人。
+     * @return
+     */
+    private List<CallCountsQueryModel> queryMaxCallCountsList() {
+
+        List<CallCountsQueryModel> lists = SQLite.select(CallLogModelDBFlow_Table.contactsName,
+            Method.count(CallLogModelDBFlow_Table.contactsName).as("counts"))
+            .from(CallLogModelDBFlow.class)
+            .groupBy(CallLogModelDBFlow_Table.contactsName)
+            .orderBy(CallCountsQueryModel_QueryTable.counts, false)
+            .limit(CONTACTS_LIMIT)
+            .queryCustomList(CallCountsQueryModel.class);
+
+        return lists;
+    }
+
 }
