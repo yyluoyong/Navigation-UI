@@ -161,4 +161,11 @@
     <string name="durationBarChartTitle">表4  通话时长排名前几位的联系人</string>
     <string name="durationDescription">单位：秒</string>
     <string name="countDescription">单位：次</string>
+
+    <string name="madeCallCounts">去电次数</string>
+    <string name="recievedCallCounts">来电次数</string>
+    <string name="totalCallCounts">总计：%1$s 次</string>
+    <string name="madeCallDuration">去电时长</string>
+    <string name="recievedCallDuration">来电时长</string>
+    <string name="totalDuration">总计：%1$s 秒</string>
 </resources>

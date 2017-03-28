@@ -1,26 +1,24 @@
 package com.call.log.infinity.activity;
 
-import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import android.provider.CallLog;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-
 import com.call.log.infinity.MyApplication;
 import com.call.log.infinity.R;
 import com.call.log.infinity.database.CallCountsQueryModel;
 import com.call.log.infinity.database.CallCountsQueryModel_QueryTable;
-import com.call.log.infinity.database.CallLogDatabase;
 import com.call.log.infinity.database.CallLogModelDBFlow;
 import com.call.log.infinity.database.CallLogModelDBFlow_Table;
+import com.call.log.infinity.database.LongResultQueryModel;
 import com.call.log.infinity.database.TotalDurationQueryModel;
 import com.call.log.infinity.database.TotalDurationQueryModel_QueryTable;
 import com.call.log.infinity.utils.BigNumberFormatter;
-import com.call.log.infinity.utils.LogUtil;
+import com.call.log.infinity.utils.CallDurationFormatter;
 import com.call.log.infinity.utils.MaterialDesignColor;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.BarChart;
@@ -45,14 +43,11 @@ import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.MPPointF;
 import com.github.mikephil.charting.utils.ViewPortHandler;
-import com.raizlabs.android.dbflow.annotation.Column;
-import com.raizlabs.android.dbflow.annotation.QueryModel;
-import com.raizlabs.android.dbflow.sql.language.CursorResult;
+import com.raizlabs.android.dbflow.sql.language.ConditionGroup;
 import com.raizlabs.android.dbflow.sql.language.Method;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
-import com.raizlabs.android.dbflow.structure.BaseQueryModel;
-import com.raizlabs.android.dbflow.structure.database.transaction.QueryTransaction;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,20 +72,86 @@ public class DatabaseToMapActivity extends AppCompatActivity {
         //初始化主题颜色
         setThemeAtStart();
 
-        initChart();
+        initCountPieChart();
+        initDurationPieChart();
+        initCountBarChart();
+        initDurationBarChart();
     }
 
     /**
-     * 初始化图表。
+     * 初始化通话次数饼图。
      */
-    private void initChart() {
-        queryMaxTotalDurationList();
-        queryMaxCallCountsList();
-
+    private void initCountPieChart() {
         final ArrayList<Integer> pieChartColors = new ArrayList<>();
         pieChartColors.add(ContextCompat.getColor(MyApplication.getContext(), R.color.MDGreen));
         pieChartColors.add(ContextCompat.getColor(MyApplication.getContext(), R.color.MDBlue));
 
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                LongResultQueryModel madeCallModel = queryCallCounts(CallLog.Calls.OUTGOING_TYPE);
+                LongResultQueryModel recievedCallModel = queryCallCounts(CallLog.Calls.INCOMING_TYPE);
+
+                ArrayList<PieEntry> entries = new ArrayList<>();
+                entries.add(new PieEntry(madeCallModel.longResult, getString(R.string.madeCallCounts)));
+                entries.add(new PieEntry(recievedCallModel.longResult, getString(R.string.recievedCallCounts)));
+
+                //饼图的数据
+                final PieData countPieData = initCountPieChartData(entries, pieChartColors);
+
+                DecimalFormat mFormat = new DecimalFormat("###,###,###,##0");
+                final String countPieDesciptionLabel =String.format(getString(R.string.totalCallCounts),
+                    mFormat.format(madeCallModel.longResult + recievedCallModel.longResult));
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setCountPieChart(countPieData, countPieDesciptionLabel);
+                    }
+                });
+            }
+        }).start();
+    }
+
+    /**
+     * 初始化通话时长饼图。
+     */
+    private void initDurationPieChart() {
+        final ArrayList<Integer> pieChartColors = new ArrayList<>();
+        pieChartColors.add(ContextCompat.getColor(MyApplication.getContext(), R.color.MDGreen));
+        pieChartColors.add(ContextCompat.getColor(MyApplication.getContext(), R.color.MDBlue));
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                LongResultQueryModel madeCallModel = queryTotalDuration(CallLog.Calls.OUTGOING_TYPE);
+                LongResultQueryModel recievedCallModel = queryTotalDuration(CallLog.Calls.INCOMING_TYPE);
+
+                ArrayList<PieEntry> entries = new ArrayList<>();
+                entries.add(new PieEntry(madeCallModel.longResult, getString(R.string.madeCallDuration)));
+                entries.add(new PieEntry(recievedCallModel.longResult, getString(R.string.recievedCallDuration)));
+
+                //饼图的数据
+                final PieData durationPieData = initDurationPieChartData(entries, pieChartColors);
+
+                DecimalFormat mFormat = new DecimalFormat("###,###,###,##0");
+                final String durationPieDesciptionLabel =String.format(getString(R.string.totalDuration),
+                    mFormat.format(madeCallModel.longResult + recievedCallModel.longResult));
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setDurationPieChart(durationPieData, durationPieDesciptionLabel);
+                    }
+                });
+            }
+        }).start();
+    }
+
+    /**
+     * 初始化通话次数的柱状图。
+     */
+    private void initCountBarChart() {
         //设置柱状图采用的颜色
         final ArrayList<Integer> barChartColors = new ArrayList<>();
         for (int c : MaterialDesignColor.MDColorsDeepToLight)
@@ -101,43 +162,21 @@ public class DatabaseToMapActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                ArrayList<PieEntry> entries = new ArrayList<>();
-                entries.add(new PieEntry(1000, "去电时长"));
-                entries.add(new PieEntry(300, "来电时长"));
-
-                //饼图的数据
-                final PieData countPieData = initCountPieChartData(entries, pieChartColors);
-                final PieData durationPieData = initDurationPieChartData(entries, pieChartColors);
-
-                final String countPieDesciptionLabel = "总计：386次";
-                final String durationPieDesciptionLabel = "总计：500分钟";
-
                 List<CallCountsQueryModel> callCountsQueryModels = queryMaxCallCountsList();
-                List<TotalDurationQueryModel> totalDurationQueryModels = queryMaxTotalDurationList();
 
                 final ArrayList<String> countBarLabels = new ArrayList<>();
                 for (int i = 0; i < callCountsQueryModels.size(); i++) {
                     countBarLabels.add(callCountsQueryModels.get(i).contactsName);
                 }
 
-                final ArrayList<String> durationBarLabels = new ArrayList<>();
-                for (int i = 0; i < callCountsQueryModels.size(); i++) {
-                    durationBarLabels.add(totalDurationQueryModels.get(i).contactsName);
-                }
-
                 //柱状图的数据
                 final BarData countBarData = initCountBarData(callCountsQueryModels, barChartColors);
-                final BarData durationBarData = initDurationBarData(totalDurationQueryModels, barChartColors);
 
                 //更新UI
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        initCountPieChart(countPieData, countPieDesciptionLabel);
-                        initDurationPieChart(durationPieData, durationPieDesciptionLabel);
-
-                        initCountBarChart(countBarData, countBarLabels, barChartColors);
-                        initDurationBarChart(durationBarData, durationBarLabels, barChartColors);
+                        setCountBarChart(countBarData, countBarLabels, barChartColors);
                     }
                 });
             }
@@ -145,9 +184,46 @@ public class DatabaseToMapActivity extends AppCompatActivity {
     }
 
     /**
-     * 按通话次数统计的饼图。
+     * 初始化通话时长的柱状图。
      */
-    private void initCountPieChart(PieData data, String descriptionLabel) {
+    private void initDurationBarChart() {
+        //设置柱状图采用的颜色
+        final ArrayList<Integer> barChartColors = new ArrayList<>();
+        for (int c : MaterialDesignColor.MDColorsDeepToLight)
+            barChartColors.add(c);
+        for (int c : ColorTemplate.VORDIPLOM_COLORS)
+            barChartColors.add(c);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<TotalDurationQueryModel> totalDurationQueryModels = queryMaxTotalDurationList();
+
+                final ArrayList<String> durationBarLabels = new ArrayList<>();
+                for (int i = 0; i < totalDurationQueryModels.size(); i++) {
+                    durationBarLabels.add(totalDurationQueryModels.get(i).contactsName);
+                }
+
+                //柱状图的数据
+                final BarData durationBarData = initDurationBarData(totalDurationQueryModels, barChartColors);
+
+                //更新UI
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setDurationBarChart(durationBarData, durationBarLabels, barChartColors);
+                    }
+                });
+            }
+        }).start();
+    }
+
+    /**
+     * 设置通话次数饼图的数据和属性。
+     * @param data
+     * @param descriptionLabel
+     */
+    private void setCountPieChart(PieData data, String descriptionLabel) {
         PieChart countChart = (PieChart) findViewById(R.id.count_chart);
         countChart.setUsePercentValues(true);
 
@@ -179,9 +255,11 @@ public class DatabaseToMapActivity extends AppCompatActivity {
     }
 
     /**
-     * 按通话时长统计的饼图。
+     * 设置通话时长饼图的数据和属性。
+     * @param data
+     * @param descriptionLabel
      */
-    private void initDurationPieChart(PieData data, String descriptionLabel) {
+    private void setDurationPieChart(PieData data, String descriptionLabel) {
         PieChart durationChart = (PieChart) findViewById(R.id.duration_chart);
         durationChart.setUsePercentValues(true);
 
@@ -213,12 +291,12 @@ public class DatabaseToMapActivity extends AppCompatActivity {
     }
 
     /**
-     * 按通话次数统计的条形图。
+     * 设置通话次数统计的条形图的数据和属性。
      * @param data
      * @param labels
      * @param colors
      */
-    private void initCountBarChart(BarData data, ArrayList<String> labels, ArrayList<Integer> colors) {
+    private void setCountBarChart(BarData data, ArrayList<String> labels, ArrayList<Integer> colors) {
         BarChart countBarChart = (BarChart) findViewById(R.id.count_bar_chart);
 
         countBarChart.setExtraOffsets(BAR_CHART_LEFT, 0, BAR_CHART_RIGHT, 0);
@@ -268,12 +346,12 @@ public class DatabaseToMapActivity extends AppCompatActivity {
     }
 
     /**
-     * 按通话时长统计的条形图。
+     * 设置通话时长统计的条形图的数据和属性。
      * @param data
      * @param labels
      * @param colors
      */
-    private void initDurationBarChart(BarData data, ArrayList<String> labels, ArrayList<Integer> colors) {
+    private void setDurationBarChart(BarData data, ArrayList<String> labels, ArrayList<Integer> colors) {
         BarChart durationBarChart = (BarChart) findViewById(R.id.duration_bar_chart);
 
         durationBarChart.setExtraOffsets(BAR_CHART_LEFT, 0, BAR_CHART_RIGHT, 0);
@@ -475,6 +553,54 @@ public class DatabaseToMapActivity extends AppCompatActivity {
         public String getFormattedValue(float value, AxisBase axis) {
             return BigNumberFormatter.format(value);
         }
+    }
+
+    /**
+     * 查询指定类型的通话的数量。
+     * @param type
+     * @return
+     */
+    private LongResultQueryModel queryCallCounts(int type) {
+        ConditionGroup sqlCondition = ConditionGroup.clause();
+
+        if (type == CallLog.Calls.OUTGOING_TYPE) {
+            sqlCondition = sqlCondition.and(CallLogModelDBFlow_Table.callType.eq(CallLog.Calls.OUTGOING_TYPE));
+        } else {
+            sqlCondition = sqlCondition.and(CallLogModelDBFlow_Table.callType.eq(CallLog.Calls.INCOMING_TYPE))
+                .or(ConditionGroup.clause().and(CallLogModelDBFlow_Table.callType.eq(CallLog.Calls.MISSED_TYPE)));
+        }
+
+        LongResultQueryModel model = SQLite.select(Method.count(CallLogModelDBFlow_Table.contactsName)
+                .as("longResult"))
+            .from(CallLogModelDBFlow.class)
+            .where(sqlCondition)
+            .queryCustomSingle(LongResultQueryModel.class);
+
+        return model;
+    }
+
+    /**
+     * 查询指定类型的通话的总通话时长。
+     * @param type
+     * @return
+     */
+    private LongResultQueryModel queryTotalDuration(int type) {
+        ConditionGroup sqlCondition = ConditionGroup.clause();
+
+        if (type == CallLog.Calls.OUTGOING_TYPE) {
+            sqlCondition = sqlCondition.and(CallLogModelDBFlow_Table.callType.eq(CallLog.Calls.OUTGOING_TYPE));
+        } else {
+            sqlCondition = sqlCondition.and(CallLogModelDBFlow_Table.callType.eq(CallLog.Calls.INCOMING_TYPE))
+                .or(ConditionGroup.clause().and(CallLogModelDBFlow_Table.callType.eq(CallLog.Calls.MISSED_TYPE)));
+        }
+
+        LongResultQueryModel model = SQLite.select(Method.sum(CallLogModelDBFlow_Table.duration)
+            .as("longResult"))
+            .from(CallLogModelDBFlow.class)
+            .where(sqlCondition)
+            .queryCustomSingle(LongResultQueryModel.class);
+
+        return model;
     }
 
     /**
