@@ -29,7 +29,7 @@
     <dimen name="searchActivityItem">18sp</dimen>
     <dimen name="searchActivityItemHeight">48dp</dimen>
 
-    <dimen name="pieChartHeight">220dp</dimen>
+    <dimen name="pieChartHeight">200dp</dimen>
     <dimen name="barChartHeight">300dp</dimen>
     <dimen name="bar_legend_left_margin">32dp</dimen>
 </resources>

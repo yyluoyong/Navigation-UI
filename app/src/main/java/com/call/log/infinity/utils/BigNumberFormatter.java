@@ -35,23 +35,23 @@ public class BigNumberFormatter {
      * @param number
      * @return
      */
-    public static final String format(@NonNull double number) {
-        DecimalFormat mFormat = new DecimalFormat("###,###,###,##0.0");
+    public static final String format(@NonNull double number, DecimalFormat decimalFormat, String moreChar) {
+        DecimalFormat mFormat = decimalFormat;
 
         if (number >= A_BRONTO) {
-            return mFormat.format(number / A_BRONTO) + BRONTO + MORE_CHAR;
+            return mFormat.format(number / A_BRONTO) + BRONTO + moreChar;
         } else if (number >= A_EXA) {
-            return mFormat.format(number / A_EXA) + EXA + MORE_CHAR;
+            return mFormat.format(number / A_EXA) + EXA + moreChar;
         } else if (number >= A_PETA) {
-            return mFormat.format(number / A_PETA) + PETA + MORE_CHAR;
+            return mFormat.format(number / A_PETA) + PETA + moreChar;
         } else if (number >= A_TERA) {
-            return mFormat.format(number / A_TERA) + TERA + MORE_CHAR;
+            return mFormat.format(number / A_TERA) + TERA + moreChar;
         } else if (number >= A_GIGA) {
-            return mFormat.format(number / A_GIGA) + GIGA + MORE_CHAR;
+            return mFormat.format(number / A_GIGA) + GIGA + moreChar;
         } else if (number >= A_MEGA) {
-            return mFormat.format(number / A_MEGA) + MEGA + MORE_CHAR;
+            return mFormat.format(number / A_MEGA) + MEGA + moreChar;
         } else if (number >= A_KILO) {
-            return mFormat.format(number / A_KILO) + KILO + MORE_CHAR;
+            return mFormat.format(number / A_KILO) + KILO + moreChar;
         }
 
         return String.valueOf(Math.round(number));

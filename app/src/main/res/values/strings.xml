@@ -156,19 +156,19 @@
     <!--搜索对话框-->
 
     <!--数据库可视化-->
-    <string name="countPieChartTitle">表1  累计通话次数</string>
-    <string name="countBarChartTitle">表2  通话次数排名前几位的联系人</string>
-    <string name="durationPieChartTitle">表3  累计通话时长</string>
-    <string name="durationBarChartTitle">表4  通话时长排名前几位的联系人</string>
-    <string name="durationDescription">单位：秒</string>
-    <string name="countDescription">单位：次</string>
+    <string name="countPieChartTitle">表1&#160;&#160;累计通话次数</string>
+    <string name="countBarChartTitle">表2&#160;&#160;通话次数排名(单位:次)</string>
+    <string name="durationPieChartTitle">表3&#160;&#160;累计通话时长</string>
+    <string name="durationBarChartTitle">表4&#160;&#160;通话时长排名(单位:秒)</string>
+    <string name="durationDescription">单位:秒</string>
+    <string name="countDescription">单位:次</string>
 
     <string name="madeCallCounts">去电次数</string>
     <string name="recievedCallCounts">来电次数</string>
-    <string name="totalCallCounts">总计：%1$s 次</string>
+    <string name="totalCallCounts">总计: %1$s 次</string>
     <string name="madeCallDuration">去电时长</string>
     <string name="recievedCallDuration">来电时长</string>
-    <string name="totalDuration">总计：%1$s 秒</string>
+    <string name="totalDuration">总计: %1$s 秒</string>
 
     <!--输出CSV文件-->
     <string name="csvFileTitle">姓名,电话号码,通话日期,通话时长,类型,归属地,运营商</string>

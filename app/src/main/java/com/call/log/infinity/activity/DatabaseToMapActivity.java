@@ -60,7 +60,8 @@ public class DatabaseToMapActivity extends AppCompatActivity {
     private static final float BAR_CHART_LEFT = 10;
     private static final float BAR_CHART_RIGHT = 10;
 
-    private static final int CONTACTS_LIMIT = 10;
+    private static final int CONTACTS_LIMIT = MyApplication.getContext().getResources()
+        .getInteger(R.integer.databaseToMapBarCounts);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,8 +94,8 @@ public class DatabaseToMapActivity extends AppCompatActivity {
                 LongResultQueryModel recievedCallModel = queryCallCounts(CallLog.Calls.INCOMING_TYPE);
 
                 ArrayList<PieEntry> entries = new ArrayList<>();
-                entries.add(new PieEntry(madeCallModel.longResult, getString(R.string.madeCallCounts)));
-                entries.add(new PieEntry(recievedCallModel.longResult, getString(R.string.recievedCallCounts)));
+                entries.add(new PieEntry(madeCallModel.longResult, ""));
+                entries.add(new PieEntry(recievedCallModel.longResult, ""));
 
                 //饼图的数据
                 final PieData countPieData = initCountPieChartData(entries, pieChartColors);
@@ -106,7 +107,7 @@ public class DatabaseToMapActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        setCountPieChart(countPieData, countPieDesciptionLabel);
+                        setCountPieChart(countPieData, countPieDesciptionLabel, pieChartColors);
                     }
                 });
             }
@@ -128,8 +129,8 @@ public class DatabaseToMapActivity extends AppCompatActivity {
                 LongResultQueryModel recievedCallModel = queryTotalDuration(CallLog.Calls.INCOMING_TYPE);
 
                 ArrayList<PieEntry> entries = new ArrayList<>();
-                entries.add(new PieEntry(madeCallModel.longResult, getString(R.string.madeCallDuration)));
-                entries.add(new PieEntry(recievedCallModel.longResult, getString(R.string.recievedCallDuration)));
+                entries.add(new PieEntry(madeCallModel.longResult, ""));
+                entries.add(new PieEntry(recievedCallModel.longResult, ""));
 
                 //饼图的数据
                 final PieData durationPieData = initDurationPieChartData(entries, pieChartColors);
@@ -141,7 +142,7 @@ public class DatabaseToMapActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        setDurationPieChart(durationPieData, durationPieDesciptionLabel);
+                        setDurationPieChart(durationPieData, durationPieDesciptionLabel, pieChartColors);
                     }
                 });
             }
@@ -223,11 +224,11 @@ public class DatabaseToMapActivity extends AppCompatActivity {
      * @param data
      * @param descriptionLabel
      */
-    private void setCountPieChart(PieData data, String descriptionLabel) {
+    private void setCountPieChart(PieData data, String descriptionLabel, ArrayList<Integer> pieChartColors) {
         PieChart countChart = (PieChart) findViewById(R.id.count_chart);
         countChart.setUsePercentValues(true);
 
-        countChart.setExtraOffsets(PIE_CHART_LEFT, 0, PIE_CHART_RIGHT, 0);
+        countChart.setExtraOffsets(PIE_CHART_LEFT, 10, PIE_CHART_RIGHT, 10);
         countChart.setDragDecelerationFrictionCoef(0.95f);
 
         countChart.setRotationAngle(0);
@@ -237,10 +238,15 @@ public class DatabaseToMapActivity extends AppCompatActivity {
 
         countChart.animateY(1000, Easing.EasingOption.EaseInOutQuad);
 
-        countChart.setDrawHoleEnabled(false);
+        countChart.setDrawHoleEnabled(true);
+        countChart.setHoleColor(Color.WHITE);
+        countChart.setTransparentCircleColor(Color.WHITE);
+        countChart.setTransparentCircleAlpha(110);
+        countChart.setHoleRadius(58f);
+        countChart.setTransparentCircleRadius(61f);
+
         Description description = countChart.getDescription();
-        description.setText(descriptionLabel);
-        description.setTextAlign(Paint.Align.LEFT);
+        description.setEnabled(false);
 
         //legend在右侧垂直居中
         Legend legend = countChart.getLegend();
@@ -248,6 +254,25 @@ public class DatabaseToMapActivity extends AppCompatActivity {
         legend.setVerticalAlignment(Legend.LegendVerticalAlignment.CENTER);
         legend.setOrientation(Legend.LegendOrientation.VERTICAL);
         legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
+
+        ArrayList<LegendEntry> legendEntries = new ArrayList<>();
+
+        LegendEntry entry1 = new LegendEntry();
+        entry1.label = getString(R.string.madeCallCounts);
+        entry1.formColor = pieChartColors.get(0);
+        legendEntries.add(entry1);
+
+        LegendEntry entry2 = new LegendEntry();
+        entry2.label = getString(R.string.recievedCallCounts);
+        entry2.formColor = pieChartColors.get(1);
+        legendEntries.add(entry2);
+
+        LegendEntry entry3 = new LegendEntry();
+        entry3.label = descriptionLabel;
+        legendEntries.add(entry3);
+
+        legend.setCustom(legendEntries);
+        legend.setTextSize(12f);
 
         countChart.setData(data);
         countChart.highlightValues(null);
@@ -259,11 +284,11 @@ public class DatabaseToMapActivity extends AppCompatActivity {
      * @param data
      * @param descriptionLabel
      */
-    private void setDurationPieChart(PieData data, String descriptionLabel) {
+    private void setDurationPieChart(PieData data, String descriptionLabel, ArrayList<Integer> pieChartColors) {
         PieChart durationChart = (PieChart) findViewById(R.id.duration_chart);
         durationChart.setUsePercentValues(true);
 
-        durationChart.setExtraOffsets(PIE_CHART_LEFT, 0, PIE_CHART_RIGHT, 0);
+        durationChart.setExtraOffsets(PIE_CHART_LEFT, 10, PIE_CHART_RIGHT, 10);
         durationChart.setDragDecelerationFrictionCoef(0.95f);
 
         durationChart.setRotationAngle(0);
@@ -273,10 +298,15 @@ public class DatabaseToMapActivity extends AppCompatActivity {
 
         durationChart.animateY(1000, Easing.EasingOption.EaseInOutQuad);
 
-        durationChart.setDrawHoleEnabled(false);
+        durationChart.setDrawHoleEnabled(true);
+        durationChart.setHoleColor(Color.WHITE);
+        durationChart.setTransparentCircleColor(Color.WHITE);
+        durationChart.setTransparentCircleAlpha(110);
+        durationChart.setHoleRadius(58f);
+        durationChart.setTransparentCircleRadius(61f);
+
         Description description = durationChart.getDescription();
-        description.setText(descriptionLabel);
-        description.setTextAlign(Paint.Align.LEFT);
+        description.setEnabled(false);
 
         //legend在右侧垂直居中
         Legend legend = durationChart.getLegend();
@@ -284,6 +314,25 @@ public class DatabaseToMapActivity extends AppCompatActivity {
         legend.setVerticalAlignment(Legend.LegendVerticalAlignment.CENTER);
         legend.setOrientation(Legend.LegendOrientation.VERTICAL);
         legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
+
+        ArrayList<LegendEntry> legendEntries = new ArrayList<>();
+
+        LegendEntry entry1 = new LegendEntry();
+        entry1.label = getString(R.string.madeCallDuration);
+        entry1.formColor = pieChartColors.get(0);
+        legendEntries.add(entry1);
+
+        LegendEntry entry2 = new LegendEntry();
+        entry2.label = getString(R.string.recievedCallDuration);
+        entry2.formColor = pieChartColors.get(1);
+        legendEntries.add(entry2);
+
+        LegendEntry entry3 = new LegendEntry();
+        entry3.label = descriptionLabel;
+        legendEntries.add(entry3);
+
+        legend.setCustom(legendEntries);
+        legend.setTextSize(12f);
 
         durationChart.setData(data);
         durationChart.highlightValues(null);
@@ -306,6 +355,8 @@ public class DatabaseToMapActivity extends AppCompatActivity {
         countBarChart.animateY(1000);
         Description description = countBarChart.getDescription();
         description.setText(getString(R.string.countDescription));
+        description.setTextSize(10f);
+        description.setEnabled(false);
 
         // if more than 60 entries are displayed in the chart, no values will be drawn
         countBarChart.setMaxVisibleValueCount(60);
@@ -340,6 +391,7 @@ public class DatabaseToMapActivity extends AppCompatActivity {
         //默认为0.95f，在使用异步线程获取并UI更新的时候，会超出屏幕，十分奇怪
         legend.setMaxSizePercent(0.8f);
         setBarChartLegendData(legend, labels, colors);
+        legend.setTextSize(12f);
 
         countBarChart.setData(data);
         countBarChart.invalidate();
@@ -358,8 +410,12 @@ public class DatabaseToMapActivity extends AppCompatActivity {
         durationBarChart.setDrawBarShadow(false);
         durationBarChart.setTouchEnabled(false);
         durationBarChart.animateY(1000);
+
         Description description = durationBarChart.getDescription();
         description.setText(getString(R.string.durationDescription));
+        description.setTextSize(10f);
+        description.setYOffset(80f);
+        description.setEnabled(false);
 
         // scaling can now only be done on x- and y-axis separately
         durationBarChart.setPinchZoom(false);
@@ -392,6 +448,7 @@ public class DatabaseToMapActivity extends AppCompatActivity {
         //默认为0.95f，在使用异步线程获取并UI更新的时候，会超出屏幕，十分奇怪
         legend.setMaxSizePercent(0.8f);
         setBarChartLegendData(legend, labels, colors);
+        legend.setTextSize(12f);
 
         durationBarChart.setData(data);
         durationBarChart.invalidate();
@@ -407,16 +464,21 @@ public class DatabaseToMapActivity extends AppCompatActivity {
 
         dataSet.setDrawIcons(false);
 
-        dataSet.setSliceSpace(1f);
+        dataSet.setSliceSpace(3f);
         dataSet.setIconsOffset(new MPPointF(0, 40));
-        dataSet.setSelectionShift(5f);
+        dataSet.setSelectionShift(4f);
 
         dataSet.setColors(colors);
+
+        dataSet.setValueLinePart1OffsetPercentage(80.f);
+        dataSet.setValueLinePart1Length(0.2f);
+        dataSet.setValueLinePart2Length(0.6f);
+        dataSet.setYValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
 
         PieData data = new PieData(dataSet);
         data.setValueFormatter(new PercentFormatter());
         data.setValueTextSize(12f);
-        data.setValueTextColor(Color.WHITE);
+        data.setValueTextColor(Color.BLACK);
 
         return data;
     }
@@ -431,16 +493,21 @@ public class DatabaseToMapActivity extends AppCompatActivity {
 
         dataSet.setDrawIcons(false);
 
-        dataSet.setSliceSpace(1f);
+        dataSet.setSliceSpace(3f);
         dataSet.setIconsOffset(new MPPointF(0, 40));
-        dataSet.setSelectionShift(5f);
+        dataSet.setSelectionShift(4f);
 
         dataSet.setColors(colors);
+
+        dataSet.setValueLinePart1OffsetPercentage(80.f);
+        dataSet.setValueLinePart1Length(0.2f);
+        dataSet.setValueLinePart2Length(0.6f);
+        dataSet.setYValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
 
         PieData data = new PieData(dataSet);
         data.setValueFormatter(new PercentFormatter());
         data.setValueTextSize(12f);
-        data.setValueTextColor(Color.WHITE);
+        data.setValueTextColor(Color.BLACK);
 
         return data;
     }
@@ -457,7 +524,7 @@ public class DatabaseToMapActivity extends AppCompatActivity {
         ArrayList<BarEntry> yValues = new ArrayList<>();
 
         for (int i = 0; i < models.size(); i++) {
-            yValues.add(new BarEntry(i, (float) models.get(i).counts));
+            yValues.add(new BarEntry(i+1, (float) models.get(i).counts));
         }
 
         set1 = new BarDataSet(yValues, "");
@@ -487,7 +554,7 @@ public class DatabaseToMapActivity extends AppCompatActivity {
         ArrayList<BarEntry> yValues = new ArrayList<>();
 
         for (int i = 0; i < models.size(); i++) {
-            yValues.add(new BarEntry(i, (float) models.get(i).totalDuration));
+            yValues.add(new BarEntry(i+1, (float) models.get(i).totalDuration));
         }
 
         BarDataSet set1;
@@ -541,7 +608,7 @@ public class DatabaseToMapActivity extends AppCompatActivity {
     private class MyValueFormatter implements IValueFormatter {
         @Override
         public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
-            return BigNumberFormatter.format(value);
+            return BigNumberFormatter.format(value, new DecimalFormat("###,###,###,##0.0"), "+");
         }
     }
 
@@ -551,7 +618,7 @@ public class DatabaseToMapActivity extends AppCompatActivity {
     private class MyAxisValueFormatter implements IAxisValueFormatter {
         @Override
         public String getFormattedValue(float value, AxisBase axis) {
-            return BigNumberFormatter.format(value);
+            return BigNumberFormatter.format(value, new DecimalFormat("###,###,###,##0.0"), "");
         }
     }
 

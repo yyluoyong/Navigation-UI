@@ -4,4 +4,5 @@
     <integer name="TAB_COUNTS">4</integer>
     <integer name="MAIN_PAGE_COUNTS">4</integer>
 
+    <integer name="databaseToMapBarCounts">8</integer>
 </resources>
