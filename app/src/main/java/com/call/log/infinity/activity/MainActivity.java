@@ -33,6 +33,7 @@ import com.call.log.infinity.database.CallLogDatabase;
 import com.call.log.infinity.database.CallLogModelDBFlow;
 import com.call.log.infinity.database.CallLogModelDBFlow_Table;
 import com.call.log.infinity.database.CopyDatabaseToSDCardUtil;
+import com.call.log.infinity.database.ExportDatabaseToCSVUtil;
 import com.call.log.infinity.utils.QueryContactsUtil;
 import com.call.log.infinity.database.WriteCallLogToDatabaseUtil;
 import com.call.log.infinity.fragment.UpdateFragmentObservable;
@@ -223,7 +224,8 @@ public class MainActivity extends BaseActivity
             //复制DBFlow数据库到SDCard
             setCopyDatabaseListener();
         } else if (id == R.id.nav_export) {
-            Toast.makeText(MainActivity.this, "点击'导出DB'按钮，功能待完善", Toast.LENGTH_SHORT).show();
+            //导出DBFlow数据库到CSV文件
+            setExportDatabaseListener();
         } else if (id == R.id.nav_delete) {
             //清空DBFlow数据库表格
             setClearDababaseTableListener();
@@ -434,6 +436,32 @@ public class MainActivity extends BaseActivity
                             Toast.makeText(MainActivity.this, successString, Toast.LENGTH_LONG).show();
                         } else {
                             Toast.makeText(MainActivity.this, getString(R.string.copyDatabaseFailed),
+                                Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+            }
+        }).start();
+    }
+
+    /**
+     * 导出数据库的监听。
+     */
+    private void setExportDatabaseListener() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final boolean isSuccess = ExportDatabaseToCSVUtil.exportDatabaseToCSV();
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (isSuccess) {
+                            String successString = String.format(getString(R.string.exportDatabaseSuccess),
+                                getPackageName());
+                            Toast.makeText(MainActivity.this, successString, Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(MainActivity.this, getString(R.string.exportDatabaseFailed),
                                 Toast.LENGTH_LONG).show();
                         }
                     }

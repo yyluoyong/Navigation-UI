@@ -7,7 +7,7 @@
     <string name="menuAbount">关于</string>
     <string name="menuSetTheme">设置主题</string>
     <string name="menuCopy">复制DB到SD卡</string>
-    <string name="menuExport">导出DB为Excel</string>
+    <string name="menuExport">导出DB为CSV文件</string>
     <string name="menuRefresh">刷新DB联系人</string>
     <string name="menuClear">清空数据库表格</string>
     <string name="menuTable">数据库可视化</string>
@@ -93,6 +93,7 @@
     <!--日期格式-->
     <string name="yearMonthDayHourMinuteSecond">yyyy_MM_dd_HH_mm_ss</string>
     <string name="yearMonthDay">yyyy年M月d日</string>
+    <string name="allDateInformation">yyyy年MM月dd日 HH:mm:ss</string>
     <string name="monthDayHourMinute">M月d日 HH:mm</string>
     <string name="hourMinute">HH:mm</string>
     <string name="todayCall">今天 %1$s</string>
@@ -168,4 +169,11 @@
     <string name="madeCallDuration">去电时长</string>
     <string name="recievedCallDuration">来电时长</string>
     <string name="totalDuration">总计：%1$s 秒</string>
+
+    <!--输出CSV文件-->
+    <string name="csvFileTitle">姓名,电话号码,通话日期,通话时长,类型,归属地,运营商</string>
+    <string name="csvLineFormat">%1$s,%2$s,%3$s,%4$s,%5$s,%6$s,%7$s</string>
+    <string name="exportDatabaseSuccess">复制成功，见“%1$s”目录</string>
+    <string name="exportDatabaseFailed">抱歉，复制失败！</string>
 </resources>
+
