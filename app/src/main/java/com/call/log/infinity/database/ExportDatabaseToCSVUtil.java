@@ -119,7 +119,7 @@ public class ExportDatabaseToCSVUtil {
                     operator = CallerLocationAndOperatorQueryUtil.UNKOWN_OPERATOR;
                 }
 
-                String contentLine = String.format(CSV_LINE_FORMAT, model.getContactsName(), model.getContactsName(),
+                String contentLine = String.format(CSV_LINE_FORMAT, model.getContactsName(), model.getPhoneNumber(),
                     dateString, durationString, callType, callerLoc, operator);
 
                 bufferedWriter.write(contentLine);

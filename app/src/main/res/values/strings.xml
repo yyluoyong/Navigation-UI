@@ -173,7 +173,7 @@
     <!--输出CSV文件-->
     <string name="csvFileTitle">姓名,电话号码,通话日期,通话时长,类型,归属地,运营商</string>
     <string name="csvLineFormat">%1$s,%2$s,%3$s,%4$s,%5$s,%6$s,%7$s</string>
-    <string name="exportDatabaseSuccess">复制成功，见“%1$s”目录</string>
-    <string name="exportDatabaseFailed">抱歉，复制失败！</string>
+    <string name="exportDatabaseSuccess">导出成功，见“%1$s”目录</string>
+    <string name="exportDatabaseFailed">抱歉，导出失败！</string>
 </resources>
 
