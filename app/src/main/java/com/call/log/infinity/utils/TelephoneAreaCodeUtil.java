@@ -5,6 +5,8 @@ package com.call.log.infinity.utils;
  */
 
 import android.text.TextUtils;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -15,12 +17,28 @@ public class TelephoneAreaCodeUtil {
 
     public static final HashMap<String, String> TELEPHONE_AREA_CODE = new HashMap<>();
 
+    public static final ArrayList<String> THREE_DIGIT_AREA_CODE = new ArrayList<>();
+
     //带区号的电话号码最少是10位
     private static final int TELEPHONE_NUMBER_LENGTH_MIN = 10;
 
     //区号是3位或者4位
     private static final int MIN_CODE_LENGTH = 3;
     private static final int MAX_CODE_LENGTH = 4;
+
+    static {
+        THREE_DIGIT_AREA_CODE.add("010");
+        THREE_DIGIT_AREA_CODE.add("020");
+        THREE_DIGIT_AREA_CODE.add("021");
+        THREE_DIGIT_AREA_CODE.add("022");
+        THREE_DIGIT_AREA_CODE.add("023");
+        THREE_DIGIT_AREA_CODE.add("024");
+        THREE_DIGIT_AREA_CODE.add("025");
+        THREE_DIGIT_AREA_CODE.add("026");
+        THREE_DIGIT_AREA_CODE.add("027");
+        THREE_DIGIT_AREA_CODE.add("028");
+        THREE_DIGIT_AREA_CODE.add("029");
+    }
 
     static {
         TELEPHONE_AREA_CODE.put("010", "北京");

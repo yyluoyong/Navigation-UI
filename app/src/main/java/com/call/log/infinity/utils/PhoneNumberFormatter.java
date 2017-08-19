@@ -20,12 +20,16 @@ public class PhoneNumberFormatter {
     //标准电话号码长度
     private static final int NORMAL_LENGTH = 11;
 
+    //某些地区的固话长度，比如杭州
+    private static final int NORMAL_LENGTH_MIN = 10;
+
     //手机号码以1开头
     private static final String CELLPHONE_NUMBER_START = "1";
 
     //将号码格式化用到的截取位数
     private static final int THREE = 3;
     private static final int FOUR = 4;
+    private static final int SIX = 6;
     private static final int SEVEN = 7;
 
     /**
@@ -56,16 +60,47 @@ public class PhoneNumberFormatter {
                     .append(delimiter)
                     .append(phoneNum.substring(THREE, phoneNum.length()));
         }
-        else if (phoneNum.length() == NORMAL_LENGTH) { //标准手机号码，或者带区号的座机号码
+        else if (phoneNum.length() == NORMAL_LENGTH_MIN) { //长度为10位的号码
+            boolean formatDone = false;
+            for (String areaCode : TelephoneAreaCodeUtil.THREE_DIGIT_AREA_CODE) {
+                if (phoneNum.startsWith(areaCode)) { //3位区号固定电话，格式化：3 4 3
+                    sb.append(phoneNum.substring(0, THREE)).append(delimiter)
+                        .append(phoneNum.substring(THREE, SEVEN)).append(delimiter)
+                        .append(phoneNum.substring(SEVEN, phoneNum.length()));
+                    formatDone = true;
+                    break;
+                }
+            }
+
+            if (!formatDone) { //4位区号，格式化：4 3 3
+                sb.append(phoneNum.substring(0, FOUR)).append(delimiter)
+                    .append(phoneNum.substring(FOUR, SEVEN)).append(delimiter)
+                    .append(phoneNum.substring(SEVEN, phoneNum.length()));
+            }
+        }
+        else if (phoneNum.length() == NORMAL_LENGTH) { //长度为11位的号码 //标准手机号码，或者带区号的座机号码
             if (phoneNum.startsWith(CELLPHONE_NUMBER_START)) { //手机号码，格式化成：3 4 4
                 sb.append(phoneNum.substring(0, THREE)).append(delimiter)
                         .append(phoneNum.substring(THREE, SEVEN)).append(delimiter)
                         .append(phoneNum.substring(SEVEN, phoneNum.length()));
             }
-            else { //带区号的座机号码，格式化成：4 3 3
-                sb.append(phoneNum.substring(0, FOUR)).append(delimiter)
+            else { //带区号的座机号码，格式化成：4 3 3 或 3 4 4
+                boolean formatDone = false;
+                for (String areaCode : TelephoneAreaCodeUtil.THREE_DIGIT_AREA_CODE) {
+                    if (phoneNum.startsWith(areaCode)) { //3位区号固定电话，格式化：3 4 4
+                        sb.append(phoneNum.substring(0, THREE)).append(delimiter)
+                            .append(phoneNum.substring(THREE, SEVEN)).append(delimiter)
+                            .append(phoneNum.substring(SEVEN, phoneNum.length()));
+                        formatDone = true;
+                        break;
+                    }
+                }
+
+                if (!formatDone) { //4位区号，格式化：4 3 4
+                    sb.append(phoneNum.substring(0, FOUR)).append(delimiter)
                         .append(phoneNum.substring(FOUR, SEVEN)).append(delimiter)
                         .append(phoneNum.substring(SEVEN, phoneNum.length()));
+                }
             }
         }
         else { //其余长度的号码，格式为：4 4 4 ...
